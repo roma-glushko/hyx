@@ -1,20 +1,22 @@
 [project]
 name = "hyx"
-version = "0.0.1"
 description = "Lightweight fault tolerance primitives for your modern Python microservices"
-authors = ["Roman Glushko <roman.glushko.m@gmail.com>"]
+authors = [
+    { name = "Roman Glushko", email = "roman.glushko.m@gmail.com" },
+]
+requires-python = ">=3.9,<4.0"
 license = "MIT"
 readme = "README.md"
 dynamic = ["version"]
+
+dependencies = [
+]
 
 [project.urls]
 Homepage = "https://github.com/roma-glushko/hyx"
 
 [tool.hatch.version]
 path = "hyx/__init__.py"
-
-[tool.poetry.dependencies]
-python = ">3.9,<4.0"
 
 [build-system]
 requires = ["hatchling"]
