@@ -16,6 +16,8 @@ All components are designed to work:
 - in asyncio-based applications
 - in-memory first
 
+With that patterns you should be all set to start improving your resilency right after the library installation.
+
 ## Implementation Plan
 
 - [ ] cache
@@ -24,3 +26,8 @@ All components are designed to work:
 - [ ] circuit breaker
 - [ ] circular buffer
 - [ ] time limiter
+
+## Acknowledgements
+
+- [resilience4j/resilience4j](https://github.com/resilience4j/resilience4j)
+- [Netflix/Hystrix](https://github.com/Netflix/Hystrix)
