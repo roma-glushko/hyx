@@ -2,7 +2,7 @@ import functools
 from typing import Any, Callable, cast
 
 from hyx.retry.manager import RetryManager
-from hyx.retry.typing import AttemptsT, BackoffsT, JitterT, RetryableFuncT, RetryOnT
+from hyx.retry.typing import AttemptsT, BackoffsT, JittersT, RetryableFuncT, RetryOnT
 
 
 def retry(
@@ -10,7 +10,7 @@ def retry(
     on: RetryOnT = Exception,
     attempts: AttemptsT = 3,
     backoff: BackoffsT = 0.5,
-    jitter: JitterT = None,
+    jitter: JittersT = None,
 ) -> Callable[[Callable], Callable]:
     """
     Retry given function on specified exceptions using defined wait strategy and jitter

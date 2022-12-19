@@ -3,7 +3,7 @@ from typing import Any
 from hyx.common.waiter import wait
 from hyx.retry.backoffs import create_backoff
 from hyx.retry.counters import create_counter
-from hyx.retry.typing import AttemptsT, BackoffsT, BackoffT, JitterT, RetryableFuncT, RetryOnT
+from hyx.retry.typing import AttemptsT, BackoffsT, BackoffT, JittersT, RetryableFuncT, RetryOnT
 
 
 class RetryManager:
@@ -12,7 +12,7 @@ class RetryManager:
         exceptions: RetryOnT,
         attempts: AttemptsT,
         backoff: BackoffsT,
-        jitter: JitterT,
+        jitter: JittersT,
     ) -> None:
         self._exceptions = exceptions
         self._attempts = attempts
