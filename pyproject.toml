@@ -1,23 +1,72 @@
-[project]
+[tool.poetry]
 name = "hyx"
+version = "0.0.1"
 description = "Lightweight fault tolerance primitives for your modern Python microservices"
-authors = [
-    { name = "Roman Glushko", email = "roman.glushko.m@gmail.com" },
-]
-requires-python = ">=3.9,<4.0"
+authors = ["Roman Glushko <roman.glushko.m@gmail.com>"]
 license = "MIT"
 readme = "README.md"
-dynamic = ["version"]
 
-dependencies = [
-]
+[tool.poetry.dependencies]
+python = ">=3.9,<4.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.2.0"
+mypy = "^0.991"
+ruff = "^0.0.182"
+black = "^22.12.0"
+isort = "^5.11.2"
+coverage = {extras = ["toml"], version = "^6.5.0"}
+pytest-asyncio = "^0.20.3"
 
 [project.urls]
 Homepage = "https://github.com/roma-glushko/hyx"
 
-[tool.hatch.version]
-path = "hyx/__init__.py"
+[tool.ruff]
+
+line-length = 120
+
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "I",  # isort
+    "C",  # flake8-comprehensions
+    "B",  # flake8-bugbear
+]
+
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+]
+per-file-ignores = {}
+
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+# Assume Python 3.10.
+target-version = "py39"
+
+[tool.ruff.mccabe]
+# Unlike Flake8, default to a complexity level of 10.
+max-complexity = 10
 
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

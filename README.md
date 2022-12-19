@@ -32,5 +32,5 @@ With that patterns you should be all set to start improving your resilency right
 - [resilience4j/resilience4j](https://github.com/resilience4j/resilience4j)
 - [Netflix/Hystrix](https://github.com/Netflix/Hystrix)
 - [slok/goresilience](https://github.com/slok/goresilience)
-- [slok/goresilience](https://github.com/slok/goresilience)
 - [App-vNext/Polly](https://github.com/App-vNext/Polly)
+- [Diplomatiq/resily](https://github.com/Diplomatiq/resily)
