@@ -3,7 +3,7 @@ from typing import Any, AsyncGenerator, AsyncIterator, Awaitable, Callable, Sequ
 BackoffT = AsyncIterator[float]
 JitterT = AsyncGenerator[float, None]
 
-RetryOnT = Union[Type[Exception], Sequence[Type[Exception]]]
+RetryOnT = Union[Type[BaseException], Sequence[Type[BaseException]]]
 AttemptsT = Union[None, int]
 BackoffsT = Union[int, float, BackoffT]
 JittersT = Union[None, JitterT]

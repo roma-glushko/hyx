@@ -2,7 +2,7 @@ import asyncio
 
 import pytest
 
-from hyx.timeout import timeout, Timeout
+from hyx.timeout import timeout
 from hyx.timeout.exceptions import MaxDurationExceeded
 
 
@@ -16,9 +16,18 @@ async def test__timeout__decorator() -> None:
 
 
 async def test__timeout__context() -> None:
-    async with Timeout(max_duration=0.5):
+    var = 0
+    async with timeout(max_duration=0.5):
         await asyncio.sleep(0.1)
-        assert True
+        var = 42
+
+    assert var == 42
+
+
+async def test__timeout__context_timeout_exceeded() -> None:
+    with pytest.raises(MaxDurationExceeded):
+        async with timeout(max_duration=0.2):
+            await asyncio.sleep(1)
 
 
 async def test__timeout__duration_equal() -> None:

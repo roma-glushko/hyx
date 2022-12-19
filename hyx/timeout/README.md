@@ -4,4 +4,5 @@ Timeout or time limiter is a component that makes sure that some code is not exe
 
 ## Acknowledgement
 
+- (aio-libs/async-timeout)[https://github.com/aio-libs/async-timeout]
 - (michalc/aiotimeout)[https://github.com/michalc/aiotimeout]

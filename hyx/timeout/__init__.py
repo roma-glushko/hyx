@@ -1,3 +1,3 @@
-from hyx.timeout.api import timeout, Timeout
+from hyx.timeout.api import timeout
 
-__all__ = ("timeout", "Timeout")
+__all__ = ("timeout",)
