@@ -1,19 +1,35 @@
 import functools
-from typing import TypeVar, cast, Any, Callable, Awaitable, Union, Sequence
+from typing import Any, Callable, cast
 
-FuncT = TypeVar("FuncT", bound=Callable[..., Awaitable[Any]])
+from hyx.retry.manager import RetryManager
+from hyx.retry.typing import AttemptsT, BackoffsT, JitterT, RetryableFuncT, RetryOnT
 
 
-def retry(on: Union[Exception, Sequence[Exception]] = Exception) -> Callable[[Callable], Callable]:
+def retry(
+    *,
+    on: RetryOnT = Exception,
+    attempts: AttemptsT = 3,
+    backoff: BackoffsT = 0.5,
+    jitter: JitterT = None,
+) -> Callable[[Callable], Callable]:
     """
     Retry given function on specified exceptions using defined wait strategy and jitter
     """
+    manager = RetryManager(
+        exceptions=on,
+        attempts=attempts,
+        backoff=backoff,
+        jitter=jitter,
+    )
 
-    def _decorator(func: FuncT) -> FuncT:
+    def _decorator(func: RetryableFuncT) -> RetryableFuncT:
         @functools.wraps(func)
         async def _wrapper(*args: Any, **kwargs: Any) -> Any:
-            return await func(*args, **kwargs)
+            return await manager(functools.partial(func, *args, **kwargs))
 
-        return cast(FuncT, _wrapper)
+        _wrapper.__original__ = func
+        _wrapper.__manager__ = manager
+
+        return cast(RetryableFuncT, _wrapper)
 
     return _decorator

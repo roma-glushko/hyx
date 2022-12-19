@@ -4,5 +4,10 @@
 
 .mypy_cache
 .pytest_cache
+.ruff_cache
+*.pyc
+
+.coverage
+htmlcov
 
 dist
