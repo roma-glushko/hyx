@@ -5,6 +5,8 @@
     <em>🧘‍♂️️Lightweight fault tolerance primitives for your resilient and modern Python microservices</em>
 </p>
 
+---
+
 Hyx provides you with a toolkit that includes common fault tolerance patterns like:
 
 - bulkhead
