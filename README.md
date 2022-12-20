@@ -39,16 +39,20 @@ With that patterns you should be all set to start improving your resiliency righ
 
 ## Component Map
 
-TBU
+| Component       | Problem                                                                                                                                                                            | Solution                                                                                             | Implemented? |
+|-----------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------|--------------|
+| Retry           | The failures happen sometimes, but they self-recover after a short time                                                                                                            | Automatically retry operation on temporary failures                                                  | ✅            |
+| Cache           |                                                                                                                                                                                    |                                                                                                      |              |
+| Circuit Breaker |                                                                                                                                                                                    |                                                                                                      |              |
+| Timeout         | Sometimes operations may take too much time. We cannot wait that long or after that time the success is unlikely                                                                   | Bound waiting to a reasonable amount of time                                                         | ✅            |
+| Bulkhead        | If executed without control, some code can take too much resources and put down the whole application (and upstream services) or cause slowness of other places of the application | Fix the amount of calls to the code, queue other calls and fail calls that goes beyond your capacity | ✅            |
+| Rate Limiter    |                                                                                                                                                                                    |                                                                                                      |              |
+| Fallback        |                                                                                                                                                                                    |                                                                                                      |              |
 
-## Implementation Plan
 
-- [ ] cache
-- [x] retry
-- [x] bulkhead
-- [ ] circuit breaker
-- [ ] circular buffer
-- [x] time limiter
+<p align="right">
+Inspired by <a href="https://github.com/App-vNext/Polly#resilience-policies" target="_blank">Polly's Resiliency Policies</a>
+</p>
 
 ## Acknowledgements
 
