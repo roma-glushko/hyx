@@ -11,21 +11,22 @@ The goal of this library is to provide you with a toolkit that includes common f
 - circular buffer
 - time limiter
 
-All components are designed to work:
+All components are designed to be:
 
-- in asyncio-based applications
+- asyncio-native
 - in-memory first
+- dependency-less
 
-With that patterns you should be all set to start improving your resilency right after the library installation.
+With that patterns you should be all set to start improving your resiliency right after the library installation.
 
 ## Implementation Plan
 
 - [ ] cache
-- [ ] retry
-- [ ] bulkhead
+- [x] retry
+- [x] bulkhead
 - [ ] circuit breaker
 - [ ] circular buffer
-- [ ] time limiter
+- [x] time limiter
 
 ## Acknowledgements
 

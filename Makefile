@@ -2,8 +2,10 @@ SOURCE?=hyx
 TESTS?=tests
 
 clean: ## Clean temporary files
+	@echo "🧹 Cleaning temporary files.."
 	@rm -rf dist
-	@rm -rf .mypy_cache .pytest_cache
+	@rm -rf .mypy_cache .pytest_cache .ruff_cache
+	@rm -rf .coverage htmlcov
 
 lint: ## Lint source code
 	@echo "🧹 Ruff"
