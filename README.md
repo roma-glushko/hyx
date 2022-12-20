@@ -4,6 +4,17 @@
 <p align="center">
     <em>🧘‍♂️️Lightweight fault tolerance primitives for your resilient and modern Python microservices</em>
 </p>
+<p align="center">
+<a href="https://pypi.org/project/hyx" target="_blank">
+    <img src="https://img.shields.io/pypi/v/hyx?color=%2318afba&label=pypi%20package" alt="Package Version">
+</a>
+<a href="https://pypi.org/project/hyx" target="_blank">
+    <img src="https://img.shields.io/pypi/dm/hyx?color=%2318afba" alt="Downloads">
+</a>
+<a href="https://pypi.org/project/hyx" target="_blank">
+  <img src="https://img.shields.io/pypi/pyversions/hyx.svg?color=%2318afba" alt="Supported Python Versions">
+</a>
+</p>
 
 ---
 
