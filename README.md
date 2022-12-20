@@ -1,15 +1,17 @@
 # Hyx
 
-🧘‍♀️Lightweight fault tolerance primitives for your modern Python microservices.
+🧘‍♀️Lightweight fault tolerance primitives for your resilient and modern Python microservices.
 
 The goal of this library is to provide you with a toolkit that includes common fault tolerance patterns like:
 
-- cache
-- retries
-- circuit breaker
 - bulkhead
+- cache
+- circuit breaker
 - circular buffer
-- time limiter
+- fallback
+- rate limiter
+- retries
+- timeout / time limiter
 
 All components are designed to be:
 
@@ -18,6 +20,10 @@ All components are designed to be:
 - dependency-less
 
 With that patterns you should be all set to start improving your resiliency right after the library installation.
+
+## Component Map
+
+TBU
 
 ## Implementation Plan
 
