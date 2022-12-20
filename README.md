@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="TBU" alt="Hyx">
+  <img src="https://raw.githubusercontent.com/roma-glushko/hyx/main/img/hyx-logo.png" alt="Hyx">
 </p>
 <p align="center">
     <em>🧘‍♂️️Lightweight fault tolerance primitives for your resilient and modern Python microservices</em>
