@@ -3,6 +3,7 @@ from types import TracebackType
 from typing import Any, Optional, Type, cast
 
 from hyx.circuitbreaker.managers import ConsecutiveCircuitBreaker
+from hyx.circuitbreaker.states import BreakerState
 from hyx.circuitbreaker.typing import DelayT
 from hyx.common.typing import ExceptionsT, FuncT
 
@@ -29,8 +30,13 @@ class consecutive_breaker:
             recovery_threshold=recovery_threshold,
         )
 
+    @property
+    def state(self) -> "BreakerState":
+        return self._manager.state
+
     async def __aenter__(self) -> "consecutive_breaker":
-        # todo:
+        await self._manager.acquire()
+
         return self
 
     async def __aexit__(
@@ -39,7 +45,8 @@ class consecutive_breaker:
         exc_val: Optional[BaseException],
         exc_tb: Optional[TracebackType],
     ) -> Optional[bool]:
-        # todo:
+        await self._manager.release(exc_val)
+
         return None
 
     def __call__(self, func: FuncT) -> FuncT:

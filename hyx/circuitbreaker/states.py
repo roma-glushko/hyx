@@ -1,7 +1,8 @@
 from datetime import datetime, timedelta
-from typing import Optional, Self
+from typing import Optional
 
 from hyx.circuitbreaker.config import BreakerConfig
+from hyx.circuitbreaker.exceptions import BreakerFailing
 
 
 class BreakerState:
@@ -14,13 +15,13 @@ class BreakerState:
     def name(self) -> str:
         return self.NAME
 
-    async def before_execution(self) -> Self:
+    async def before_execution(self) -> "BreakerState":
         return self
 
-    async def on_success(self) -> Self:
+    async def on_success(self) -> "BreakerState":
         return self
 
-    async def on_exception(self, exception: BaseException) -> Self:
+    async def on_exception(self) -> "BreakerState":
         return self
 
 
@@ -44,7 +45,7 @@ class WorkingState(BreakerState):
     def _reset_exceptions_count(self) -> None:
         self._consecutive_exceptions = 0
 
-    async def on_success(self) -> Self:
+    async def on_success(self) -> "BreakerState":
         """
         Reset the failure counter
         """
@@ -52,7 +53,7 @@ class WorkingState(BreakerState):
 
         return self
 
-    async def on_exception(self, exception: BaseException) -> "BreakerState":
+    async def on_exception(self) -> "BreakerState":
         """
         Transit the breaker to the failing state if number of consecutive errors is beyond the threshold
         """
@@ -85,7 +86,7 @@ class FailingState(BreakerState):
         return datetime.utcnow()
 
     def _get_failing_until(self, since: datetime) -> datetime:
-        return since + timedelta(self._config.recovery_delay_secs)
+        return since + timedelta(seconds=self._config.recovery_delay_secs)
 
     @property
     def until(self) -> datetime:
@@ -113,9 +114,9 @@ class FailingState(BreakerState):
         """
         return self._failing_since
 
-    async def before_execution(self) -> Self:
+    async def before_execution(self) -> "BreakerState":
         if self.remain:
-            raise RuntimeError
+            raise BreakerFailing("Circuit Breaker is in the failing state")
 
         return RecoveringState(self._config)
 
@@ -139,7 +140,7 @@ class RecoveringState(BreakerState):
     def consecutive_successes(self) -> int:
         return self._consecutive_successes
 
-    async def on_success(self) -> Self:
+    async def on_success(self) -> "BreakerState":
         self._consecutive_successes += 1
 
         if self.consecutive_successes >= self._config.recovery_threshold:
@@ -147,5 +148,5 @@ class RecoveringState(BreakerState):
 
         return self
 
-    async def on_exception(self, exception: BaseException) -> Self:
+    async def on_exception(self) -> "BreakerState":
         return FailingState(self._config)
