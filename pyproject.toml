@@ -3,7 +3,7 @@ name = "hyx"
 version = "0.0.1"
 description = "Lightweight fault tolerance primitives for your modern Python microservices"
 authors = ["Roman Glushko <roman.glushko.m@gmail.com>"]
-license = "MIT"
+license = "Apache License 2.0"
 readme = "README.md"
 
 [tool.poetry.dependencies]
