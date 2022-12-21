@@ -1,15 +1,16 @@
 from typing import Any
 
+from hyx.common.typing import ExceptionsT, FuncT
 from hyx.common.waiter import wait
 from hyx.retry.backoffs import create_backoff
 from hyx.retry.counters import create_counter
-from hyx.retry.typing import AttemptsT, BackoffsT, BackoffT, JittersT, RetryableFuncT, RetryOnT
+from hyx.retry.typing import AttemptsT, BackoffsT, BackoffT, JittersT
 
 
 class RetryManager:
     def __init__(
         self,
-        exceptions: RetryOnT,
+        exceptions: ExceptionsT,
         attempts: AttemptsT,
         backoff: BackoffsT,
         jitter: JittersT,
@@ -28,7 +29,7 @@ class RetryManager:
 
         return delay
 
-    async def __call__(self, func: RetryableFuncT) -> Any:
+    async def __call__(self, func: FuncT) -> Any:
         counter = create_counter(self._attempts)
         backoff = self._backoff.__aiter__()
 

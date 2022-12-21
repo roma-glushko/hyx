@@ -1,13 +1,14 @@
 import functools
 from typing import Any, Callable, cast
 
+from hyx.common.typing import ExceptionsT, FuncT
 from hyx.retry.manager import RetryManager
-from hyx.retry.typing import AttemptsT, BackoffsT, JittersT, RetryableFuncT, RetryOnT
+from hyx.retry.typing import AttemptsT, BackoffsT, JittersT
 
 
 def retry(
     *,
-    on: RetryOnT = Exception,
+    on: ExceptionsT = Exception,
     attempts: AttemptsT = 3,
     backoff: BackoffsT = 0.5,
     jitter: JittersT = None,
@@ -22,7 +23,7 @@ def retry(
         jitter=jitter,
     )
 
-    def _decorator(func: RetryableFuncT) -> RetryableFuncT:
+    def _decorator(func: FuncT) -> FuncT:
         @functools.wraps(func)
         async def _wrapper(*args: Any, **kwargs: Any) -> Any:
             return await manager(functools.partial(func, *args, **kwargs))
@@ -30,6 +31,6 @@ def retry(
         _wrapper.__original__ = func
         _wrapper.__manager__ = manager
 
-        return cast(RetryableFuncT, _wrapper)
+        return cast(FuncT, _wrapper)
 
     return _decorator

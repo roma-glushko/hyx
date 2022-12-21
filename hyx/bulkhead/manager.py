@@ -2,7 +2,7 @@ import asyncio
 from typing import Any
 
 from hyx.bulkhead.exceptions import BulkheadFull
-from hyx.timeout.typing import FuncT
+from hyx.common.typing import FuncT
 
 
 class BulkheadManager:
