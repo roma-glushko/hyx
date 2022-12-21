@@ -45,7 +45,7 @@ async def test__circuitbreaker__decorator__pass_unknown_exceptions() -> None:
     assert cast(WorkingState, breaker.state).consecutive_exceptions == 0
 
 
-async def test__circuitbreaker__consecutive__state_transitions() -> None:
+async def test__circuitbreaker__consecutive__state_transitions_with_success_in_the_end() -> None:
     fail_until: int = 2
     fails: int = 0
 
@@ -59,6 +59,7 @@ async def test__circuitbreaker__consecutive__state_transitions() -> None:
     @breaker
     async def faulty() -> float:
         nonlocal fails, fail_until
+
         if fails < fail_until:
             fails += 1
             raise RuntimeError("error on calculation")
@@ -92,3 +93,30 @@ async def test__circuitbreaker__consecutive__state_transitions() -> None:
     assert await faulty() == 42
     assert isinstance(breaker.state, WorkingState)
 
+
+async def test__circuitbreaker__consecutive__state_transitions_with_failure_in_the_end() -> None:
+    breaker = consecutive_breaker(
+        exceptions=(RuntimeError,),
+        failure_threshold=1,
+        recovery_delay_secs=1,
+        recovery_threshold=2,
+    )
+
+    @breaker
+    async def faulty() -> float:
+        raise RuntimeError("error on calculation")
+
+    # cause the first failure
+    with pytest.raises(RuntimeError):
+        await faulty()
+
+    assert isinstance(breaker.state, FailingState)
+
+    # wait for the recovery delay
+    await asyncio.sleep(1)
+
+    # cause the second failure and switch to the failure mode again
+    with pytest.raises(RuntimeError):
+        await faulty()
+
+    assert isinstance(breaker.state, FailingState)
