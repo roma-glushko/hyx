@@ -1,4 +1,3 @@
-from typing import Any, Awaitable, Callable, TypeVar, Union
+from typing import Union
 
 DurationT = Union[int, float]
-FuncT = TypeVar("FuncT", bound=Callable[..., Awaitable[Any]])

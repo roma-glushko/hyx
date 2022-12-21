@@ -3,7 +3,7 @@ from types import TracebackType
 from typing import Any, Optional, Type, cast
 
 from hyx.bulkhead.manager import BulkheadManager
-from hyx.timeout.typing import FuncT
+from hyx.common.typing import FuncT
 
 
 class bulkhead:
