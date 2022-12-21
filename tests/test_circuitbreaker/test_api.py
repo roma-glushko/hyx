@@ -1,12 +1,11 @@
 import asyncio
-import contextlib
 from typing import cast
 
 import pytest
 
 from hyx.circuitbreaker import consecutive_breaker
 from hyx.circuitbreaker.exceptions import BreakerFailing
-from hyx.circuitbreaker.states import WorkingState, FailingState, RecoveringState
+from hyx.circuitbreaker.states import FailingState, RecoveringState, WorkingState
 
 
 async def test__circuitbreaker__decorator_context_success() -> None:

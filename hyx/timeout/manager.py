@@ -1,8 +1,9 @@
 import asyncio
 from typing import Any, Optional, Type
 
+from hyx.common.typing import FuncT
 from hyx.timeout.exceptions import MaxDurationExceeded
-from hyx.timeout.typing import DurationT, FuncT
+from hyx.timeout.typing import DurationT
 
 
 class TimeoutManager:
