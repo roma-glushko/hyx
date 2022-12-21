@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "hyx"
-version = "0.0.1"
+version = "0.0.2.rc0"
 description = "Lightweight fault tolerance primitives for your modern Python microservices"
 authors = ["Roman Glushko <roman.glushko.m@gmail.com>"]
 license = "Apache License 2.0"
