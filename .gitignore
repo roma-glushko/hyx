@@ -10,4 +10,6 @@
 .coverage
 htmlcov
 
+site
+
 dist
