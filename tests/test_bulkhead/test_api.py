@@ -2,7 +2,7 @@ import asyncio
 
 import pytest
 
-from hyx.bulkhead.api import bulkhead
+from hyx.bulkhead import bulkhead
 from hyx.bulkhead.exceptions import BulkheadFull
 
 
