@@ -26,9 +26,9 @@ docs-build: ## Build docs
 build: package-build docs-build
 
 test: ## Run tests
-	@coverage run -m pytest tests $(SOURCE)
+	@poetry run coverage run -m pytest tests $(SOURCE)
 
 test-cov: ## Generate test coverage
-	@coverage report --show-missing
-	@coverage html
+	@poetry run coverage report --show-missing
+	@poetry run coverage html
 	@open htmlcov/index.html
