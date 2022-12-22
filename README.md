@@ -1,19 +1,24 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/roma-glushko/hyx/main/img/hyx-logo.png" alt="Hyx">
+  <img loading="lazy" src="https://raw.githubusercontent.com/roma-glushko/hyx/main/img/hyx-logo.png" alt="Hyx">
 </p>
 <p align="center">
     <em>🧘‍♂️️Lightweight fault tolerance primitives for your resilient and modern Python microservices</em>
 </p>
 <p align="center">
 <a href="https://pypi.org/project/hyx" target="_blank">
-    <img src="https://img.shields.io/pypi/v/hyx?color=%2318afba&label=pypi%20package" alt="Package Version">
+    <img loading="lazy" src="https://img.shields.io/pypi/v/hyx?color=%2318afba&label=pypi%20package" alt="Package Version">
 </a>
 <a href="https://pypi.org/project/hyx" target="_blank">
-    <img src="https://img.shields.io/pypi/dm/hyx?color=%2318afba" alt="Downloads">
+    <img loading="lazy" src="https://img.shields.io/pypi/dm/hyx?color=%2318afba" alt="Downloads">
 </a>
 <a href="https://pypi.org/project/hyx" target="_blank">
-  <img src="https://img.shields.io/pypi/pyversions/hyx.svg?color=%2318afba" alt="Supported Python Versions">
+  <img loading="lazy" src="https://img.shields.io/pypi/pyversions/hyx.svg?color=%2318afba" alt="Supported Python Versions">
 </a>
+
+<a href="https://hyx.readthedocs.io/en/latest/?badge=latest">
+    <img loading="lazy" src='https://readthedocs.org/projects/hyx/badge/?version=latest' alt='Documentation Status' />
+</a>
+
 </p>
 
 ---
