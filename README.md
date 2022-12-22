@@ -18,6 +18,10 @@
 <a href="https://hyx.readthedocs.io/en/latest/?badge=latest">
     <img loading="lazy" src="https://readthedocs.org/projects/hyx/badge/?version=latest&color=%2318afba" alt='Documentation Status' />
 </a>
+  
+<a href="https://github.com/roma-glushko/hyx/actions/workflows/tests.yml">
+    <img loading="lazy" src="https://github.com/roma-glushko/hyx/actions/workflows/tests.yml/badge.svg?branch=main" alt='Test Status' />
+</a>
 
 </p>
 
