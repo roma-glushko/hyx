@@ -50,4 +50,4 @@ jobs:
         run: "make build"
 
       - name: "Run tests"
-        run: "make tests"
+        run: "make test"
