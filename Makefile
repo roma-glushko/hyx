@@ -6,12 +6,19 @@ clean: ## Clean temporary files
 	@rm -rf dist
 	@rm -rf .mypy_cache .pytest_cache .ruff_cache
 	@rm -rf .coverage htmlcov
+	@rm -rf site
 
 lint: ## Lint source code
 	@echo "🧹 Ruff"
 	@ruff --fix $(SOURCE) $(TESTS)
 	@echo "🧽 MyPy"
 	@mypy --pretty $(SOURCE) $(TESTS)
+
+docs-serve: ## Start docs with autoreload
+	@poetry run mkdocs servce
+
+docs-build: ## Build docs
+	@poetry run mkdocs build
 
 test: ## Run tests
 	@coverage run -m pytest tests $(SOURCE)

@@ -1,0 +1,75 @@
+strict: true
+
+site_name: Hyx
+site_author: Roman Hlushko
+site_description: Lightweight fault tolerance primitives for your resilient and modern Python microservices
+site_url: https://hyx.readthedocs.io/
+
+copyright: Copyright &copy; 2022 - Present, Roman Hlushko
+
+theme:
+  name: material
+  icon:
+    repo: fontawesome/brands/github
+  palette:
+  - media: '(prefers-color-scheme: light)'
+    scheme: default
+    primary: cyan
+    accent: light green
+    toggle:
+      icon: material/weather-sunny
+      name: Switch to light mode
+  - media: '(prefers-color-scheme: dark)'
+    scheme: slate
+    primary: cyan
+    accent: light green
+    toggle:
+      icon: material/weather-night
+      name: Switch to dark mode
+
+  features:
+    - navigation.sections
+
+  font:
+    text: Roboto
+    code: Roboto Mono
+
+repo_name: roma-glushko/hyx
+repo_url: https://github.com/roma-glushko/hyx
+edit_uri: ''
+
+plugins:
+- search
+
+markdown_extensions:
+- toc:
+    permalink: true
+- admonition
+- pymdownx.details
+- pymdownx.superfences
+- markdown.extensions.codehilite:
+    guess_lang: false
+- mdx_include:
+    base_path: docs
+- codehilite
+- pymdownx.emoji:
+    emoji_generator: !!python/name:materialx.emoji.to_svg
+    emoji_index: !!python/name:materialx.emoji.twemoji
+- pymdownx.superfences:
+    custom_fences:
+    - name: mermaid
+      class: mermaid
+      format: !!python/name:pymdownx.superfences.fence_code_format ''
+- pymdownx.tabbed:
+    alternate_style: true
+
+nav:
+- Getting Started: index.md
+- Components:
+    - Retry: components/retry.md
+    - Circuit Breakers: components/circuit_breakers.md
+    - Timeout: components/timeout.md
+    - Bulkhead: components/bulkhead.md
+    - Fallback: components/fallback.md
+- FAQ: faq.md
+- Release Notes: release_notes.md

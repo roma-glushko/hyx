@@ -18,6 +18,12 @@ isort = "^5.11.2"
 coverage = {extras = ["toml"], version = "^6.5.0"}
 pytest-asyncio = "^0.20.3"
 
+
+[tool.poetry.group.docs.dependencies]
+mkdocs = "^1.4.2"
+mkdocs-material = "^8.5.11"
+mdx-include = "^1.4.2"
+
 [project.urls]
 Homepage = "https://github.com/roma-glushko/hyx"
 
