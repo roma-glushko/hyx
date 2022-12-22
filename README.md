@@ -16,7 +16,7 @@
 </a>
 
 <a href="https://hyx.readthedocs.io/en/latest/?badge=latest">
-    <img loading="lazy" src='https://readthedocs.org/projects/hyx/badge/?version=latest' alt='Documentation Status' />
+    <img loading="lazy" src="https://readthedocs.org/projects/hyx/badge/?version=latest&color=%2318afba" alt='Documentation Status' />
 </a>
 
 </p>

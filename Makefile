@@ -14,11 +14,16 @@ lint: ## Lint source code
 	@echo "🧽 MyPy"
 	@mypy --pretty $(SOURCE) $(TESTS)
 
+package-build: ## Build the project package
+	@poetry build
+
 docs-serve: ## Start docs with autoreload
 	@poetry run mkdocs servce
 
 docs-build: ## Build docs
 	@poetry run mkdocs build
+
+build: package-build docs-build
 
 test: ## Run tests
 	@coverage run -m pytest tests $(SOURCE)
