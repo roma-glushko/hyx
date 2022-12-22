@@ -16,31 +16,39 @@
 </a>
 
 <a href="https://hyx.readthedocs.io/en/latest/?badge=latest">
-    <img loading="lazy" src='https://readthedocs.org/projects/hyx/badge/?version=latest' alt='Documentation Status' />
+    <img loading="lazy" src="https://readthedocs.org/projects/hyx/badge/?version=latest&color=%2318afba" alt='Documentation Status' />
 </a>
 
 </p>
 
 ---
 
-Hyx provides you with a toolkit that includes common fault tolerance patterns like:
+**Hyx** (/ˈhʌɪx/) is a set of well-known stability patterns that are commonly needed
+when you build [microservice-based](https://en.wikipedia.org/wiki/Microservices) applications.
+Hyx is meant to be [Hystrix (Java)](https://github.com/Netflix/Hystrix), [resilience4j (Java)](https://github.com/resilience4j/resilience4j) or [Polly (C#)](https://github.com/App-vNext/Polly) but for the Python world.
 
-- bulkhead
-- cache
-- circuit breaker
-- circular buffer
-- fallback
-- rate limiter
-- retries
-- timeout / time limiter
+## Key Features
 
-All components are designed to be:
+- Implements five commonly used resiliency patterns with various configurations based on advice and experience of industry leaders (e.g. AWS, Google, Netflix)
+- Idiomatic Pythonic implementation based on [decorators](https://realpython.com/primer-on-python-decorators) and [context managers](https://realpython.com/python-with-statement)
+- [AsyncIO](https://docs.python.org/3/library/asyncio.html) Native Implementation
+- Lightweight. Readable Codebase. High Test Coverage
 
-- asyncio-native
-- in-memory first
-- dependency-less
+## Requirements
 
-With that patterns you should be all set to start improving your resiliency right after the library installation.
+- Python 3.7+
+- AsyncIO-powered applications ([no sync support?](./faq.md))
+
+## Installation
+
+Hyx can be installed from [PyPi](https://pypi.org/project/hyx):
+
+``` sh
+pip install hyx
+
+# or via poetry
+poetry add hyx
+```
 
 ## Component Map
 

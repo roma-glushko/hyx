@@ -39,7 +39,7 @@ Hyx is meant to be [Hystrix (Java)](https://github.com/Netflix/Hystrix), [resili
 
 ## Requirements
 
-- Python 3.9+
+- Python 3.7+
 - AsyncIO-powered applications ([no sync support?](./faq.md))
 
 ## Installation
