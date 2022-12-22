@@ -1,4 +1,4 @@
-from typing import Any, Awaitable, Callable, Type, TypeVar, Union
+from typing import Any, Awaitable, Callable, Type, TypeVar, Union, Tuple
 
 FuncT = TypeVar("FuncT", bound=Callable[..., Awaitable[Any]])
-ExceptionsT = Union[Type[BaseException], tuple[Type[BaseException], ...]]
+ExceptionsT = Union[Type[BaseException], Tuple[Type[BaseException], ...]]
