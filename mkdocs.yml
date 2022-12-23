@@ -5,7 +5,7 @@ site_author: Roman Hlushko
 site_description: Lightweight fault tolerance primitives for your resilient and modern Python microservices
 site_url: https://hyx.readthedocs.io/
 
-copyright: Copyright &copy; 2022 - Present, Roman Hlushko
+copyright: Copyright &copy; 2022 - Present, Roman Hlushko - <a href="#__consent">Change cookie settings</a>
 
 theme:
   name: material
@@ -62,6 +62,26 @@ markdown_extensions:
       format: !!python/name:pymdownx.superfences.fence_code_format ''
 - pymdownx.tabbed:
     alternate_style: true
+
+extra:
+    consent:
+        title: Cookie consent
+        description: "We use cookies to recognize your repeated visits and preferences, as well as to measure the effectiveness of our documentation and whether users find what they're searching for. With your consent, you're helping us to make our documentation better."
+
+    analytics:
+      provider: google
+      property: G-5TSGMG0S5G
+      feedback:
+        title: Was this page helpful?
+        ratings:
+        - icon: material/thumb-up-outline
+          name: This page was helpful
+          data: 1
+          note: Thanks for your feedback!
+        - icon: material/thumb-down-outline
+          name: This page could be improved
+          data: 0
+          note: Thanks for your feedback! Help us improve this page by using our <a href="https://github.com/roma-glushko/hyx/issues/new?title=[Feedback]+{title}+-+{url}" target="_blank" rel="noopener">feedback form</a>
 
 nav:
 - Getting Started: index.md
