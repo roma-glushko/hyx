@@ -18,7 +18,7 @@ package-build: ## Build the project package
 	@poetry build
 
 docs-serve: ## Start docs with autoreload
-	@poetry run mkdocs servce
+	@poetry run mkdocs serve
 
 docs-build: ## Build docs
 	@poetry run mkdocs build

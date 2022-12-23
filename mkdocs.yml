@@ -65,11 +65,11 @@ markdown_extensions:
 
 nav:
 - Getting Started: index.md
-- Components:
-    - Retry: components/retry.md
-    - Circuit Breakers: components/circuit_breakers.md
-    - Timeout: components/timeout.md
-    - Bulkhead: components/bulkhead.md
-    - Fallback: components/fallback.md
+# - Components:
+#     - Retry: components/retry.md
+#     - Circuit Breakers: components/circuit_breakers.md
+#     - Timeout: components/timeout.md
+#     - Bulkhead: components/bulkhead.md
+#     - Fallback: components/fallback.md
 - FAQ: faq.md
-- Release Notes: release_notes.md
+# - Release Notes: release_notes.md
