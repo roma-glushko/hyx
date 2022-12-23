@@ -1,3 +1,8 @@
+---
+hide:
+  - feedback
+---
+
 # Hyx
 
 <p align="center">
