@@ -31,6 +31,7 @@ class WorkingState(BreakerState):
 
     Also known as the "closed" state
     """
+
     NAME = "working"
 
     def __init__(self, config: BreakerConfig) -> None:
@@ -129,6 +130,7 @@ class RecoveringState(BreakerState):
 
     Also known as the "half-open" state.
     """
+
     NAME = "recovering"
 
     def __init__(self, config: BreakerConfig) -> None:

@@ -41,7 +41,7 @@ class expo(AsyncIterator[float]):
         return self
 
     async def __anext__(self) -> float:
-        delay = self._initial_delay * self._base ** self._attempt
+        delay = self._initial_delay * self._base**self._attempt
 
         if not self._max_delay or delay < self._max_delay:
             self._attempt += 1

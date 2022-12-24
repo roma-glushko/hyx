@@ -9,7 +9,11 @@ from hyx.circuitbreaker.states import FailingState, RecoveringState, WorkingStat
 
 
 async def test__circuitbreaker__decorator_context_success() -> None:
-    @consecutive_breaker(exceptions=(RuntimeError, ValueError), failure_threshold=2, recovery_delay_secs=0.1)
+    @consecutive_breaker(
+        exceptions=(RuntimeError, ValueError),
+        failure_threshold=2,
+        recovery_delay_secs=0.1,
+    )
     async def faulty() -> float:
         return 42
 
@@ -20,7 +24,9 @@ async def test__circuitbreaker__decorator_context_success() -> None:
 
 
 async def test__circuitbreaker__decorator__pass_known_exceptions() -> None:
-    breaker = consecutive_breaker(exceptions=RuntimeError, failure_threshold=2, recovery_delay_secs=0.1)
+    breaker = consecutive_breaker(
+        exceptions=RuntimeError, failure_threshold=2, recovery_delay_secs=0.1
+    )
 
     @breaker
     async def faulty() -> None:
@@ -33,7 +39,9 @@ async def test__circuitbreaker__decorator__pass_known_exceptions() -> None:
 
 
 async def test__circuitbreaker__decorator__pass_unknown_exceptions() -> None:
-    breaker = consecutive_breaker(exceptions=(RuntimeError,), failure_threshold=2, recovery_delay_secs=0.1)
+    breaker = consecutive_breaker(
+        exceptions=(RuntimeError,), failure_threshold=2, recovery_delay_secs=0.1
+    )
 
     @breaker
     async def faulty() -> None:
