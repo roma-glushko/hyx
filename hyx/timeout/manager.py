@@ -28,19 +28,13 @@ class TimeoutManager:
         self._is_timeout = asyncio.Event()
         watched_task = asyncio.current_task()
 
-        self._timeout_task = self._event_loop.call_later(
-            self._max_duration, self._on_timeout, watched_task
-        )
+        self._timeout_task = self._event_loop.call_later(self._max_duration, self._on_timeout, watched_task)
 
     async def stop(self, error: Optional[Type[BaseException]] = None) -> None:
         """
         Stop measuring the code block execution time
         """
-        if (
-            error is asyncio.CancelledError
-            and self._is_timeout
-            and self._is_timeout.is_set()
-        ):
+        if error is asyncio.CancelledError and self._is_timeout and self._is_timeout.is_set():
             raise MaxDurationExceeded
 
         if self._timeout_task:

@@ -27,6 +27,11 @@ mdx-include = "^1.4.2"
 [project.urls]
 Homepage = "https://github.com/roma-glushko/hyx"
 
+[tool.black]
+
+line-length = 120
+target-version = ['py39']
+
 [tool.ruff]
 
 line-length = 120
