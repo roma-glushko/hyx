@@ -5,7 +5,7 @@ site_author: Roman Hlushko
 site_description: Lightweight fault tolerance primitives for your resilient and modern Python microservices
 site_url: https://hyx.readthedocs.io/
 
-copyright: Copyright &copy; 2022 - Present, Roman Hlushko - <a href="#__consent">Change cookie settings</a>
+copyright: Copyright &copy; 2022 - Present, <a target="_blank" href="https://www.romaglushko.com/">Roman Hlushko</a> - <a href="#__consent">Change cookie settings</a>
 
 theme:
   name: material
@@ -85,7 +85,8 @@ extra:
 
 nav:
 - Getting Started: index.md
-# - Components:
+- Components:
+    - Introduction: components/index.md
 #     - Retry: components/retry.md
 #     - Circuit Breakers: components/circuit_breakers.md
 #     - Timeout: components/timeout.md
