@@ -23,8 +23,8 @@ def fallback(
         async def _wrapper(*args: Any, **kwargs: Any) -> Any:
             return await manager(func, *args, **kwargs)
 
-        _wrapper.__original__ = func
-        _wrapper.__manager__ = manager
+        _wrapper._original = func
+        _wrapper._manager = manager
 
         return cast(FuncT, _wrapper)
 
