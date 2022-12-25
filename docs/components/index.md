@@ -65,7 +65,7 @@ That will restrict your system to **fail in the way you expect it to fail**.
 
 Sooo, what is Hyx? 
 
-Hyx is your ready-to-use **resiliency engineering toolkit** that will help you to restrict your system to **fail in the predictable way**.
+Hyx is your ready-to-use **resiliency engineering toolkit** that will help you to restrict your system to fail in the predictable way.
 Hyx implements and provides primitives and components that are well-known in resiliency engineering and proven to be useful in production settings.
 
 All components can be divided into two groups:
