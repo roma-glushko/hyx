@@ -8,6 +8,7 @@ class FallbackManager:
     """
     Call fallback handler on exceptions or conditions
     """
+
     def __init__(
         self,
         handler: FallbackT,

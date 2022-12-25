@@ -12,6 +12,7 @@ class consecutive_breaker:
     """
     Circuit Breaker that watches for consecutive errors
     """
+
     def __init__(
         self,
         exceptions: ExceptionsT = Exception,
@@ -53,6 +54,7 @@ class consecutive_breaker:
         """
         Apply Consecutive Circuit Breaker as decorator
         """
+
         @functools.wraps(func)
         async def _wrapper(*args: Any, **kwargs: Any) -> Any:
             return await self._manager(functools.partial(func, *args, **kwargs))

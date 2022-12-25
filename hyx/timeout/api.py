@@ -10,6 +10,7 @@ class timeout:
     """
     Timeout Decontext. Can be used as a decorator or context manager
     """
+
     def __init__(self, max_duration: float) -> None:
         self._max_duration = max_duration
         self._timeout_manager: Optional[TimeoutManager] = None

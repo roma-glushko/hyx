@@ -7,10 +7,7 @@ from hyx.fallback.typing import FallbackT, PredicateT
 
 
 def fallback(
-    handler: FallbackT,
-    *,
-    on: Optional[ExceptionsT] = Exception,
-    if_: Optional[PredicateT] = None
+    handler: FallbackT, *, on: Optional[ExceptionsT] = Exception, if_: Optional[PredicateT] = None
 ) -> Callable[[Callable], Callable]:
     """
     Provides a fallback on exceptions
