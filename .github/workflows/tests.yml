@@ -55,7 +55,7 @@ jobs:
         run: "make test"
       
       - name: "Generate coverage report"
-        run: "make test-cov"
+        run: "make test-cov-gen"
       
       - name: Upload Coverage to Codecov
         uses: codecov/codecov-action@v2
