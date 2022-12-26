@@ -28,7 +28,7 @@ docs-build: ## Build docs
 build: package-build docs-build
 
 test: ## Run tests
-	@poetry run coverage run -m pytest tests $(SOURCE)
+	@poetry run coverage run -m pytest tests --cov $(SOURCE) --cov-report=xml
 
 test-cov-gen: ## ## Generate test coverage
 	@poetry run coverage report --show-missing
