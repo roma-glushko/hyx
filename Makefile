@@ -33,6 +33,4 @@ test: ## Run tests
 test-cov: ## Generate test coverage
 	@poetry run coverage report --show-missing
 	@poetry run coverage html
-
-test-cov-open: ## Open generated coverage report
 	@open htmlcov/index.html
