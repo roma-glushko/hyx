@@ -15,6 +15,8 @@
   <img loading="lazy" src="https://img.shields.io/pypi/pyversions/hyx.svg?color=%2318afba" alt="Supported Python Versions">
 </a>
 
+<br/>
+
 <a href="https://hyx.readthedocs.io/en/latest/?badge=latest">
     <img loading="lazy" src="https://readthedocs.org/projects/hyx/badge/?version=latest&color=%2318afba" alt='Documentation Status' />
 </a>
