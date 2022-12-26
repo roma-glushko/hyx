@@ -12,7 +12,7 @@ class TimeoutManager:
         self._event_loop = asyncio.get_running_loop()
 
         self._is_timeout: Optional[asyncio.Event] = None
-        self._timeout_task: Optional[asyncio.Task] = None
+        self._timeout_task: Optional[asyncio.TimerHandle] = None
 
     def _on_timeout(self, watched_task: asyncio.Task) -> None:
         if self._is_timeout:

@@ -1,9 +1,9 @@
 import functools
 from types import TracebackType
-from typing import Optional, Type, Any, cast
+from typing import Any, Optional, Type, cast
 
 from hyx.common.typing import FuncT
-from hyx.ratelimit.managers import TokenBucketLimiter, RateLimiter
+from hyx.ratelimit.managers import RateLimiter, TokenBucketLimiter
 
 
 class ratelimiter:
@@ -34,8 +34,8 @@ class ratelimiter:
 
             return await func(*args, **kwargs)
 
-        _wrapper.__original__ = func
-        _wrapper.__manager__ = self._limiter
+        _wrapper._original = func
+        _wrapper._manager = self._limiter
 
         return cast(FuncT, _wrapper)
 
@@ -72,7 +72,7 @@ class tokenbucket:
 
             return await func(*args, **kwargs)
 
-        _wrapper.__original__ = func
-        _wrapper.__manager__ = self._limiter
+        _wrapper._original = func
+        _wrapper._manager = self._limiter
 
         return cast(FuncT, _wrapper)
