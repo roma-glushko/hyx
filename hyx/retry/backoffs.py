@@ -1,5 +1,4 @@
-from collections.abc import AsyncIterator
-from typing import AsyncGenerator, Optional, Union, Iterator
+from typing import Iterator, Optional, Union
 
 from hyx.retry.typing import BackoffsT, BackoffT
 

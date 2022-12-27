@@ -1,4 +1,4 @@
-from typing import Union, Callable, Iterator
+from typing import Callable, Iterator, Union
 
 BackoffT = Iterator[float]
 JitterT = Callable[[float], float]
