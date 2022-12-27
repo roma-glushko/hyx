@@ -1,21 +1,24 @@
 import random
-from typing import AsyncGenerator
 
 
-async def full(upper_bound: float) -> AsyncGenerator[float, None]:
+def full(wait_time: float) -> float:
     """
     Full Interval Jitter
 
     Draw a jitter value from [0, upper_bound] interval uniformly
 
-    Reference: http://www.awsarchitectureblog.com/2015/03/backoff.html
+    Reference: https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/
     """
 
-    yield random.uniform(0, upper_bound)
+    return random.uniform(0, wait_time)
 
 
-async def rand(fixed_part: float) -> AsyncGenerator[float, None]:
+def equal(wait_time: float) -> float:
     """
-    Fixed value with some random number of milliseconds
+    Equal Jitter
+
+    Reference: https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/
     """
-    yield fixed_part + random.random()
+    half_wait_time = 0.5 * wait_time
+
+    return half_wait_time + random.uniform(0, half_wait_time)

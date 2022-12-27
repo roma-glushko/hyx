@@ -21,17 +21,17 @@ class RetryManager:
         self._jitter = jitter
         self._waiter = wait
 
-    async def _next_delay(self, backoff: BackoffT) -> float:
-        delay = await backoff.__anext__()
+    def _next_delay(self, backoff: BackoffT) -> float:
+        delay = next(backoff)
 
         if self._jitter:
-            delay += await self._jitter.__anext__()
+            return self._jitter(delay)
 
         return delay
 
     async def __call__(self, func: FuncT) -> Any:
         counter = create_counter(self._attempts)
-        backoff = self._backoff.__aiter__()
+        backoff = iter(self._backoff)
 
         while bool(counter):
             try:
@@ -39,5 +39,5 @@ class RetryManager:
             except self._exceptions:
                 counter += 1
 
-                next_delay = await self._next_delay(backoff)
+                next_delay = self._next_delay(backoff)
                 await self._waiter(next_delay)

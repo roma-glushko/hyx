@@ -1,10 +1,10 @@
 from collections.abc import AsyncIterator
-from typing import AsyncGenerator, Optional, Union
+from typing import AsyncGenerator, Optional, Union, Iterator
 
 from hyx.retry.typing import BackoffsT, BackoffT
 
 
-class const(AsyncIterator[float]):
+class const(Iterator[float]):
     """
     Constant Delay Backoff
     """
@@ -12,14 +12,14 @@ class const(AsyncIterator[float]):
     def __init__(self, wait: Union[int, float]) -> None:
         self._wait = wait
 
-    def __aiter__(self) -> "const":
+    def __iter__(self) -> "const":
         return self
 
-    async def __anext__(self) -> float:
+    def __next__(self) -> float:
         return float(self._wait)
 
 
-class expo(AsyncIterator[float]):
+class expo(Iterator[float]):
     """
     Exponential Backoff (delay = factor * base ** attempt)
     """
@@ -36,11 +36,12 @@ class expo(AsyncIterator[float]):
 
         self._attempt = 0
 
-    def __aiter__(self) -> "expo":
+    def __iter__(self) -> "expo":
         self._attempt = 0
+
         return self
 
-    async def __anext__(self) -> float:
+    def __next__(self) -> float:
         delay = self._initial_delay * self._base**self._attempt
 
         if not self._max_delay or delay < self._max_delay:
@@ -57,7 +58,7 @@ def create_backoff(backoff_config: BackoffsT) -> BackoffT:
     if isinstance(backoff_config, (int, float)):
         return const(wait=backoff_config)
 
-    if isinstance(backoff_config, AsyncGenerator):
+    if isinstance(backoff_config, Iterator):
         return backoff_config
 
     raise ValueError(f"Unsupported backoff type: {backoff_config.__class__}")
