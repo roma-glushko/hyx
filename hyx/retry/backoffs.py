@@ -1,3 +1,4 @@
+import random
 from typing import Iterator, Optional, Union
 
 from hyx.retry.typing import BackoffsT, BackoffT
@@ -8,14 +9,14 @@ class const(Iterator[float]):
     Constant Delay Backoff
     """
 
-    def __init__(self, wait: Union[int, float]) -> None:
-        self._wait = wait
+    def __init__(self, delay: Union[int, float]) -> None:
+        self._delay = delay
 
     def __iter__(self) -> "const":
         return self
 
     def __next__(self) -> float:
-        return float(self._wait)
+        return float(self._delay)
 
 
 class expo(Iterator[float]):
@@ -41,7 +42,7 @@ class expo(Iterator[float]):
         return self
 
     def __next__(self) -> float:
-        delay = self._initial_delay * self._base**self._attempt
+        delay = self._initial_delay * self._base ** self._attempt
 
         if not self._max_delay or delay < self._max_delay:
             self._attempt += 1
@@ -51,6 +52,54 @@ class expo(Iterator[float]):
         #  in any case we are going to return max_delay
 
         return self._max_delay
+
+
+class decorrexp(Iterator[float]):
+    """
+    Decorrelated Exponential Backoff with Build-in Jitter
+
+    References:
+    - https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/
+    - https://github.com/Polly-Contrib/Polly.Contrib.WaitAndRetry/blob/master/src/Polly.Contrib.WaitAndRetry/Backoff.AwsDecorrelatedJitter.cs
+    """
+
+    def __init__(self, min_delay: float, max_delay: float, multiplier: float = 3) -> None:
+        self._multiplier = multiplier
+        self._min_delay = min_delay
+        self._max_delay = max_delay
+
+        self._current_delay: float = self._min_delay
+
+    def __iter__(self) -> "decorrexp":
+        self._current_delay = self._min_delay
+
+        return self
+
+    def __next__(self) -> float:
+        upper_bound_delay = min(self._max_delay, self._current_delay * self._multiplier)
+
+        self._current_delay = random.uniform(self._min_delay, upper_bound_delay)
+
+        return self._current_delay
+
+
+class softexp(Iterator[float]):
+    """
+    Soft Exponential Backoff with Build-in Jitter
+
+    References:
+    - https://github.com/App-vNext/Polly/issues/530
+    - https://github.com/Polly-Contrib/Polly.Contrib.WaitAndRetry/blob/master/src/Polly.Contrib.WaitAndRetry/Backoff.DecorrelatedJitterV2.cs # noqa
+    """
+
+    def __init__(self, wait: Union[int, float]) -> None:
+        ...
+
+    def __iter__(self) -> "softexp":
+        return self
+
+    def __next__(self) -> float:
+        ...
 
 
 def create_backoff(backoff_config: BackoffsT) -> BackoffT:
