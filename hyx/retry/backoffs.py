@@ -38,7 +38,7 @@ class const(Iterator[float]):
         if self._is_sequence(delay_secs):
             delay_secs = next(self._intervals)
 
-        delay_ms = delay_secs * SECS_TO_MS
+        delay_ms = float(delay_secs) * SECS_TO_MS
 
         if self._jitter:
             delay_ms = self._jitter(delay_ms)
