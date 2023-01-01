@@ -1,7 +1,7 @@
-from typing import AsyncGenerator, AsyncIterator, Union
+from typing import Callable, Iterator, Union
 
-BackoffT = AsyncIterator[float]
-JitterT = AsyncGenerator[float, None]
+BackoffT = Iterator[float]
+JitterT = Callable[[float], float]
 
 AttemptsT = Union[None, int]
 BackoffsT = Union[int, float, BackoffT]
