@@ -42,7 +42,7 @@ class expo(Iterator[float]):
         return self
 
     def __next__(self) -> float:
-        delay = self._initial_delay * self._base ** self._attempt
+        delay = self._initial_delay * self._base**self._attempt
 
         if not self._max_delay or delay < self._max_delay:
             self._attempt += 1
@@ -61,7 +61,7 @@ class decorrexp(Iterator[float]):
     References:
     - https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/
     - https://github.com/Polly-Contrib/Polly.Contrib.WaitAndRetry/blob/master/src/Polly.Contrib.WaitAndRetry/Backoff.AwsDecorrelatedJitter.cs
-    """
+    """  # noqa: E501
 
     def __init__(self, min_delay: float, max_delay: float, multiplier: float = 3) -> None:
         self._multiplier = multiplier
@@ -89,8 +89,8 @@ class softexp(Iterator[float]):
 
     References:
     - https://github.com/App-vNext/Polly/issues/530
-    - https://github.com/Polly-Contrib/Polly.Contrib.WaitAndRetry/blob/master/src/Polly.Contrib.WaitAndRetry/Backoff.DecorrelatedJitterV2.cs # noqa
-    """
+    - https://github.com/Polly-Contrib/Polly.Contrib.WaitAndRetry/blob/master/src/Polly.Contrib.WaitAndRetry/Backoff.DecorrelatedJitterV2.cs
+    """  # noqa: E501
 
     def __init__(self, wait: Union[int, float]) -> None:
         ...
