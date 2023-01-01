@@ -9,6 +9,8 @@ class FallbackManager:
     Call fallback handler on exceptions or conditions
     """
 
+    __slots__ = ("_handler", "_exceptions", "_predicate")
+
     def __init__(
         self,
         handler: FallbackT,

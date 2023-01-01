@@ -8,6 +8,8 @@ from hyx.retry.typing import AttemptsT, BackoffsT, JittersT
 
 
 class RetryManager:
+    __slots__ = ("_exceptions", "_attempts", "_backoff", "_jitter", "_waiter")
+
     def __init__(
         self,
         exceptions: ExceptionsT,
