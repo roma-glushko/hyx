@@ -25,8 +25,8 @@ async def test__retry__const_backoff(value: float) -> None:
 @pytest.mark.parametrize(
     "params,results",
     [
-        ({"base": 2, "initial_delay": 1, "max_delay": None}, [1, 2, 4, 8, 16]),
-        ({"base": 2, "initial_delay": 1, "max_delay": 8}, [1, 2, 4, 8, 8]),
+        ({"base": 2, "min_delay": 1, "max_delay": None}, [1, 2, 4, 8, 16]),
+        ({"base": 2, "min_delay": 1, "max_delay": 8}, [1, 2, 4, 8, 8]),
     ],
 )
 async def test__retry__exponential_backoff(params: dict[str, Any], results: list[float]) -> None:

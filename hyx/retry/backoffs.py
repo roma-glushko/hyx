@@ -1,7 +1,7 @@
 import random
 from typing import Iterator, Optional, Union
 
-from hyx.retry.typing import BackoffsT, BackoffT
+from hyx.retry.typing import BackoffsT, BackoffT, JittersT
 
 
 class const(Iterator[float]):
@@ -9,14 +9,20 @@ class const(Iterator[float]):
     Constant Delay Backoff
     """
 
-    def __init__(self, delay: Union[int, float]) -> None:
+    def __init__(self, delay: Union[int, float], *, jitter: JittersT = None) -> None:
         self._delay = delay
+        self._jitter = jitter
 
     def __iter__(self) -> "const":
         return self
 
     def __next__(self) -> float:
-        return float(self._delay)
+        delay = float(self._delay)
+
+        if self._jitter:
+            return self._jitter(delay)
+
+        return delay
 
 
 class expo(Iterator[float]):
@@ -26,13 +32,16 @@ class expo(Iterator[float]):
 
     def __init__(
         self,
-        initial_delay: float = 1,
+        *,
+        min_delay: float = 1,
         base: float = 2,
         max_delay: Optional[float] = None,
+        jitter: JittersT = None,
     ) -> None:
-        self._initial_delay = initial_delay
+        self._min_delay = min_delay
         self._base = base
         self._max_delay = max_delay
+        self._jitter = jitter
 
         self._attempt = 0
 
@@ -42,16 +51,55 @@ class expo(Iterator[float]):
         return self
 
     def __next__(self) -> float:
-        delay = self._initial_delay * self._base**self._attempt
+        delay = self._min_delay * self._base**self._attempt
 
-        if not self._max_delay or delay < self._max_delay:
+        if self._max_delay and delay > self._max_delay:
+            delay = self._max_delay
+        else:
+            # no needs to further increment attempt if we have reached delays > max_delay
+            #  in any case we are going to return max_delay
             self._attempt += 1
-            return delay
 
-        # no needs to further increment attempt if we have reached delays > max_delay
-        #  in any case we are going to return max_delay
+        if self._jitter:
+            return self._jitter(delay)
 
-        return self._max_delay
+        return delay
+
+
+class linear(Iterator[float]):
+    """
+    Linear Backoff
+    """
+
+    def __init__(
+        self,
+        *,
+        min_delay: float = 1,
+        additive: float = 1.0,
+        max_delay: Optional[float] = None,
+        jitter: JittersT = None,
+    ) -> None:
+        self._min_delay = min_delay
+        self._max_delay = max_delay
+        self._additive = additive
+        self._jitter = jitter
+
+        self._current_attempt = 0
+
+    def __iter__(self) -> "linear":
+        self._current_attempt = 0
+
+        return self
+
+    def __next__(self) -> float:
+        delay = self._min_delay + self._current_attempt * self._additive
+
+        self._current_attempt += 1
+
+        if self._jitter:
+            return self._jitter(delay)
+
+        return delay
 
 
 class decorrexp(Iterator[float]):
@@ -92,7 +140,7 @@ class softexp(Iterator[float]):
     - https://github.com/Polly-Contrib/Polly.Contrib.WaitAndRetry/blob/master/src/Polly.Contrib.WaitAndRetry/Backoff.DecorrelatedJitterV2.cs
     """  # noqa: E501
 
-    def __init__(self, wait: Union[int, float]) -> None:
+    def __init__(self, delay: Union[int, float]) -> None:
         ...
 
     def __iter__(self) -> "softexp":

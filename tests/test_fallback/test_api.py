@@ -9,10 +9,14 @@ async def test__fallback__decorator() -> None:
         return "falling back"
 
     @fallback(handler, on=Exception)
-    async def imokay(result: ResultT, *args, **kwargs) -> str:
-        return "totally a-okay"
+    async def imokay(degree: str = "a", *, totally: bool = True) -> str:
+        adverb: str = "totally " if totally else ""
+
+        return f"{adverb}{degree}-okay"
 
     assert await imokay() == "totally a-okay"
+    assert await imokay("b") == "totally b-okay"
+    assert await imokay("b", totally=False) == "b-okay"
 
 
 async def test__fallback__on_failure() -> None:
