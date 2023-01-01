@@ -104,7 +104,7 @@ class softexp(Iterator[float]):
 
 def create_backoff(backoff_config: BackoffsT) -> BackoffT:
     if isinstance(backoff_config, (int, float)):
-        return const(wait=backoff_config)
+        return const(delay=backoff_config)
 
     if isinstance(backoff_config, Iterator):
         return backoff_config

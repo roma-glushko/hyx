@@ -5,11 +5,11 @@ from hyx.fallback.typing import ResultT
 
 
 async def test__fallback__decorator() -> None:
-    async def handler() -> str:
+    async def handler(result: ResultT, *args, **kwargs) -> str:
         return "falling back"
 
     @fallback(handler, on=Exception)
-    async def imokay() -> str:
+    async def imokay(result: ResultT, *args, **kwargs) -> str:
         return "totally a-okay"
 
     assert await imokay() == "totally a-okay"
