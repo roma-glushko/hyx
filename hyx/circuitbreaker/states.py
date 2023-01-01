@@ -8,6 +8,8 @@ from hyx.circuitbreaker.exceptions import BreakerFailing
 class BreakerState:
     NAME: str = "base"
 
+    __slots__ = ("_config",)
+
     def __init__(self, config: BreakerConfig) -> None:
         self._config = config
 
@@ -33,6 +35,8 @@ class WorkingState(BreakerState):
     """
 
     NAME = "working"
+
+    __slots__ = ("_consecutive_exceptions",)
 
     def __init__(self, config: BreakerConfig) -> None:
         super().__init__(config)
@@ -75,6 +79,11 @@ class FailingState(BreakerState):
     """
 
     NAME = "failing"
+
+    __slots__ = (
+        "_failing_since",
+        "_failing_until",
+    )
 
     def __init__(self, config: BreakerConfig) -> None:
         super().__init__(config)
@@ -132,6 +141,8 @@ class RecoveringState(BreakerState):
     """
 
     NAME = "recovering"
+
+    __slots__ = ("_consecutive_successes",)
 
     def __init__(self, config: BreakerConfig) -> None:
         super().__init__(config)

@@ -13,6 +13,8 @@ class consecutive_breaker:
     Circuit Breaker that watches for consecutive errors
     """
 
+    __slots__ = ("_manager",)
+
     def __init__(
         self,
         exceptions: ExceptionsT = Exception,
@@ -20,10 +22,6 @@ class consecutive_breaker:
         recovery_delay_secs: DelayT = 30,
         recovery_threshold: int = 1,
     ) -> None:
-        self._exceptions = exceptions
-        self._failure_threshold = failure_threshold
-        self._recovery_delay_secs = recovery_delay_secs
-
         self._manager = ConsecutiveCircuitBreaker(
             exceptions=exceptions,
             failure_threshold=failure_threshold,
