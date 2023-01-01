@@ -14,7 +14,7 @@ from hyx.retry import backoffs
     ],
 )
 async def test__retry__const_backoff(value: float) -> None:
-    backoff = backoffs.const(wait=value)
+    backoff = backoffs.const(delay=value)
 
     actual_results = [next(backoff) for _ in range(5)]
 
