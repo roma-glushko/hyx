@@ -1,4 +1,4 @@
-SOURCE?=hyx
+SOURCE?=hyx docs/snippets
 TESTS?=tests
 
 clean: ## Clean temporary files

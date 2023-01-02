@@ -13,6 +13,14 @@ MS_TO_SECS = 1 / SECS_TO_MS
 class const(Iterator[float]):
     """
     Constant Delay(s) Backoff
+
+    **Parameters:**
+
+    * **delay_secs** - How much time do we wait on each retry.
+        If `Sequence[float]` is passed, it will take next delay from that list on each retry.
+        It will repeat from the beginning if the list is shorter than number of attempts
+    * **jitter** *(optional)* - Decorrelate delays with the jitter. No jitter by default
+
     """
 
     def __init__(self, delay_secs: Union[float, Sequence[float]], *, jitter: JittersT = None) -> None:
@@ -49,6 +57,14 @@ class const(Iterator[float]):
 class linear(Iterator[float]):
     """
     Linear Backoff
+
+    **Parameters:**
+
+    * **min_delay_secs** - The minimal initial delay
+    * **additive_secs** - How many seconds to add on each retry
+    * **max_delay_secs** *(optional)* - Limit the longest possible delay
+    * **jitter** *(optional)* - Decorrelate delays with the jitter. No jitter by default
+
     """
 
     def __init__(
@@ -87,7 +103,15 @@ class linear(Iterator[float]):
 
 class expo(Iterator[float]):
     """
-    Exponential Backoff (delay = factor * base ** attempt)
+    Exponential Backoff (delay = min_delay_secs * base ** attempt)
+
+    **Parameters:**
+
+    * **min_delay_secs** - The minimal initial delay
+    * **base** - The base of the exponential function
+    * **max_delay_secs** *(optional)* - Limit the longest possible delay
+    * **jitter** *(optional)* - Decorrelate delays with the jitter. No jitter by default
+
     """
 
     def __init__(
@@ -130,7 +154,15 @@ class expo(Iterator[float]):
 
 class fibo(Iterator[float]):
     """
-    Fibonacci Backoff without Jitter
+    Fibonacci Backoff
+
+    **Parameters:**
+
+    * **min_delay_secs** - The minimal initial delay
+    * **factor_secs** - Defines the second element in the initial Fibonacci sequence
+    * **max_delay_secs** *(optional)* - Limit the longest possible delay
+    * **jitter** *(optional)* - Decorrelate delays with the jitter. No jitter by default
+
     """
 
     def __init__(
@@ -174,15 +206,18 @@ class decorrexp(Iterator[float]):
     """
     Decorrelated Exponential Backoff with Build-in Jitter
 
-    References:
-    - https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/
-    - https://github.com/Polly-Contrib/Polly.Contrib.WaitAndRetry/blob/master/src/Polly.Contrib.WaitAndRetry/Backoff.AwsDecorrelatedJitter.cs
-    """  # noqa: E501
+    **Parameters:**
 
-    def __init__(self, min_delay_secs: float, max_delay_secs: float, multiplier: float = 3) -> None:
+    * **min_delay_secs** - The minimal initial delay
+    * **base** - The base of the exponential function
+    * **max_delay_secs** *(optional)* - Limit the longest possible delay
+
+    """
+
+    def __init__(self, min_delay_secs: float, max_delay_secs: float, base: float = 3) -> None:
         self._min_delay_ms = min_delay_secs * SECS_TO_MS
         self._max_delay_ms = max_delay_secs * SECS_TO_MS if max_delay_secs else None
-        self._multiplier = multiplier
+        self._base = base
 
         self._current_delay_ms: float = self._min_delay_ms
 
@@ -192,7 +227,13 @@ class decorrexp(Iterator[float]):
         return self
 
     def __next__(self) -> float:
-        upper_bound_delay_ms = self._current_delay_ms * self._multiplier
+        """
+        References:
+        - https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/
+        - https://github.com/Polly-Contrib/Polly.Contrib.WaitAndRetry/blob/master/src/Polly.Contrib.WaitAndRetry/Backoff.AwsDecorrelatedJitter.cs
+        """  # noqa: E501
+
+        upper_bound_delay_ms = self._current_delay_ms * self._base
 
         if self._max_delay_ms and upper_bound_delay_ms > self._max_delay_ms:
             upper_bound_delay_ms = self._max_delay_ms
@@ -206,10 +247,14 @@ class softexp(Iterator[float]):
     """
     Soft Exponential Backoff with Build-in Jitter
 
-    References:
-    - https://github.com/App-vNext/Polly/issues/530
-    - https://github.com/Polly-Contrib/Polly.Contrib.WaitAndRetry/blob/master/src/Polly.Contrib.WaitAndRetry/Backoff.DecorrelatedJitterV2.cs
-    """  # noqa: E501
+    **Parameters:**
+
+    * **median_delay_secs** - The minimal initial delay
+    * **max_delay_secs** *(optional)* - Limit the longest possible delay
+    * **pfactor** -
+    * **rp_scaling_factor** -
+
+    """
 
     def __init__(
         self,
@@ -235,6 +280,12 @@ class softexp(Iterator[float]):
         return self
 
     def __next__(self) -> float:
+        """
+        References:
+        - https://github.com/App-vNext/Polly/issues/530
+        - https://github.com/Polly-Contrib/Polly.Contrib.WaitAndRetry/blob/master/src/Polly.Contrib.WaitAndRetry/Backoff.DecorrelatedJitterV2.cs
+        """  # noqa: E501
+
         t = self._current_attempt + random.random()
         next_factor = 2**t * math.tanh(math.sqrt(self._pfactor * t))
         delta = next_factor - self._current_factor
