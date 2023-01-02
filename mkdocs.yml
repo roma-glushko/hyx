@@ -53,6 +53,7 @@ markdown_extensions:
 - mdx_include:
     base_path: docs
 - codehilite
+- md_in_html
 - attr_list
 - pymdownx.emoji:
     emoji_generator: !!python/name:materialx.emoji.to_svg

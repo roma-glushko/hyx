@@ -9,14 +9,20 @@ All of that can create situations when your requests maybe delayed, queued or fa
 What can you do in that case? The most natural answer is to **retry your request**. 
 Hence, retry is the most fundamental, intuitive and commonly used component in our resilience toolkit.
 
-However, retries might look deceptively simple and straightforward, the real usage of retries are more nuanced.
+However, retries might look deceptively simple and straightforward, 
+the real usage of retries are more nuanced as you will read throughout this page.
+
+## Use cases
+
+- Retries hide temporary short-lived errors
+- Jitters are useful to reduce congestion on resources
 
 ## Usage
 
 Hyx provides a decorator that brings retry functionality to any function:
 
-```Python hl_lines="4 7"
-{!> ./snippets/retry_basic_usage.py !}
+```Python hl_lines="5 8"
+{!> ./snippets/retry/retry_basic_usage.py !}
 ```
 
 ::: hyx.retry.retry
@@ -31,14 +37,14 @@ Depending on the backoff, retry component can help your system or be a source of
 
 The most basic backoff strategy is to wait the constant amount of time on each retry.
 
-```Python hl_lines="7"
-{!> ./snippets/retry_backoff_const.py !}
+```Python hl_lines="8"
+{!> ./snippets/retry/retry_backoff_const.py !}
 ```
 
 If you pass a list of delays, then it will pull delays from it <abbr title="starts taking delays from the beggining of the list if attemps are more than delays in the list">cyclically</abbr>.
 
-```Python hl_lines="7"
-{!> ./snippets/retry_backoff_const_intervals.py !}
+```Python hl_lines="8"
+{!> ./snippets/retry/retry_backoff_const_intervals.py !}
 ```
 
 The `float` or `list[float]` backoffs are just aliases for the `const` backoff.
@@ -53,8 +59,8 @@ It produces delays that growth rapidly. That gives the faulty functionality more
 
 Hyx implements the Capped Exponential Backoff that allows to specify the `max_delay_secs` bound:
 
-```Python hl_lines="8"
-{!> ./snippets/retry_backoff_expo.py !}
+```Python hl_lines="9"
+{!> ./snippets/retry/retry_backoff_expo.py !}
 ```
 
 ::: hyx.retry.backoffs.expo
@@ -64,8 +70,8 @@ Hyx implements the Capped Exponential Backoff that allows to specify the `max_de
 
 Linear Backoff growth linearly by adding `additive_secs` on each retry:
 
-```Python hl_lines="8"
-{!> ./snippets/retry_backoff_linear.py !}
+```Python hl_lines="9"
+{!> ./snippets/retry/retry_backoff_linear.py !}
 ```
 
 ::: hyx.retry.backoffs.linear
@@ -75,8 +81,8 @@ Linear Backoff growth linearly by adding `additive_secs` on each retry:
 
 Another rapidly growing backoff is based on the Fibonacci sequence:
 
-```Python hl_lines="8"
-{!> ./snippets/retry_backoff_fibo.py !}
+```Python hl_lines="9"
+{!> ./snippets/retry/retry_backoff_fibo.py !}
 ```
 
 ::: hyx.retry.backoffs.fibo
@@ -88,8 +94,8 @@ This is a complex backoff strategy proposed by [AWS Research](https://aws.amazon
 It's based on [the exponential backoff](#exponential-backoff) and includes [the full jitter](#full-jitter). 
 On every retry, it exponentially widens the range of possible delays.
 
-```Python hl_lines="8"
-{!> ./snippets/retry_backoff_decorrexp.py !}
+```Python hl_lines="9"
+{!> ./snippets/retry/retry_backoff_decorrexp.py !}
 ```
 
 ::: hyx.retry.backoffs.decorrexp
@@ -101,11 +107,27 @@ Soft Exponential Backoff is another variation of complex exponential backoffs wi
 It was authored by [the Polly community](https://github.com/App-vNext/Polly/issues/530) as a less spiky alternative to 
 [Decorrelated Exponential Backoff](#decorrelated-exponential-backoff).
 
-```Python hl_lines="8"
-{!> ./snippets/retry_backoff_softexp.py !}
+```Python hl_lines="9"
+{!> ./snippets/retry/retry_backoff_softexp.py !}
 ```
 
+::: hyx.retry.backoffs.softexp
+    :docstring:
+
 ### Custom Backoffs
+
+In the Hyx design, backoffs are just iterators that returns float numbers and can go on infinitely.
+
+Here is how the factorial backoff could be implemented: 
+
+```Python hl_lines="10-34 37"
+{!> ./snippets/retry/retry_backoff_custom.py !}
+```
+
+!!! note
+    The built-in backoffs accepts delay params in seconds, but works with milliseconds under the hood. 
+    That improves granularity of the generated delays.
+    Then it returns generated delays in seconds again.
 
 ## Jitters
 
@@ -118,7 +140,10 @@ It may push your system to autoscale without many reasons that is not super effi
 
 In that case, we say that the requests were **correlated**. 
 
-In order to mitigate this problem, we can use jitters which is essentially a way to **decorrelated your requests by adding some randomness**. 
+In order to mitigate this problem, we can use jitters which is essentially a way to **decorrelated your requests by adding some randomness**.
+That helps to distribute load more evenly and process the same amount of requests with less capacity.
+
+In the Hyx design, jitters are part of backoff strategy.
 
 !!! note
     [Constant](#constant-backoff), [exponential](#exponential-backoff), [linear](#linear-backoff) and [fibonacci](#fibonacci-backoff) backoffs supports
@@ -131,7 +156,7 @@ Full Jitter is a decorrelation strategy proposed by [AWS Research](https://aws.a
 It takes a delay from the range between zero and your upper bound uniformly:
 
 ```Python hl_lines="9"
-{!> ./snippets/retry_backoff_expo_jitter.py !}
+{!> ./snippets/retry/retry_backoff_expo_jitter.py !}
 ```
 
 !!! note
@@ -159,18 +184,82 @@ provide built-in decorrelation as a part of their algorithm.
 
 ### Custom Jitters
 
-TBU
+Hyx uses jitters as a part of backoff strategies. 
+Jitters are callables that takes a delay in milliseconds generated by backoff and returns the final delay in milliseconds.
+
+!!! note
+    Jitters can modify the final delay returned by backoff algorithm.
+
+```Python hl_lines="11-16 19"
+{!> ./snippets/retry/retry_backoff_custom_jitter.py !}
+```
 
 ## Backoffs Outside Retries
 
-Backoffs and Jitters can be useful even outside of retries.
+Backoffs and jitters can be useful even outside of retries.
 
-## Gotchas
+### Worker Pools
+
+In the following example, we create a pool of in-process workers. 
+If we had no delays between their scheduling, they would be started almost instantaneously. 
+They would complete with each other pulling tasks from the database.
+
+In order to avoid that, we are introducing a little jitter that decorrelates their startup time:
+
+```Python hl_lines="12 24"
+{!> ./snippets/retry/jitter_out_retries.py !}
+```
+
+Besides that, we are jittering the worker's rest time increasing changes that workers lifecycles end up being different.
+
+## Antipatterns
 
 ### Infinite Retries
 
-TBU
+Hyx supports an option to retry infinitely, but that should be generally considered as **an antipattern**.
+
+```Python hl_lines="10"
+{!> ./snippets/retry/retry_infinite_attempts.py !}
+```
+
+### No Delays
+
+You can disable delays between retries, but that's **another antipattern** you should not follow:
+
+```Python hl_lines="11"
+{!> ./snippets/retry/retry_no_delays.py !}
+```
+
+Without delays, retries can easily heat your system and create a situation known as [the retry storm](#retry-storms).
+
+### Retry What Should Not be Retried
+
+It's important to realize that not every action should be retried. 
+When you are dealing with non-idempotent APIs, you can introduce duplicated entries in the system if retried.
+
+When it comes to HTTP requests, you should retry based on the server response errors and consider error codes that
+have temporarily nature (e.g. 50x errors).
 
 ### Retry Storms
 
-TBU
+The retry storm is well-known issue when retries are badly configured or put in the wrong place of the system.
+
+Excessive retries can overload some part of your system put it down. 
+The two antipatterns above are common ways to misconfigure retries. 
+That's why you should always limit the number of retry attempts and give some time between the retries for the downstream system to recover.
+
+The place where retries are added is equally important to avoid retry storms. Consider the following case:
+
+<figure markdown>
+  ![Image title](../img/retry/retry-storm.svg){ loading=lazy, align=center }
+  <figcaption>A system with retries configured on multiple levels</figcaption>
+</figure>
+
+The given system has two retries configured on two levels: `gateway` (lvl1) and `orders` microservice (lvl2). 
+If the `inventory` microservice fails, 
+it will first exhause all retries on the `orders` side and then it will get back to the `gateway`. 
+The `gateway` will retry two more times.
+
+The total number of request to the `inventory` microservice will be 3 * 3 which is 9. 
+If we had a deeper request chain with more retries on the way, 
+all of them would multiply and create even worse load on the system.
