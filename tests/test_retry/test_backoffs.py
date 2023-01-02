@@ -94,8 +94,8 @@ async def test__retry__fibonacci_backoff(args: dict[str, Any], expected_delays: 
 @pytest.mark.parametrize(
     "args,expected_delays",
     [
-        ({"min_delay_secs": 1.0, "multiplier": 2.0, "max_delay_secs": None}, [1.6394, 1.0570, 1.3064, 1.36, 2.2667]),
-        ({"min_delay_secs": 2.0, "multiplier": 10.0, "max_delay_secs": None}, [13.5097, 5.3289, 16.1058, 37.5036]),
+        ({"min_delay_secs": 1.0, "base": 2.0, "max_delay_secs": None}, [1.6394, 1.0570, 1.3064, 1.36, 2.2667]),
+        ({"min_delay_secs": 2.0, "base": 10.0, "max_delay_secs": None}, [13.5097, 5.3289, 16.1058, 37.5036]),
     ],
 )
 async def test__retry__decorrexp_backoff(args: dict[str, Any], expected_delays: list[str]) -> None:
