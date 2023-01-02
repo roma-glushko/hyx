@@ -4,23 +4,21 @@ from hyx.common.typing import ExceptionsT, FuncT
 from hyx.common.waiter import wait
 from hyx.retry.backoffs import create_backoff
 from hyx.retry.counters import create_counter
-from hyx.retry.typing import AttemptsT, BackoffsT, JittersT
+from hyx.retry.typing import AttemptsT, BackoffsT
 
 
 class RetryManager:
-    __slots__ = ("_exceptions", "_attempts", "_backoff", "_jitter", "_waiter")
+    __slots__ = ("_exceptions", "_attempts", "_backoff", "_waiter")
 
     def __init__(
         self,
         exceptions: ExceptionsT,
         attempts: AttemptsT,
         backoff: BackoffsT,
-        jitter: JittersT,
     ) -> None:
         self._exceptions = exceptions
         self._attempts = attempts
         self._backoff = create_backoff(backoff)
-        self._jitter = jitter
         self._waiter = wait
 
     async def __call__(self, func: FuncT) -> Any:

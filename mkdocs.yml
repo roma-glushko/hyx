@@ -47,11 +47,13 @@ markdown_extensions:
 - admonition
 - pymdownx.details
 - pymdownx.superfences
+- mkautodoc
 - markdown.extensions.codehilite:
     guess_lang: false
 - mdx_include:
     base_path: docs
 - codehilite
+- attr_list
 - pymdownx.emoji:
     emoji_generator: !!python/name:materialx.emoji.to_svg
     emoji_index: !!python/name:materialx.emoji.twemoji
@@ -87,7 +89,7 @@ nav:
 - Getting Started: index.md
 - Components:
     - Introduction: components/index.md
-#     - Retry: components/retry.md
+    - Retry: components/retry.md
 #     - Circuit Breakers: components/circuit_breakers.md
 #     - Timeout: components/timeout.md
 #     - Bulkhead: components/bulkhead.md

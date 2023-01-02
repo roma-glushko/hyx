@@ -13,6 +13,14 @@ MS_TO_SECS = 1 / SECS_TO_MS
 class const(Iterator[float]):
     """
     Constant Delay(s) Backoff
+
+    **Parameters:**
+
+    * **delay_secs** - How much time do we wait on each retry.
+        If `Sequence[float]` is passed, it will take next delay from that list on each retry.
+        It will repeat from the beginning if the list is shorter than number of attempts
+    * **jitter** - Decorrelate delays with the jitter. No jitter by default
+
     """
 
     def __init__(self, delay_secs: Union[float, Sequence[float]], *, jitter: JittersT = None) -> None:
@@ -87,7 +95,7 @@ class linear(Iterator[float]):
 
 class expo(Iterator[float]):
     """
-    Exponential Backoff (delay = factor * base ** attempt)
+    Exponential Backoff (delay = min_delay_secs * base ** attempt)
     """
 
     def __init__(
@@ -130,7 +138,7 @@ class expo(Iterator[float]):
 
 class fibo(Iterator[float]):
     """
-    Fibonacci Backoff without Jitter
+    Fibonacci Backoff
     """
 
     def __init__(
@@ -173,11 +181,7 @@ class fibo(Iterator[float]):
 class decorrexp(Iterator[float]):
     """
     Decorrelated Exponential Backoff with Build-in Jitter
-
-    References:
-    - https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/
-    - https://github.com/Polly-Contrib/Polly.Contrib.WaitAndRetry/blob/master/src/Polly.Contrib.WaitAndRetry/Backoff.AwsDecorrelatedJitter.cs
-    """  # noqa: E501
+    """
 
     def __init__(self, min_delay_secs: float, max_delay_secs: float, multiplier: float = 3) -> None:
         self._min_delay_ms = min_delay_secs * SECS_TO_MS
@@ -192,6 +196,12 @@ class decorrexp(Iterator[float]):
         return self
 
     def __next__(self) -> float:
+        """
+        References:
+        - https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/
+        - https://github.com/Polly-Contrib/Polly.Contrib.WaitAndRetry/blob/master/src/Polly.Contrib.WaitAndRetry/Backoff.AwsDecorrelatedJitter.cs
+        """  # noqa: E501
+
         upper_bound_delay_ms = self._current_delay_ms * self._multiplier
 
         if self._max_delay_ms and upper_bound_delay_ms > self._max_delay_ms:
