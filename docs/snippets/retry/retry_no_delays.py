@@ -3,10 +3,9 @@ import asyncio
 import httpx
 
 from hyx.retry import retry
-from hyx.retry.backoffs import expo
-
 
 # Don't do this
+
 
 @retry(on=httpx.NetworkError, backoff=0.0)
 async def get_poke_data(pokemon: str) -> None:
