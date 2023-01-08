@@ -11,8 +11,8 @@ from hyx.common.typing import ExceptionsT, FuncT
 class consecutive_breaker:
     """
     Consecutive breaker is the most basic implementation of the circuit breaker pattern.
-    It counts the absolute amount of times the system has been **consecutively failed** and turns into the `failing` state
-    if the threshold is exceeded.
+    It counts the absolute amount of times the system has been **consecutively failed** and
+    turns into the `failing` state if the threshold is exceeded.
 
     Then the breaker waits for the `recovery` delay and moves into the `recovering` state.
     If the action is successful, the breaker gets back to the `working` state.
