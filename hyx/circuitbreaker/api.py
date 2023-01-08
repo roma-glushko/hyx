@@ -10,7 +10,32 @@ from hyx.common.typing import ExceptionsT, FuncT
 
 class consecutive_breaker:
     """
-    Circuit Breaker that watches for consecutive errors
+    Consecutive breaker is the most basic implementation of the circuit breaker pattern.
+    It counts the absolute amount of times the system has been **consecutively failed** and
+    turns into the `failing` state if the threshold is exceeded.
+
+    Then the breaker waits for the `recovery` delay and moves into the `recovering` state.
+    If the action is successful, the breaker gets back to the `working` state.
+    Otherwise, it goes back to the `failing` state and waits another delay.
+
+    Graphically, these transitions look like this:
+
+    ``` mermaid
+    stateDiagram
+        [*] --> Working: start from
+        Working --> Failing: failure threshold is exceeded
+        Failing --> Recovering: after the recovery delay
+        Recovering --> Working: after the recovery threshold is passed
+        Recovering --> Failing: at least one failing result
+    ```
+
+    **Parameters**
+
+    * **exceptions** - Exception or list of exceptions that are considered as a failure
+    * **failure_threshold** - Consecutive number of failures that put the breaker into the `failing` state
+    * **recovery_delay_secs** - The recovery delay in seconds
+    * **recovery_threshold** - Number of consecutive successes that is needed to be pass to
+        turn the breaker back to the `working` state
     """
 
     __slots__ = ("_manager",)
@@ -20,7 +45,7 @@ class consecutive_breaker:
         exceptions: ExceptionsT = Exception,
         failure_threshold: int = 5,
         recovery_delay_secs: DelayT = 30,
-        recovery_threshold: int = 1,
+        recovery_threshold: int = 3,
     ) -> None:
         self._manager = ConsecutiveCircuitBreaker(
             exceptions=exceptions,

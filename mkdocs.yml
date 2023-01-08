@@ -91,7 +91,7 @@ nav:
 - Components:
     - Introduction: components/index.md
     - Retry: components/retry.md
-#     - Circuit Breakers: components/circuit_breakers.md
+    - Circuit Breakers: components/circuit_breakers.md
 #     - Timeout: components/timeout.md
 #     - Bulkhead: components/bulkhead.md
 #     - Fallback: components/fallback.md
