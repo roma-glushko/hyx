@@ -33,6 +33,10 @@ Hyx provides a decorator that brings retry functionality to any function:
 The backoff strategy is a crucial parameter to consider. 
 Depending on the backoff, the retry component can help your system or be a source of problems.
 
+!!! warning
+    For the sake of simplicity, Hyx assumes that you are following AsyncIO best practices and not running CPU-intensive operations in the main thread.
+    Otherwise, the backoff delays may fire later after the thread is unblocked.
+
 ### Constant Backoff
 
 The most basic backoff strategy is to wait the constant amount of time on each retry.

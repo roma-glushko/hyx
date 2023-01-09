@@ -42,6 +42,10 @@ Hyx provides a decorator and a context manager that can help with setting up tim
 ::: hyx.timeout.timeout
     :docstring:
 
+!!! warning
+    For the sake of simplicity, Hyx assumes that you are following AsyncIO best practices and not running CPU-intensive operations in the main thread.
+    Otherwise, the timeout functionality may fire with a delay after the thread is unblocked.
+
 ### Distributed Timeout
 
 Distributed systems make things more complicated when it comes to timeouts. 
