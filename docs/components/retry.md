@@ -1,4 +1,4 @@
-# Retry
+# Retries
 
 ## Introduction
 

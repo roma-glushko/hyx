@@ -1,4 +1,4 @@
-# Timeout
+# Timeouts
 
 ## Introduction
 

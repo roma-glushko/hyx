@@ -79,12 +79,12 @@ Here is a list of components that Hyx is currently providing:
 
 #### Reactive Components
 
-- [Retry](./retry.md)
-- [Circuit Breaker](./circuit_breakers.md)
-- [Timeout](timeout.md)
-- Fallback
+- [Retries](retry.md)
+- [Circuit Breakers](circuit_breakers.md)
+- [Timeouts](timeout.md)
+- [Fallbacks](fallback.md)
 
 #### Proactive Components
 
-- Bulkhead
-- Rate Limiter
+- [Bulkheads](bulkhead.md)
+- [Rate Limiters](rate_limiter.md)
