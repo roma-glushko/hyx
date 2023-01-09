@@ -23,7 +23,9 @@ Hyx provides a decorator and a context manager that can help with setting up tim
 * Ensure that the caller has to wait no more than a given delay. Local timeouts work best when limiting action that doesn't touch other microservices.
 * Limit a microservice request chain by using a [distributed timeout](#distributed-timeout)
 
-## Usages
+## Timeouts
+
+### Local Timeouts
 
 === "decorator"
 
@@ -40,7 +42,7 @@ Hyx provides a decorator and a context manager that can help with setting up tim
 ::: hyx.timeout.timeout
     :docstring:
 
-## Distributed Timeout
+### Distributed Timeout
 
 Distributed systems make things more complicated when it comes to timeouts. 
 When you request a downstream service with a timeout, there is a possibility that the request will be queued for a while.
