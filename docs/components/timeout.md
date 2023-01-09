@@ -3,10 +3,10 @@
 ## Introduction
 
 Not all actions or requests complete immediately. 
-Most of the actions takes a bit of time to finish and that time may depend on various variables like user input, current load, etc.
+Most of the actions take a bit of time to finish and that time may depend on various variables like user input, current load, etc.
 At the same time, we don't want to wait forever as any waiting takes resources, and we are limited in terms of resources.
 
-One way to go about this problem is to specify a timeout which is how much time you can wait in the worse case for the action to happen.
+One way to go about this problem is to specify a timeout which is how much time you can wait in the worst case for the action to happen.
 
 Some functionality comes with built-in timeouts. For example, if you are using a HTTP or RPC client, chances are there is timeout parameter in there:
 
@@ -20,8 +20,8 @@ Hyx provides a decorator and a context manager that can help with setting up tim
 
 ## Use Case
 
-* Ensure that caller has to wait no more than a given delay. Local timeouts work best when limiting action that doesn't touch another microservices.
-* Limit a microservice request chain by using a distributed timeout
+* Ensure that the caller has to wait no more than a given delay. Local timeouts work best when limiting action that doesn't touch other microservices.
+* Limit a microservice request chain by using a [distributed timeout](#distributed-timeout)
 
 ## Usages
 
@@ -48,9 +48,9 @@ Hence, the caller will give up waiting on the timeout and move on handling other
 
 But what will eventually happen with that queued request? 
 If not failed on the load balancing level, it will simply be processed when the turn comes to it. 
-That will be a waste of resource as the result of the request is not going to be used anyhow. That's a problem.
+That will be a waste of resources as the result of the request is not going to be used anyhow. That's a problem.
 
-A common solution is to let all microservices in the request chain to know how much time they have to respond. 
+A common solution is to let all microservices in the request chain know how much time they have to respond. 
 If we exceed that limit, microservices can ignore the requests as they are already timed out. 
 This is called a distributed timeout (a.k.a. deadlines, timeout budget).
 

@@ -79,9 +79,9 @@ Here is a list of components that Hyx is currently providing:
 
 #### Reactive Components
 
-- Retry
-- Circuit Breaker
-- Timeout
+- [Retry](./retry.md)
+- [Circuit Breaker](./circuit_breakers.md)
+- [Timeout](timeout.md)
 - Fallback
 
 #### Proactive Components
