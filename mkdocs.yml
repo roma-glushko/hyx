@@ -10,6 +10,7 @@ copyright: Copyright &copy; 2022 - Present, <a target="_blank" href="https://www
 theme:
   name: material
   icon:
+    logo: material/meditation
     repo: fontawesome/brands/github
   palette:
   - media: '(prefers-color-scheme: light)'

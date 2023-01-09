@@ -61,3 +61,9 @@ The breakers come into two flavours:
 
 ::: hyx.circuitbreaker.consecutive_breaker
     :docstring:
+
+## Best Practices
+
+### Catch Server-Side Errors
+
+TBU
