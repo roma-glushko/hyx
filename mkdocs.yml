@@ -92,7 +92,8 @@ nav:
     - Introduction: components/index.md
     - Retry: components/retry.md
     - Circuit Breakers: components/circuit_breakers.md
-#     - Timeout: components/timeout.md
+    - Timeout: components/timeout.md
+#     - Rate Limiter: components/rate_limiter.md
 #     - Bulkhead: components/bulkhead.md
 #     - Fallback: components/fallback.md
 - FAQ: faq.md
