@@ -60,6 +60,6 @@ A common solution is to let all microservices in the request chain know how much
 If we exceed that limit, microservices can ignore the requests as they are already timed out. 
 This is called a distributed timeout (a.k.a. deadlines, timeout budget).
 
-!!! note
+!!! info
     Hyx doesn't yet provide a way to easily add a distributed budget 
-    as it will require to integrate with the API framework of your choice. We have some plans for that. Stay tuned.
+    as it will require to integrate with the API framework of your choice. We have some plans to support that. Stay tuned.

@@ -215,9 +215,9 @@ In order to avoid that, we are introducing a little jitter that decorrelates the
 
 Besides that, we are jittering the worker's rest time increasing changes that workers lifecycles end up being different.
 
-## Antipatterns
+## Best Practices
 
-### Infinite Retries
+### Limit Retry Attempts
 
 Hyx supports an option to retry infinitely, but that should be generally considered as **an antipattern**.
 
@@ -225,7 +225,9 @@ Hyx supports an option to retry infinitely, but that should be generally conside
 {!> ./snippets/retry/retry_infinite_attempts.py !}
 ```
 
-### No Delays
+Always prefer to limit the number of retries over the infinite attempts.
+
+### Specify Delays
 
 You can disable delays between retries, but that's **another antipattern** you should not follow:
 
@@ -235,7 +237,7 @@ You can disable delays between retries, but that's **another antipattern** you s
 
 Without delays, retries can easily heat your system and create a situation known as [the retry storm](#retry-storms).
 
-### Retry What Should Not be Retried
+### When and What to Retry
 
 It's important to realize that not every action should be retried. 
 When you are dealing with non-idempotent APIs, you can introduce duplicated entries in the system if retried.
@@ -243,7 +245,7 @@ When you are dealing with non-idempotent APIs, you can introduce duplicated entr
 When it comes to HTTP requests, you should retry based on the server response errors and consider error codes that
 have temporary nature (e.g. 50x errors).
 
-### Retry Storms
+### Avoid Retry Storms
 
 The retry storm is a well-known issue when retries are badly configured or put in the wrong place of the system.
 

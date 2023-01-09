@@ -93,6 +93,16 @@ Here is a short overview of Hyx's components:
     Inspired by <a href="https://github.com/App-vNext/Polly#resilience-policies" target="_blank">Polly's Resiliency Policies</a>
 </p>
 
+## Stay Tuned
+
+Hyx is a young but rapidly evolving project. 
+There are [tons of things we want to support and integrate with](roadmap.md) to make Hyx suitable for different frameworks and use cases.
+
+If you don't want to miss our updates, consider the following options:
+
+* give Hyx a star and watch in [Github](https://github.com/roma-glushko/hyx) 
+* follow Roman Hlushko (the creator of Hyx) in [LinkedIn and other social media](https://www.romaglushko.com)
+
 ## Thanks
 
 !!! quote
