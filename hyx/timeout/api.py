@@ -8,11 +8,15 @@ from hyx.timeout.manager import TimeoutManager
 
 class timeout:
     """
-    Timeout Decontext. Can be used as a decorator or context manager
+    Timeout Decontext
+
+    **Parameters:**
+
+    * **max_delay_secs** - Max amount of time to wait for the action in seconds
     """
 
-    def __init__(self, max_duration: float) -> None:
-        self._max_duration = max_duration
+    def __init__(self, max_delay_secs: float) -> None:
+        self._max_delay_secs = max_delay_secs
         self._timeout_manager: Optional[TimeoutManager] = None
 
     async def __aenter__(self) -> "timeout":
@@ -20,7 +24,7 @@ class timeout:
             await self._timeout_manager.stop()
             self._timeout_manager = None
 
-        self._timeout_manager = TimeoutManager(max_duration=self._max_duration)
+        self._timeout_manager = TimeoutManager(max_duration=self._max_delay_secs)
 
         await self._timeout_manager.start()
         return self
@@ -41,7 +45,7 @@ class timeout:
         """
         Apply timeout as a decorator
         """
-        manager = TimeoutManager(max_duration=self._max_duration)
+        manager = TimeoutManager(max_duration=self._max_delay_secs)
 
         @functools.wraps(func)
         async def _wrapper(*args: Any, **kwargs: Any) -> Any:

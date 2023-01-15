@@ -1,4 +1,4 @@
-SOURCE?=hyx
+SOURCE?=hyx docs/snippets
 TESTS?=tests
 
 clean: ## Clean temporary files
@@ -28,9 +28,14 @@ docs-build: ## Build docs
 build: package-build docs-build
 
 test: ## Run tests
-	@poetry run coverage run -m pytest tests $(SOURCE)
+	@poetry run coverage run -m pytest $(TESTS) $(SOURCE)
 
-test-cov: ## Generate test coverage
+test-cov-xml: ## Run tests
+	@poetry run coverage run -m pytest $(TESTS) --cov $(SOURCE) --cov-report=xml
+
+test-cov-html: ## Generate test coverage
 	@poetry run coverage report --show-missing
 	@poetry run coverage html
+
+test-cov-open: test-cov-html  ## Open test coverage in browser
 	@open htmlcov/index.html

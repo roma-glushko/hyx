@@ -18,12 +18,15 @@ isort = "^5.11.2"
 pytest-asyncio = "^0.20.3"
 coverage = "^7.0.1"
 mutmut = "^2.4.3"
+pytest-cov = "^4.0.0"
 
 
 [tool.poetry.group.docs.dependencies]
 mkdocs = "^1.4.2"
 mkdocs-material = "^8.5.11"
 mdx-include = "^1.4.2"
+mkautodoc = "^0.2.0"
+httpx = "^0.23.1"
 
 [project.urls]
 Homepage = "https://github.com/roma-glushko/hyx"

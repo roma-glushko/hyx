@@ -1,12 +1,14 @@
 import functools
 from types import TracebackType
-from typing import Optional, Type, Any, cast
+from typing import Any, Optional, Type, cast
 
 from hyx.common.typing import FuncT
-from hyx.ratelimit.managers import TokenBucketLimiter, RateLimiter
+from hyx.ratelimit.managers import RateLimiter, TokenBucketLimiter
 
 
 class ratelimiter:
+    __slots__ = ("_limiter",)
+
     def __init__(self, limiter: RateLimiter) -> None:
         self._limiter = limiter
 
@@ -41,6 +43,8 @@ class ratelimiter:
 
 
 class tokenbucket:
+    __slots__ = ("_limiter",)
+
     def __init__(self, max_execs: float, time_period_secs: float, bucket_size: float) -> None:
         self._limiter = TokenBucketLimiter(
             max_execs=max_execs,

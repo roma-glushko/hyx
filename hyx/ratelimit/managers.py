@@ -15,6 +15,16 @@ class TokenBucketLimiter(RateLimiter):
     Otherwise, it's going to be rejected with RateLimitExceeded
     """
 
+    __slots__ = (
+        "_max_execs",
+        "_time_period_secs",
+        "_bucket_size",
+        "_loop",
+        "_token_per_secs",
+        "_tokens",
+        "_next_replenish_at",
+    )
+
     def __init__(self, max_execs: float, time_period_secs: float, bucket_size: float) -> None:
         self._max_execs = max_execs
         self._time_period_secs = time_period_secs

@@ -35,3 +35,19 @@ async def test__retry__pass_different_error() -> None:
 
     with pytest.raises(RuntimeError):
         await runtime_func()
+
+
+async def test__retry__infinite_retries() -> None:
+    execs = 0
+
+    @retry(on=RuntimeError, attempts=None)
+    async def flaky_error() -> int:
+        nonlocal execs
+
+        if execs < 3:
+            execs += 1
+            raise RuntimeError
+
+        return 42
+
+    assert await flaky_error() == 42

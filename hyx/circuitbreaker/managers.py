@@ -11,6 +11,8 @@ class ConsecutiveCircuitBreaker:
     Watch for consecutive exceptions that exceed a given threshold
     """
 
+    __slots__ = ("_config", "_state")
+
     def __init__(
         self,
         exceptions: ExceptionsT,
