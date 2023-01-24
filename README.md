@@ -15,12 +15,18 @@
   <img loading="lazy" src="https://img.shields.io/pypi/pyversions/hyx.svg?color=%2318afba" alt="Supported Python Versions">
 </a>
 
+<br/>
+
 <a href="https://hyx.readthedocs.io/en/latest/?badge=latest">
     <img loading="lazy" src="https://readthedocs.org/projects/hyx/badge/?version=latest&color=%2318afba" alt='Documentation Status' />
 </a>
   
 <a href="https://github.com/roma-glushko/hyx/actions/workflows/tests.yml">
     <img loading="lazy" src="https://github.com/roma-glushko/hyx/actions/workflows/tests.yml/badge.svg?branch=main" alt='Test Status' />
+</a>
+
+<a href="https://app.codecov.io/github/roma-glushko/hyx">
+    <img loading="lazy" src="https://img.shields.io/codecov/c/gh/roma-glushko/hyx" alt="Coverage" />
 </a>
 
 </p>

@@ -7,6 +7,8 @@ from hyx.timeout.typing import DurationT
 
 
 class TimeoutManager:
+    __slots__ = ("_max_duration", "_event_loop", "_is_timeout", "_timeout_task")
+
     def __init__(self, max_duration: DurationT) -> None:
         self._max_duration = max_duration
         self._event_loop = asyncio.get_running_loop()

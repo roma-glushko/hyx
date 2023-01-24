@@ -3,7 +3,7 @@ from typing import Any, Callable, cast
 
 from hyx.common.typing import ExceptionsT, FuncT
 from hyx.retry.manager import RetryManager
-from hyx.retry.typing import AttemptsT, BackoffsT, JittersT
+from hyx.retry.typing import AttemptsT, BackoffsT
 
 
 def retry(
@@ -11,16 +11,23 @@ def retry(
     on: ExceptionsT = Exception,
     attempts: AttemptsT = 3,
     backoff: BackoffsT = 0.5,
-    jitter: JittersT = None,
 ) -> Callable[[Callable], Callable]:
     """
-    Retry given function on specified exceptions using defined wait strategy and jitter
+    `@retry()` decorator retries the function `on` exceptions for the given number of `attempts`.
+        Delays after each retry is defined by `backoff` strategy.
+
+    **Parameters:**
+
+    * **on** - Exception or tuple of Exceptions we need to retry on.
+    * **attempts** - How many times do we need to retry. If `None`, it will infinitely retry until the success.
+    * **backoff** - Backoff Strategy that defines delays on each retry.
+        Takes `float` numbers (delay in secs), `list[floats]` (delays on each retry attempt), or `Iterator[float]`
+
     """
     manager = RetryManager(
         exceptions=on,
         attempts=attempts,
         backoff=backoff,
-        jitter=jitter,
     )
 
     def _decorator(func: FuncT) -> FuncT:

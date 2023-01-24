@@ -13,13 +13,12 @@ class bulkhead:
     Bulkhead can be seen as a throttling mechanist for parallel executions.
     """
 
-    def __init__(self, max_execs: int, max_parallel_execs: int) -> None:
-        self._max_execs = max_execs
-        self._max_parallel_execs = max_parallel_execs
+    __slots__ = ("_manager",)
 
+    def __init__(self, max_execs: int, max_parallel_execs: int) -> None:
         self._manager = BulkheadManager(
-            max_execs=self._max_execs,
-            max_parallel_execs=self._max_parallel_execs,
+            max_execs=max_execs,
+            max_parallel_execs=max_parallel_execs,
         )
 
     async def __aenter__(self) -> "bulkhead":
