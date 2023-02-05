@@ -2,7 +2,7 @@ import itertools
 import math
 import random
 from collections.abc import Sequence
-from typing import Any, Iterator, Optional, Union
+from typing import Iterator, Optional, Union
 
 from hyx.retry.typing import BackoffsT, BackoffT, JittersT
 
@@ -29,24 +29,25 @@ class const(Iterator[float]):
 
         self._intervals: Optional[Iterator[float]] = None
 
-        if self._is_sequence(self._delay_secs):
-            self._intervals = itertools.cycle(self._delay_secs)
-
-    def _is_sequence(self, delay: Any) -> bool:
-        return isinstance(delay, Sequence)
-
     def __iter__(self) -> "const":
-        self._intervals = itertools.cycle(self._delay_secs) if self._is_sequence(self._delay_secs) else None
+        self._intervals = None
+
+        if isinstance(self._delay_secs, Sequence):
+            self._intervals = itertools.cycle(self._delay_secs)
 
         return self
 
+    def _get_next_delay(self) -> float:
+        if self._intervals:
+            return next(self._intervals)
+
+        if isinstance(self._delay_secs, float):
+            return self._delay_secs
+
+        raise ValueError(f"Unsupported delay type: {self._delay_secs}")
+
     def __next__(self) -> float:
-        delay_secs = self._delay_secs
-
-        if self._is_sequence(delay_secs):
-            delay_secs = next(self._intervals)
-
-        delay_ms = float(delay_secs) * SECS_TO_MS
+        delay_ms = self._get_next_delay() * SECS_TO_MS
 
         if self._jitter:
             delay_ms = self._jitter(delay_ms)

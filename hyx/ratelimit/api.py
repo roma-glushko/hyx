@@ -36,8 +36,8 @@ class ratelimiter:
 
             return await func(*args, **kwargs)
 
-        _wrapper._original = func
-        _wrapper._manager = self._limiter
+        _wrapper._original = func  # type: ignore[attr-defined]
+        _wrapper._manager = self._limiter  # type: ignore[attr-defined]
 
         return cast(FuncT, _wrapper)
 
@@ -76,7 +76,7 @@ class tokenbucket:
 
             return await func(*args, **kwargs)
 
-        _wrapper._original = func
-        _wrapper._manager = self._limiter
+        _wrapper._original = func  # type: ignore[attr-defined]
+        _wrapper._manager = self._limiter  # type: ignore[attr-defined]
 
         return cast(FuncT, _wrapper)

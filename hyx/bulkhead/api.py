@@ -45,7 +45,7 @@ class bulkhead:
         async def _wrapper(*args: Any, **kwargs: Any) -> Any:
             return await self._manager(cast(FuncT, functools.partial(func, *args, **kwargs)))
 
-        _wrapper._original = func
-        _wrapper._manager = self._manager
+        _wrapper._original = func  # type: ignore[attr-defined]
+        _wrapper._manager = self._manager  # type: ignore[attr-defined]
 
         return cast(FuncT, _wrapper)
