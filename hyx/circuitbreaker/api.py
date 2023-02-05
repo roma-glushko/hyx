@@ -80,9 +80,9 @@ class consecutive_breaker:
 
         @functools.wraps(func)
         async def _wrapper(*args: Any, **kwargs: Any) -> Any:
-            return await self._manager(functools.partial(func, *args, **kwargs))
+            return await self._manager(cast(FuncT, functools.partial(func, *args, **kwargs)))
 
-        _wrapper.__original__ = func
-        _wrapper.__manager__ = self._manager
+        _wrapper._original = func  # type: ignore[attr-defined]
+        _wrapper._manager = self._manager  # type: ignore[attr-defined]
 
         return cast(FuncT, _wrapper)
