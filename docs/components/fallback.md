@@ -3,7 +3,8 @@
 ## Introduction
 
 When your downstream microservices fall apart, [retries](retry.md) exceed or [breakers](circuit_breakers.md) fire on, 
-you need to have a solid plan B that will make this failure transient for the upstream microservices.
+you need to have a solid plan B that will cover this failure up for the upstream microservices. 
+Otherwise, the whole request chain would fail in a cascading fashion all the way up. 
 
 This plan B is normally called a fallback, 
 and it comes in different forms depending on the context and functionality to fill.
@@ -16,4 +17,9 @@ and it comes in different forms depending on the context and functionality to fi
 
 ## Usage
 
-TBU
+```Python hl_lines="4 8 15"
+{!> ./snippets/fallback/fallback_decorator.py !}
+```
+
+::: hyx.fallback.fallback
+    :docstring:
