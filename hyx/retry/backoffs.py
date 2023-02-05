@@ -20,7 +20,6 @@ class const(Iterator[float]):
         If `Sequence[float]` is passed, it will take next delay from that list on each retry.
         It will repeat from the beginning if the list is shorter than number of attempts
     * **jitter** *(optional)* - Decorrelate delays with the jitter. No jitter by default
-
     """
 
     def __init__(self, delay_secs: Union[float, Sequence[float]], *, jitter: JittersT = None) -> None:
@@ -29,10 +28,13 @@ class const(Iterator[float]):
 
         self._intervals: Optional[Iterator[float]] = None
 
+        if isinstance(self._delay_secs, (list, tuple)):
+            self._intervals = itertools.cycle(self._delay_secs)
+
     def __iter__(self) -> "const":
         self._intervals = None
 
-        if isinstance(self._delay_secs, Sequence):
+        if isinstance(self._delay_secs, (list, tuple)):
             self._intervals = itertools.cycle(self._delay_secs)
 
         return self
