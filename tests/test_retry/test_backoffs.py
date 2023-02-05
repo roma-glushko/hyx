@@ -30,8 +30,8 @@ async def test__retry__const_backoff(value: float) -> None:
         ((1.0, 2.0, 5.0), [1.0, 2.0, 5.0, 1.0, 2.0, 5.0, 1.0, 2.0, 5.0]),
     ],
 )
-async def test__retry__const_interval_backoff(interval: list[float], expected_sequence: list[float]) -> None:
-    backoff = backoffs.const(delay_secs=interval)
+async def test__retry__interval_backoff(interval: list[float], expected_sequence: list[float]) -> None:
+    backoff = backoffs.interval(delay_secs=interval)
 
     actual_results = [next(backoff) for _ in range(len(expected_sequence))]
 

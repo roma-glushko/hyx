@@ -16,40 +16,48 @@ class const(Iterator[float]):
 
     **Parameters:**
 
-    * **delay_secs** - How much time do we wait on each retry.
-        If `Sequence[float]` is passed, it will take next delay from that list on each retry.
+    * **delay_secs** *(float, int)* - How much time do we wait on each retry.
+    * **jitter** *(optional)* - Decorrelate delays with the jitter. No jitter by default
+    """
+
+    def __init__(self, delay_secs: Union[int, float], *, jitter: JittersT = None) -> None:
+        self._delay_secs = delay_secs
+        self._jitter = jitter
+
+    def __next__(self) -> float:
+        delay_ms = self._delay_secs * SECS_TO_MS
+
+        if self._jitter:
+            delay_ms = self._jitter(delay_ms)
+
+        return delay_ms * MS_TO_SECS
+
+
+class interval(Iterator[float]):
+    """
+    Interval Delay(s) Backoff
+
+    **Parameters:**
+
+    * **delay_secs** *(Sequence[float])* - How much time do we wait on each retry.
+        It will take next delay from that list on each retry.
         It will repeat from the beginning if the list is shorter than number of attempts
     * **jitter** *(optional)* - Decorrelate delays with the jitter. No jitter by default
     """
 
-    def __init__(self, delay_secs: Union[float, Sequence[float]], *, jitter: JittersT = None) -> None:
+    def __init__(self, delay_secs: Sequence[float], *, jitter: JittersT = None) -> None:
         self._delay_secs = delay_secs
         self._jitter = jitter
 
-        self._intervals: Optional[Iterator[float]] = None
+        self._intervals: Iterator[float] = itertools.cycle(self._delay_secs)
 
-        if isinstance(self._delay_secs, (list, tuple)):
-            self._intervals = itertools.cycle(self._delay_secs)
-
-    def __iter__(self) -> "const":
-        self._intervals = None
-
-        if isinstance(self._delay_secs, (list, tuple)):
-            self._intervals = itertools.cycle(self._delay_secs)
+    def __iter__(self) -> "interval":
+        self._intervals = itertools.cycle(self._delay_secs)
 
         return self
 
-    def _get_next_delay(self) -> float:
-        if self._intervals:
-            return next(self._intervals)
-
-        if isinstance(self._delay_secs, float):
-            return self._delay_secs
-
-        raise ValueError(f"Unsupported delay type: {self._delay_secs}")
-
     def __next__(self) -> float:
-        delay_ms = self._get_next_delay() * SECS_TO_MS
+        delay_ms = next(self._intervals) * SECS_TO_MS
 
         if self._jitter:
             delay_ms = self._jitter(delay_ms)
@@ -307,6 +315,9 @@ class softexp(Iterator[float]):
 def create_backoff(backoff_config: BackoffsT) -> BackoffT:
     if isinstance(backoff_config, (int, float)):
         return const(delay_secs=backoff_config)
+
+    if isinstance(backoff_config, (list, tuple)):
+        return interval(delay_secs=backoff_config)
 
     if isinstance(backoff_config, Iterator):
         return backoff_config
