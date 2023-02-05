@@ -31,6 +31,12 @@ build: package-build docs-build
 test: ## Run tests
 	@poetry run coverage run -m pytest $(TESTS) $(SOURCE)
 
+test-meta: ## Test robustness of the test suit
+	@mutmut run
+
+test-meta-results: ## Show weak test cases
+	@mutmut results
+
 test-cov-xml: ## Run tests
 	@poetry run coverage run -m pytest $(TESTS) --cov $(SOURCE) --cov-report=xml
 

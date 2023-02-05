@@ -15,3 +15,5 @@ htmlcov
 site
 
 dist
+
+tmp

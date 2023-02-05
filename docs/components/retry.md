@@ -45,14 +45,22 @@ The most basic backoff strategy is to wait the constant amount of time on each r
 {!> ./snippets/retry/retry_backoff_const.py !}
 ```
 
-If you pass a list of delays, then it will pull delays from it <abbr title="starts taking delays from the beginning of the list if attempts are more than delays in the list">cyclically</abbr>.
+The `float` backoffs are just aliases for the `const` backoff.
+
+::: hyx.retry.backoffs.const
+    :docstring:
+
+### Interval Backoff
+
+You can also provide a list or a tuple of floats to pull delays from it in a sequential and <abbr title="starts taking delays from the beginning of the list if attempts are more than delays in the list">cyclical</abbr> manner.
+
 ```Python hl_lines="8"
 {!> ./snippets/retry/retry_backoff_const_intervals.py !}
 ```
 
-The `float` or `list[float]` backoffs are just aliases for the `const` backoff.
+The `list[float]` and `tuple[float, ...]` backoffs are just aliases for the `interval` backoff.
 
-::: hyx.retry.backoffs.const
+::: hyx.retry.backoffs.interval
     :docstring:
 
 ### Exponential Backoff

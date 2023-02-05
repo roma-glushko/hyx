@@ -1,3 +1,5 @@
+from typing import Any
+
 import pytest
 
 from hyx.fallback import fallback
@@ -5,7 +7,7 @@ from hyx.fallback.typing import ResultT
 
 
 async def test__fallback__decorator() -> None:
-    async def handler(result: ResultT, *args, **kwargs) -> str:
+    async def handler(result: ResultT, *args: Any, **kwargs: Any) -> str:
         return "falling back"
 
     @fallback(handler, on=Exception)
