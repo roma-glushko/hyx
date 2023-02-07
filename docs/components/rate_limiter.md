@@ -47,13 +47,13 @@ The bucket gets replenished with new tokens with a constant rate that is equal t
 
 === "decorator"
 
-    ```Python hl_lines="3 6"
+    ```Python hl_lines="1 6"
     {!> ./snippets/ratelimiter/ratelimiter_decorator.py !}
     ```
 
 === "context manager"
 
-    ```Python hl_lines="3 10"
+    ```Python hl_lines="1 4 12"
     {!> ./snippets/ratelimiter/ratelimiter_context.py !}
     ```
 
