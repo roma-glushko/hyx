@@ -31,18 +31,47 @@ By state rate limiter can be grouped as:
 
 ### Static Rate Limiters
 
-TBU
+In static rate limiters, you define the rate explicitly during the rate limiter configuration (e.g. 100 req/sec). 
+Then limiters employ disparate algorithms to count and enforce that limits.
+
+The rate value is usually determined by load testing of the microservice.
 
 #### Token Bucket Rate Limiter
 
-TBU
+This rate limiter is based on the token bucket algorithm. 
+In this approach, we have a notion of a bucket with tokens. 
+If the bucket has some tokens, a new request takes one out to come through.
+Otherwise, the request fails due reaching the limit.
+
+The bucket gets replenished with new tokens with a constant rate that is equal to `1/request rate`.
+
+=== "decorator"
+
+    ```Python hl_lines="3 6"
+    {!> ./snippets/ratelimiter/ratelimiter_decorator.py !}
+    ```
+
+=== "context manager"
+
+    ```Python hl_lines="3 10"
+    {!> ./snippets/ratelimiter/ratelimiter_context.py !}
+    ```
 
 ### Dynamic Rate Limiters
 
-TBU
+The static rate can be resource consuming to determine as well as it may get stale very quickly (e.g. new versions of a microservice can make it slower to process requests).
+When the rate value gets inappropriate, you are at risk of underutilizing your resources or making rate limiting inefficient.
+
+The good news is that often you don't even need to know the exact rate value.
+
+All you need is to make sure that microservices are utilizing all resources they have while shedding excessive load.
+
+In this situation, you can apply Adaptive Request Concurrency (a dynamic form of [bulkhead](./bulkhead.md)).
+
+!!! note
+    Hyx doesn't provide ARC implementation at this moment. [Let us know](../../faq/#missing-a-feature) if this is useful for you.
 
 ## By State
-
 
 ### Local/In-memory Rate Limiters
 
@@ -53,11 +82,11 @@ This is a simple, straightforward, database- and dependency less way to quickly 
 At the same, that simplicity comes with the following specifics.
 
 As you scale microservice instance number up, the allowed rate limiting effectively grow as well. 
-For example, if you have specified to handle 10 req/sec for one microservice instance, then theoretically:
+For example, if you have specified to handle 10 req/sec for one microservice instance, then:
 
 * 1 instance handles 10 req/sec
-* 2 instances handles 20 req/sec
-* 10 instances handles 100 req/sec
+* 2 instances handle 20 req/sec
+* 10 instances handle 100 req/sec
 
 This may look odd, but it's still useful and efficient as you don't need to introduce an external database 
 to store your state, and you ensure that each particular instance is not going to be overloaded.
@@ -68,7 +97,7 @@ If this behavior is not intended, or you have a well-specified SLA on your reque
 you should look at more [complex distributed state](#distributed-rate-limiters).
 
 !!! note
-    This is the only type of state that Hyx is supporting at the moment.
+    This is the only type of state that Hyx is supporting at the moment. [Let us know](../../faq/#missing-a-feature) if this is useful for you.
 
 ### Distributed Rate Limiters
 
@@ -82,9 +111,26 @@ Having a database as a dependency is a reasonable overhead if you need to enforc
 Otherwise, if you don't have strong statements in favor of introducing a database, consider using [the local rate limiters](#localin-memory-rate-limiters).
 
 !!! note
-    Hyx doesn't support distributed components currently. This may change in [the future](../roadmap.md).
+    Hyx doesn't support distributed components currently. This may change in [the future](../roadmap.md). 
+
+    [Let us know](../../faq/#missing-a-feature) if this is useful for you.
 
 ## Best Practices
+
+### Shard Rate Limits
+
+Rate limiting rarely makes sense to apply on the global level. 
+In that case, all requests would fall under the same shard.
+
+In practice, it makes sense to shard rate limits on different levels.
+For example, rate limits are often sharded by `user_id`, so each user has own rate quote.
+
+Another popular way to shard limits is based on request routes. 
+In this case, rate sharding can help to prioritize and separate traffic that microservice handles. 
+
+A similar way to shard is based on read/write operations or based on more/less resource-consuming API
+
+This can be seen as a some form of [bulkhead](./bulkhead.md).
 
 ### Rate Limit Public API
 
@@ -99,4 +145,4 @@ Hence, the common advice is to rate limit your Public API by having some sort of
 If you are not selling your API (like Twitter, Meta or Stripe do) and you don't have some SLA on the request rate, 
 you can apply a simple [local rate limiting](#localin-memory-rate-limiters).
 
-Otherwise, you need to pick a [distributed rate limiting](#distributed-rate-limiters).
+Otherwise, you should prefer using [distributed rate limiting](#distributed-rate-limiters).
