@@ -54,6 +54,10 @@ Hyx is meant to be [Hystrix (Java)](https://github.com/Netflix/Hystrix), [resili
 - [AsyncIO](https://docs.python.org/3/library/asyncio.html) Native Implementation
 - Lightweight. Readable Codebase. High Test Coverage
 
+!!! warning
+    At this stage, Hyx prioritizes speed of development over API stability. 
+    This is going to change once we implement [main features and use cases](./roadmap.md#m2-pixi).
+
 ## Requirements
 
 - Python 3.9+
