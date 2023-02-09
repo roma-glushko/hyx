@@ -25,7 +25,17 @@ Hence, the bulkhead is essentially a **concurrency limiting mechanism**. In turn
 
 ## Usage
 
-TBU
+=== "decorator"
+
+    ```Python hl_lines="1 7"
+    {!> ./snippets/bulkhead/bulkhead_decorator.py !}
+    ```
+
+=== "context manager"
+
+    ```Python hl_lines="1 4 12"
+    {!> ./snippets/bulkhead/bulkhead_context.py !}
+    ```
 
 ## Adaptive Limiting
 

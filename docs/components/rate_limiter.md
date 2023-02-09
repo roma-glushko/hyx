@@ -47,7 +47,7 @@ The bucket gets replenished with new tokens with a constant rate that is equal t
 
 === "decorator"
 
-    ```Python hl_lines="1 6"
+    ```Python hl_lines="1 7"
     {!> ./snippets/ratelimiter/ratelimiter_decorator.py !}
     ```
 
@@ -56,6 +56,9 @@ The bucket gets replenished with new tokens with a constant rate that is equal t
     ```Python hl_lines="1 4 12"
     {!> ./snippets/ratelimiter/ratelimiter_context.py !}
     ```
+
+::: hyx.ratelimit.tokenbucket
+    :docstring:
 
 ### Dynamic Rate Limiters
 
