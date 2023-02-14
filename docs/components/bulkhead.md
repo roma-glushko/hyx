@@ -37,6 +37,9 @@ Hence, the bulkhead is essentially a **concurrency limiting mechanism**. In turn
     {!> ./snippets/bulkhead/bulkhead_context.py !}
     ```
 
+::: hyx.bulkhead.bulkhead
+    :docstring:
+
 ## Adaptive Limiting
 
 TBU

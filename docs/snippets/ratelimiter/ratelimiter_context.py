@@ -4,7 +4,7 @@ from hyx.ratelimit import tokenbucket
 limiter = tokenbucket(max_execs=20, time_period_secs=60, bucket_size=20)
 
 
-@app.post("/projects/")
+@app.post("/projects/")  # type: ignore[F821]
 def create_new_project():
     """
     Create a new project

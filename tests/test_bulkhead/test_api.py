@@ -7,7 +7,7 @@ from hyx.bulkhead.exceptions import BulkheadFull
 
 
 async def test__bulkhead__decorator() -> None:
-    @bulkhead(max_execs=3, max_parallel_execs=2)
+    @bulkhead(max_capacity=3, max_concurrency=2)
     async def calculations() -> float:
         await asyncio.sleep(0.5)
         return 42
@@ -16,13 +16,13 @@ async def test__bulkhead__decorator() -> None:
 
 
 async def test__bulkhead__context() -> None:
-    async with bulkhead(max_execs=3, max_parallel_execs=2):
+    async with bulkhead(max_capacity=3, max_concurrency=2):
         await asyncio.sleep(0.2)
         assert True
 
 
 async def test__bulkhead__capacity_exceeded() -> None:
-    bh = bulkhead(max_execs=2, max_parallel_execs=2)
+    bh = bulkhead(max_capacity=2, max_concurrency=2)
 
     with pytest.raises(BulkheadFull):
         async with bh:
@@ -32,7 +32,7 @@ async def test__bulkhead__capacity_exceeded() -> None:
 
 
 async def test__bulkhead__capacity_exceeded_from_different_coroutines() -> None:
-    bh = bulkhead(max_execs=3, max_parallel_execs=2)
+    bh = bulkhead(max_capacity=3, max_concurrency=2)
 
     async def calc() -> None:
         async with bh:
@@ -56,7 +56,7 @@ async def test__bulkhead__capacity_exceeded_from_different_coroutines() -> None:
 
 
 async def test__bulkhead__execution_order() -> None:
-    bh = bulkhead(max_execs=3, max_parallel_execs=1)
+    bh = bulkhead(max_capacity=3, max_concurrency=1)
 
     actual_result = []
 
