@@ -10,32 +10,38 @@ class BulkheadManager:
     Semaphore-based bulkhead implementation
     """
 
-    __slots__ = ("_max_execs", "_max_parallel_execs", "_execs_limiter", "_parallel_execs_limiter")
+    __slots__ = ("_total_execs_limiter", "_concurrency_limiter")
 
-    def __init__(self, max_execs: int, max_parallel_execs: int) -> None:
-        self._max_execs = max_execs
-        self._max_parallel_execs = max_parallel_execs
+    def __init__(self, max_concurrency: int, max_capacity: int) -> None:
+        if max_concurrency <= 0:
+            raise ValueError(f"max_concurrency should be greater than zero (\"{max_concurrency}\" given)")
 
-        self._execs_limiter = asyncio.Semaphore(self._max_execs)
-        self._parallel_execs_limiter = asyncio.Semaphore(self._max_parallel_execs)
+        if max_capacity <= 0:
+            raise ValueError(f"max_capacity should be greater than zero (\"{max_capacity}\" given)")
+
+        if max_capacity < max_concurrency:
+            raise ValueError("max_capacity should be equal or greater than max_concurrency")
+
+        self._concurrency_limiter = asyncio.Semaphore(max_concurrency)
+        self._total_execs_limiter = asyncio.Semaphore(max_capacity)
 
     def _raise_on_exceed(self) -> None:
-        if self._execs_limiter.locked():
+        if self._total_execs_limiter.locked():
             raise BulkheadFull
 
     async def acquire(self) -> None:
         self._raise_on_exceed()
 
-        await self._execs_limiter.acquire()
-        await self._parallel_execs_limiter.acquire()
+        await self._total_execs_limiter.acquire()
+        await self._concurrency_limiter.acquire()
 
     async def release(self) -> None:
-        self._parallel_execs_limiter.release()
-        self._execs_limiter.release()
+        self._concurrency_limiter.release()
+        self._total_execs_limiter.release()
 
     async def __call__(self, func: FuncT) -> Any:
         self._raise_on_exceed()
 
-        async with self._execs_limiter:
-            async with self._parallel_execs_limiter:
+        async with self._total_execs_limiter:
+            async with self._concurrency_limiter:
                 return await func()

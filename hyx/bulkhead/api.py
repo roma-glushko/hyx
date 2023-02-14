@@ -11,14 +11,20 @@ class bulkhead:
     Bulkhead defines a fix-size action "queue" to constrain number of times the operation is executed at the same time
     as well as number of requests to postpone/queue.
     Bulkhead can be seen as a throttling mechanist for parallel executions.
-    """
 
+    **Parameters**
+
+    * **max_concurrency** *(int)* - Max executions at the same time.
+        If the number is exceeded and max_execs allows, remaining executions are going to be queued
+    * **max_capacity** *(int)* - Overall max number of executions (concurrent and queued).
+        If the number is exceeded, new executions are going to be rejected
+    """
     __slots__ = ("_manager",)
 
-    def __init__(self, max_execs: int, max_parallel_execs: int) -> None:
+    def __init__(self, max_concurrency: int, max_capacity: int) -> None:
         self._manager = BulkheadManager(
-            max_execs=max_execs,
-            max_parallel_execs=max_parallel_execs,
+            max_concurrency=max_concurrency,
+            max_capacity=max_capacity,
         )
 
     async def __aenter__(self) -> "bulkhead":
@@ -27,10 +33,10 @@ class bulkhead:
         return self
 
     async def __aexit__(
-        self,
-        exc_type: Optional[Type[BaseException]],
-        exc_val: Optional[BaseException],
-        exc_tb: Optional[TracebackType],
+            self,
+            exc_type: Optional[Type[BaseException]],
+            exc_val: Optional[BaseException],
+            exc_tb: Optional[TracebackType],
     ) -> Optional[bool]:
         await self._manager.release()
 
