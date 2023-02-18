@@ -16,7 +16,7 @@ class consecutive_breaker:
 
     Then the breaker waits for the `recovery` delay and moves into the `recovering` state.
     If the action is successful, the breaker gets back to the `working` state.
-    Otherwise, it goes back to the `failing` state and waits another delay.
+    Otherwise, it goes back to the `failing` state and waits again.
 
     Graphically, these transitions look like this:
 
@@ -32,10 +32,10 @@ class consecutive_breaker:
     **Parameters**
 
     * **exceptions** - Exception or list of exceptions that are considered as a failure
-    * **failure_threshold** - Consecutive number of failures that put the breaker into the `failing` state
-    * **recovery_delay_secs** - The recovery delay in seconds
+    * **failure_threshold** - Consecutive number of failures that turns breaker into the `failing` state
+    * **recovery_time_secs** - Time in seconds we give breaker to recover from the `failing` state
     * **recovery_threshold** - Number of consecutive successes that is needed to be pass to
-        turn the breaker back to the `working` state
+        turn breaker back to the `working` state
     """
 
     __slots__ = ("_manager",)
@@ -44,13 +44,13 @@ class consecutive_breaker:
         self,
         exceptions: ExceptionsT = Exception,
         failure_threshold: int = 5,
-        recovery_delay_secs: DelayT = 30,
+        recovery_time_secs: DelayT = 30,
         recovery_threshold: int = 3,
     ) -> None:
         self._manager = ConsecutiveCircuitBreaker(
             exceptions=exceptions,
             failure_threshold=failure_threshold,
-            recovery_delay_secs=recovery_delay_secs,
+            recovery_time_secs=recovery_time_secs,
             recovery_threshold=recovery_threshold,
         )
 
@@ -80,9 +80,9 @@ class consecutive_breaker:
 
         @functools.wraps(func)
         async def _wrapper(*args: Any, **kwargs: Any) -> Any:
-            return await self._manager(functools.partial(func, *args, **kwargs))
+            return await self._manager(cast(FuncT, functools.partial(func, *args, **kwargs)))
 
-        _wrapper.__original__ = func
-        _wrapper.__manager__ = self._manager
+        _wrapper._original = func  # type: ignore[attr-defined]
+        _wrapper._manager = self._manager  # type: ignore[attr-defined]
 
         return cast(FuncT, _wrapper)

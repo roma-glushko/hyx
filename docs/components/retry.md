@@ -1,4 +1,4 @@
-# Retry
+# Retries
 
 ## Introduction
 
@@ -33,6 +33,10 @@ Hyx provides a decorator that brings retry functionality to any function:
 The backoff strategy is a crucial parameter to consider. 
 Depending on the backoff, the retry component can help your system or be a source of problems.
 
+!!! warning
+    For the sake of simplicity, Hyx assumes that you are following AsyncIO best practices and not running CPU-intensive operations in the main thread.
+    Otherwise, the backoff delays may fire later after the thread is unblocked.
+
 ### Constant Backoff
 
 The most basic backoff strategy is to wait the constant amount of time on each retry.
@@ -41,14 +45,22 @@ The most basic backoff strategy is to wait the constant amount of time on each r
 {!> ./snippets/retry/retry_backoff_const.py !}
 ```
 
-If you pass a list of delays, then it will pull delays from it <abbr title="starts taking delays from the beginning of the list if attempts are more than delays in the list">cyclically</abbr>.
+The `float` backoffs are just aliases for the `const` backoff.
+
+::: hyx.retry.backoffs.const
+    :docstring:
+
+### Interval Backoff
+
+You can also provide a list or a tuple of floats to pull delays from it in a sequential and <abbr title="starts taking delays from the beginning of the list if attempts are more than delays in the list">cyclical</abbr> manner.
+
 ```Python hl_lines="8"
 {!> ./snippets/retry/retry_backoff_const_intervals.py !}
 ```
 
-The `float` or `list[float]` backoffs are just aliases for the `const` backoff.
+The `list[float]` and `tuple[float, ...]` backoffs are just aliases for the `interval` backoff.
 
-::: hyx.retry.backoffs.const
+::: hyx.retry.backoffs.interval
     :docstring:
 
 ### Exponential Backoff
@@ -211,9 +223,9 @@ In order to avoid that, we are introducing a little jitter that decorrelates the
 
 Besides that, we are jittering the worker's rest time increasing changes that workers lifecycles end up being different.
 
-## Antipatterns
+## Best Practices
 
-### Infinite Retries
+### Limit Retry Attempts
 
 Hyx supports an option to retry infinitely, but that should be generally considered as **an antipattern**.
 
@@ -221,7 +233,9 @@ Hyx supports an option to retry infinitely, but that should be generally conside
 {!> ./snippets/retry/retry_infinite_attempts.py !}
 ```
 
-### No Delays
+Always prefer to limit the number of retries over the infinite attempts.
+
+### Specify Delays
 
 You can disable delays between retries, but that's **another antipattern** you should not follow:
 
@@ -231,7 +245,7 @@ You can disable delays between retries, but that's **another antipattern** you s
 
 Without delays, retries can easily heat your system and create a situation known as [the retry storm](#retry-storms).
 
-### Retry What Should Not be Retried
+### When and What to Retry
 
 It's important to realize that not every action should be retried. 
 When you are dealing with non-idempotent APIs, you can introduce duplicated entries in the system if retried.
@@ -239,7 +253,7 @@ When you are dealing with non-idempotent APIs, you can introduce duplicated entr
 When it comes to HTTP requests, you should retry based on the server response errors and consider error codes that
 have temporary nature (e.g. 50x errors).
 
-### Retry Storms
+### Avoid Retry Storms
 
 The retry storm is a well-known issue when retries are badly configured or put in the wrong place of the system.
 

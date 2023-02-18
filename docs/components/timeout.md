@@ -1,4 +1,4 @@
-# Timeout
+# Timeouts
 
 ## Introduction
 
@@ -20,10 +20,10 @@ Hyx provides a decorator and a context manager that can help with setting up tim
 
 ## Use Case
 
-* Ensure that the caller has to wait no more than a given delay. Local timeouts work best when limiting action that doesn't touch other microservices.
+* Ensure that the caller has to wait no more than a given delay. [Local timeouts](#local-timeouts) work best when limiting action that doesn't touch other microservices.
 * Limit a microservice request chain by using a [distributed timeout](#distributed-timeout)
 
-## Timeouts
+## By Locality
 
 ### Local Timeouts
 
@@ -42,6 +42,10 @@ Hyx provides a decorator and a context manager that can help with setting up tim
 ::: hyx.timeout.timeout
     :docstring:
 
+!!! warning
+    For the sake of simplicity, Hyx assumes that you are following AsyncIO best practices and not running CPU-intensive operations in the main thread.
+    Otherwise, the timeout functionality may fire with a delay after the thread is unblocked.
+
 ### Distributed Timeout
 
 Distributed systems make things more complicated when it comes to timeouts. 
@@ -56,6 +60,7 @@ A common solution is to let all microservices in the request chain know how much
 If we exceed that limit, microservices can ignore the requests as they are already timed out. 
 This is called a distributed timeout (a.k.a. deadlines, timeout budget).
 
-!!! note
+!!! info
     Hyx doesn't yet provide a way to easily add a distributed budget 
-    as it will require to integrate with the API framework of your choice. We have some plans for that. Stay tuned.
+    as it will require to integrate with the API framework of your choice. We have [some plans](../roadmap.md) to support that.
+    [Let us know](./faq/#missing-a-feature) if this is useful for you.

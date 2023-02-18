@@ -7,11 +7,24 @@ from hyx.fallback.typing import FallbackT, PredicateT
 
 
 def fallback(
-    handler: FallbackT, *, on: Optional[ExceptionsT] = Exception, if_: Optional[PredicateT] = None
+    handler: FallbackT,
+    *,
+    on: Optional[ExceptionsT] = Exception,
+    if_: Optional[PredicateT] = None,
 ) -> Callable[[Callable], Callable]:
     """
-    Provides a fallback on exceptions
+    Provides a fallback on exceptions and/or specific result of the original function
+
+    **Parameters**
+
+    * **handler** *(Callable)* - The fallback handler
+    * **on** *(None | Exception | tuple[Exception, ...])* - Fall back on the give exception(s)
+    * **if_** *(None | Callable)* - Fall back if the given predicate function returns True
+        on the original function result
     """
+    if not on and not if_:
+        raise ValueError("Either on or if_ param should be specified when using the fallback decorator")
+
     manager = FallbackManager(
         handler=handler,
         exceptions=on,
@@ -23,8 +36,8 @@ def fallback(
         async def _wrapper(*args: Any, **kwargs: Any) -> Any:
             return await manager(func, *args, **kwargs)
 
-        _wrapper.__original__ = func
-        _wrapper.__manager__ = manager
+        _wrapper._original = func  # type: ignore[attr-defined]
+        _wrapper._manager = manager  # type: ignore[attr-defined]
 
         return cast(FuncT, _wrapper)
 

@@ -55,6 +55,10 @@ The breakers come into two flavours:
     Breakers are stateful components. 
     The regular usage is to create an instance of a breaker and use or inject it in all places that are working with the underlying subsystem that we anticipate to fail.
 
+!!! warning
+    For the sake of simplicity, Hyx assumes that you are following AsyncIO best practices and not running CPU-intensive operations in the main thread.
+    Otherwise, the breaker delays may fire later after the thread is unblocked.
+
 ## Breakers
 
 ### Consecutive Breaker
