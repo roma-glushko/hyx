@@ -17,13 +17,13 @@ class ConsecutiveCircuitBreaker:
         self,
         exceptions: ExceptionsT,
         failure_threshold: int,
-        recovery_delay_secs: DelayT,
+        recovery_time_secs: DelayT,
         recovery_threshold: int,
     ) -> None:
         self._config = BreakerConfig(
             exceptions=exceptions,
             failure_threshold=failure_threshold,
-            recovery_delay_secs=recovery_delay_secs,
+            recovery_time_secs=recovery_time_secs,
             recovery_threshold=recovery_threshold,
         )
 

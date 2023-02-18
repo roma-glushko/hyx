@@ -8,5 +8,5 @@ from hyx.common.typing import ExceptionsT
 class BreakerConfig:
     exceptions: ExceptionsT
     failure_threshold: int
-    recovery_delay_secs: DelayT
+    recovery_time_secs: DelayT
     recovery_threshold: int
