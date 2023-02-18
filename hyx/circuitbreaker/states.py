@@ -96,7 +96,7 @@ class FailingState(BreakerState):
         return datetime.utcnow()
 
     def _get_failing_until(self, since: datetime) -> datetime:
-        return since + timedelta(seconds=self._config.recovery_delay_secs)
+        return since + timedelta(seconds=self._config.recovery_time_secs)
 
     @property
     def until(self) -> datetime:

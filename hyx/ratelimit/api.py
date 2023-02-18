@@ -43,12 +43,24 @@ class ratelimiter:
 
 
 class tokenbucket:
+    """
+    Constant Rate Limiting based on the Token Bucket algorithm.
+
+    **Parameters**
+
+    * **max_executions** *(float)* - How many executions are permitted?
+    * **per_time_secs** *(float)* - Per what time span? (in seconds)
+    * **bucket_size** *(None | float)* - The token bucket size. Defines the max number of executions
+        that are permitted to happen during bursts.
+        The burst is when no executions have happened for a long time, and then you are receiving a
+        bunch of them at the same time. Equal to *max_executions* by default.
+   """
     __slots__ = ("_limiter",)
 
-    def __init__(self, max_execs: float, time_period_secs: float, bucket_size: float) -> None:
+    def __init__(self, max_executions: float, per_time_secs: float, bucket_size: Optional[float] = None) -> None:
         self._limiter = TokenBucketLimiter(
-            max_execs=max_execs,
-            time_period_secs=time_period_secs,
+            max_executions=max_executions,
+            per_time_secs=per_time_secs,
             bucket_size=bucket_size,
         )
 

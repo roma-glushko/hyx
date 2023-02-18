@@ -4,7 +4,7 @@ from hyx.bulkhead import bulkhead
 limiter = bulkhead(max_concurrency=10, max_capacity=100)
 
 
-@app.post("/projects/")  # type: ignore[F821]
+@app.post("/projects/")
 def create_new_project():
     """
     Create a new project
