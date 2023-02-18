@@ -135,6 +135,8 @@ class LRUCache:
 
     def __init__(self, max_size: int = 1000, ttl_secs: Optional[float] = None) -> None:
         self._max_size = max_size
+
+        # TODO: use dict and the TTL list instead of OrderedDict to reduce memory usage
         self._data: OrderedDict[Any, LRUCache.Item] = OrderedDict()
 
         self._ttl_secs = ttl_secs
