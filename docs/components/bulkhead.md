@@ -42,5 +42,8 @@ Hence, the bulkhead is essentially a **concurrency limiting mechanism**. In turn
 
 ## Adaptive Limiting
 
-TBU
+Concurrency is possible to limit adaptively based on statistics around latency of completed requestes and some latency objective.
+
+!!! note
+    Hyx doesn't provide ARC implementation at this moment. [Let us know](../../faq/#missing-a-feature) if this is useful for you.
 

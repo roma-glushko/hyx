@@ -1,4 +1,5 @@
 import asyncio
+from typing import Optional
 
 from hyx.ratelimit.exceptions import RateLimitExceeded
 
@@ -16,8 +17,8 @@ class TokenBucketLimiter(RateLimiter):
     """
 
     __slots__ = (
-        "_max_execs",
-        "_time_period_secs",
+        "_max_executions",
+        "_per_time_secs",
         "_bucket_size",
         "_loop",
         "_token_per_secs",
@@ -25,13 +26,14 @@ class TokenBucketLimiter(RateLimiter):
         "_next_replenish_at",
     )
 
-    def __init__(self, max_execs: float, time_period_secs: float, bucket_size: float) -> None:
-        self._max_execs = max_execs
-        self._time_period_secs = time_period_secs
-        self._bucket_size = bucket_size
+    def __init__(self, max_executions: float, per_time_secs: float, bucket_size: Optional[float] = None) -> None:
+        self._max_executions = max_executions
+        self._per_time_secs = per_time_secs
+
+        self._bucket_size = bucket_size if bucket_size else max_executions
 
         self._loop = asyncio.get_running_loop()
-        self._token_per_secs = self._time_period_secs / self._max_execs
+        self._token_per_secs = self._per_time_secs / self._max_executions
 
         self._tokens = self._bucket_size
         self._next_replenish_at = self._loop.time() + self._token_per_secs

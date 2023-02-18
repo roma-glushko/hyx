@@ -47,7 +47,7 @@ The bucket gets replenished with new tokens with a constant rate that is equal t
 
 === "decorator"
 
-    ```Python hl_lines="1 7"
+    ```Python hl_lines="1 6"
     {!> ./snippets/ratelimiter/ratelimiter_decorator.py !}
     ```
 
@@ -62,17 +62,13 @@ The bucket gets replenished with new tokens with a constant rate that is equal t
 
 ### Dynamic Rate Limiters
 
-The static rate can be resource consuming to determine as well as it may get stale very quickly (e.g. new versions of a microservice can make it slower to process requests).
-When the rate value gets inappropriate, you are at risk of underutilizing your resources or making rate limiting inefficient.
+The static rate can be resource consuming to determine as well as it may get stale very quickly (e.g. new versions of a microservice can make it slower to process requests). 
+When the rate value gets outdated, you are at risk of underutilizing your resources or making rate limiting inefficient.
 
 The good news is that often you don't even need to know the exact rate value.
+All you need is to make sure that microservices are utilizing all available resources by controlling concurrency level while shedding excessive load.
 
-All you need is to make sure that microservices are utilizing all resources they have while shedding excessive load.
-
-In this situation, you can apply Adaptive Request Concurrency (a dynamic form of [bulkhead](./bulkhead.md)).
-
-!!! note
-    Hyx doesn't provide ARC implementation at this moment. [Let us know](../../faq/#missing-a-feature) if this is useful for you.
+In this situation, you can apply Adaptive Request Concurrency (a dynamic form of [bulkhead](./bulkhead.md#adaptive-limiting)).
 
 ## By State
 
