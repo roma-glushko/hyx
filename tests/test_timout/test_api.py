@@ -7,7 +7,7 @@ from hyx.timeout.exceptions import MaxDurationExceeded
 
 
 async def test__timeout__decorator() -> None:
-    @timeout(max_delay_secs=0.5)
+    @timeout(timeout_secs=0.5)
     async def quick_func() -> float:
         await asyncio.sleep(0.1)
         return 42
@@ -17,7 +17,7 @@ async def test__timeout__decorator() -> None:
 
 async def test__timeout__context() -> None:
     var = 0
-    async with timeout(max_delay_secs=0.5):
+    async with timeout(timeout_secs=0.5):
         await asyncio.sleep(0.1)
         var = 42
 
@@ -26,12 +26,12 @@ async def test__timeout__context() -> None:
 
 async def test__timeout__context_timeout_exceeded() -> None:
     with pytest.raises(MaxDurationExceeded):
-        async with timeout(max_delay_secs=0.2):
+        async with timeout(timeout_secs=0.2):
             await asyncio.sleep(1)
 
 
 async def test__timeout__duration_equal() -> None:
-    @timeout(max_delay_secs=0.3)
+    @timeout(timeout_secs=0.3)
     async def func() -> float:
         await asyncio.sleep(0.3)
         return 42
@@ -41,7 +41,7 @@ async def test__timeout__duration_equal() -> None:
 
 
 async def test__timeout__max_duration_exceeded() -> None:
-    @timeout(max_delay_secs=0.2)
+    @timeout(timeout_secs=0.2)
     async def slow_func() -> float:
         await asyncio.sleep(10)
         return 42
