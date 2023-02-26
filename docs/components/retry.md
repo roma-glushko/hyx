@@ -270,10 +270,12 @@ The place where retries are added is equally important to avoid retry storms. Co
 
 The given system has two retries configured on two levels: `gateway` (lvl1) and `orders` microservice (lvl2). 
 If the `inventory` microservice fails, 
-it will first exhaust all retries on the `orders` side and then it will get back to the `gateway`. 
+it will first exhaust all retries on the `orders` side, and then it will get back to the `gateway`. 
 The `gateway` will retry two more times.
 
 The total number of request to the `inventory` microservice will be 3 * 3 which is 9. 
 If we had a deeper request chain with more retries on the way, 
 all of them would multiply and create even worse load on the system.
 
+The general rule of thumb here is to retry in the component that is directly above the failed one. 
+In this case, it would be okay to retry on the `orders` level only.
