@@ -61,6 +61,9 @@ class TimeoutManager:
         Stop measuring the code block execution time
         """
         if error is asyncio.CancelledError and self._is_timeout and self._is_timeout.is_set():
+            if self._events:
+                await self._events.on_timeout(self)
+
             raise MaxDurationExceeded
 
         if self._timeout_task:

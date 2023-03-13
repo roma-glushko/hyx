@@ -18,9 +18,9 @@ class Listener(TimeoutListener):
 
 
 async def test__timeout__execute_listener_in_decorator() -> None:
-    listener = Listener()
+    listener1, listener2 = Listener(), Listener()
 
-    @timeout(timeout_secs=0.1, listeners=(listener,))
+    @timeout(0.1, listeners=(listener1, listener2))
     async def slow_func() -> float:
         await asyncio.sleep(10)
         return 42
@@ -28,18 +28,19 @@ async def test__timeout__execute_listener_in_decorator() -> None:
     with pytest.raises(MaxDurationExceeded):
         await slow_func()
 
-    await asyncio.sleep(5)  # TODO: Work this around via background task manager
+    await asyncio.sleep(0.5)  # TODO: Work this around via background task manager
 
-    listener.on_timeout_mock.assert_called()
+    listener1.on_timeout_mock.assert_called()
+    listener2.on_timeout_mock.assert_called()
 
 
 async def test__timeout__execute_listener_in_context() -> None:
     listener = Listener()
 
     with pytest.raises(MaxDurationExceeded):
-        async with timeout(timeout_secs=0.1, listeners=(listener,)):
+        async with timeout(0.1, listeners=(listener,)):
             await asyncio.sleep(1)
 
-    await asyncio.sleep(5)  # TODO: Work this around via background task manager
+    await asyncio.sleep(0.5)  # TODO: Work this around via background task manager
 
     listener.on_timeout_mock.assert_called()

@@ -5,5 +5,11 @@ if TYPE_CHECKING:
 
 
 class TimeoutListener:
+    """
+    Listen to events dispatched by timeout components
+    """
+
     async def on_timeout(self, timeout: "TimeoutManager") -> None:
-        ...
+        """
+        Dispatch on timing out
+        """
