@@ -1,13 +1,53 @@
 import asyncio
-from typing import Callable, Generic, TypeVar
+import weakref
+from typing import Callable, Generic, TypeVar, Optional
+
+ListenerT = TypeVar("ListenerT", covariant=True)
+
+_EVENT_MANAGER: Optional["EventManager"] = None
 
 
 class EventManager:
     """
-    EventManager dispatches specific sets of listeners that correspond to the specific component
+    Keeps track of currently active listeners tasks dispatched on the recent events
+    """
+
+    def __init__(self) -> None:
+        self._listener_tasks: weakref.WeakSet[asyncio.Task] = weakref.WeakSet()
+
+    def add(self, listener_task: asyncio.Task) -> None:
+        self._listener_tasks.add(listener_task)
+
+    async def wait_for_tasks(self) -> None:
+        # TODO: allow to specify a timeout
+        await asyncio.gather(*list(self._listener_tasks))
+
+    async def cancel_tasks(self) -> None:
+        for task in self._listener_tasks:
+            task.cancel()
+
+        await self.wait_for_tasks()
+
+
+def set_event_manager(event_manager: EventManager) -> None:
+    # TODO: Do we need any locking?
+    global _EVENT_MANAGER
+
+    if _EVENT_MANAGER:
+        # TODO: Log this when the logging part is figured out
+        # logger.warning("Overriding of current EventManager is not allowed")
+        return
+
+    _EVENT_MANAGER = event_manager
+
+
+class EventDispatcher:
+    """
+    Dispatches specific sets of listeners that correspond to the specific component on events
     """
 
     def __init__(self, listeners) -> None:
+        self._event_manager = _EVENT_MANAGER
         self._listeners = listeners
 
     async def execute_listeners(self, event_handler_name: str, *args, **kwargs) -> None:
@@ -32,19 +72,19 @@ class EventManager:
 
         async def handle_event(*args, **kwargs) -> None:
             # TODO: Should we keep the task reference to eventually cancel it on app shutdown?
-            asyncio.create_task(self.execute_listeners(
+            listener_task = asyncio.create_task(self.execute_listeners(
                 event_handler_name,
                 *args,
                 **kwargs,
             ))
 
+            if self._event_manager:
+                self._event_manager.add(listener_task)
+
         return handle_event
 
 
-ListenerT = TypeVar("ListenerT", covariant=True)
-
-
-class ListenerRegistry(Generic[ListenerT]):
+class GlobalListeners(Generic[ListenerT]):
     """
     A global listener registry that helps to register component-wide listeners
     """
@@ -55,7 +95,8 @@ class ListenerRegistry(Generic[ListenerT]):
     def listeners(self) -> list[ListenerT]:
         return list(self._registry.values())
 
-    def register(self, class_) -> Callable:  # TODO: classes won't be probably useful as we need instances to execute their methods
+    # TODO: classes won't be probably useful as we need instances to execute their methods
+    def register(self, class_) -> Callable:
         self._registry[class_.__name__] = class_
 
         return class_

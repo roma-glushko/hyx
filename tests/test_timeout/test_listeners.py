@@ -3,10 +3,14 @@ from unittest.mock import Mock
 
 import pytest
 
+from hyx.common.events import set_event_manager, EventManager
 from hyx.timeout import timeout
 from hyx.timeout.exceptions import MaxDurationExceeded
 from hyx.timeout.listeners import TimeoutListener
 from hyx.timeout.manager import TimeoutManager
+
+event_manager = EventManager()
+set_event_manager(event_manager)
 
 
 class Listener(TimeoutListener):
@@ -28,7 +32,7 @@ async def test__timeout__execute_listener_in_decorator() -> None:
     with pytest.raises(MaxDurationExceeded):
         await slow_func()
 
-    await asyncio.sleep(0.5)  # TODO: Work this around via background task manager
+    await event_manager.wait_for_tasks()
 
     listener1.on_timeout_mock.assert_called()
     listener2.on_timeout_mock.assert_called()
@@ -41,6 +45,6 @@ async def test__timeout__execute_listener_in_context() -> None:
         async with timeout(0.1, listeners=(listener,)):
             await asyncio.sleep(1)
 
-    await asyncio.sleep(0.5)  # TODO: Work this around via background task manager
+    await event_manager.wait_for_tasks()
 
     listener.on_timeout_mock.assert_called()

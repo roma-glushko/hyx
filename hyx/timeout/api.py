@@ -2,7 +2,7 @@ import functools
 from types import TracebackType
 from typing import Any, Optional, Sequence, Type, cast
 
-from hyx.common.events import EventManager
+from hyx.common.events import EventDispatcher
 from hyx.common.typing import FuncT
 from hyx.timeout.listeners import TimeoutListener
 from hyx.timeout.manager import TimeoutManager
@@ -26,7 +26,7 @@ class timeout:
     def _create_timeout(self) -> TimeoutManager:
         return TimeoutManager(
             timeout_secs=self._timeout_secs,
-            events=cast(TimeoutListener, EventManager(listeners=self._listeners))
+            events=cast(TimeoutListener, EventDispatcher(listeners=self._listeners))
         )
 
     async def __aenter__(self) -> "timeout":
