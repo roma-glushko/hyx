@@ -17,16 +17,31 @@ class timeout:
     * **timeout_secs** - Max amount of time to wait for the action in seconds
     """
 
-    def __init__(self, timeout_secs: float, *, listeners: Optional[Sequence[TimeoutListener]] = None) -> None:
+    __slots__ = (
+        "_timeout_secs",
+        "_timeout_manager",
+        "_name",
+        "_listeners",
+    )
+
+    def __init__(
+        self,
+        timeout_secs: float,
+        *,
+        name: Optional[str] = None,
+        listeners: Optional[Sequence[TimeoutListener]] = None
+    ) -> None:
         self._timeout_secs = timeout_secs
         self._timeout_manager: Optional[TimeoutManager] = None
 
+        self._name = name  # TODO: set default name on None
         self._listeners = listeners
 
     def _create_timeout(self) -> TimeoutManager:
         return TimeoutManager(
+            name=self._name,
             timeout_secs=self._timeout_secs,
-            events=cast(TimeoutListener, EventDispatcher(listeners=self._listeners))
+            event_dispatcher=EventDispatcher(self._listeners).as_listener
         )
 
     async def __aenter__(self) -> "timeout":

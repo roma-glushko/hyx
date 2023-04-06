@@ -11,7 +11,7 @@ class TimeoutManager:
     __slots__ = (
         "_name",
         "_timeout_secs",
-        "_events",
+        "_event_dispatcher",
         "_is_timeout",
         "_timeout_task",
     )
@@ -20,7 +20,7 @@ class TimeoutManager:
         self,
         timeout_secs: DurationT,
         name: Optional[str] = None,
-        events: Optional[TimeoutListener] = None,
+        event_dispatcher: Optional[TimeoutListener] = None,
     ) -> None:
         self._timeout_secs = timeout_secs
 
@@ -28,7 +28,7 @@ class TimeoutManager:
         self._timeout_task: Optional[asyncio.TimerHandle] = None
 
         self._name = name
-        self._events = events
+        self._event_dispatcher = event_dispatcher
 
     @property
     def name(self) -> str:
@@ -41,8 +41,8 @@ class TimeoutManager:
         watched_task.cancel()
         self._timeout_task = None
 
-        if self._events:
-            await self._events.on_timeout(self)
+        if self._event_dispatcher:
+            await self._event_dispatcher.on_timeout(self)
 
     async def start(self) -> None:
         """
@@ -61,8 +61,8 @@ class TimeoutManager:
         Stop measuring the code block execution time
         """
         if error is asyncio.CancelledError and self._is_timeout and self._is_timeout.is_set():
-            if self._events:
-                await self._events.on_timeout(self)
+            if self._event_dispatcher:
+                await self._event_dispatcher.on_timeout(self)
 
             raise MaxDurationExceeded
 
@@ -79,7 +79,7 @@ class TimeoutManager:
 
             return await asyncio.wait_for(watched_task, timeout=self._timeout_secs)
         except asyncio.TimeoutError:
-            if self._events:
-                await self._events.on_timeout(self)
+            if self._event_dispatcher:
+                await self._event_dispatcher.on_timeout(self)
 
             raise MaxDurationExceeded from None

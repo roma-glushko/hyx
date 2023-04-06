@@ -1,6 +1,6 @@
 import asyncio
 import weakref
-from typing import Callable, Generic, TypeVar, Optional
+from typing import Callable, Generic, TypeVar, Optional, Sequence, cast
 
 ListenerT = TypeVar("ListenerT", covariant=True)
 
@@ -11,6 +11,10 @@ class EventManager:
     """
     Keeps track of currently active listeners tasks dispatched on the recent events
     """
+
+    __slots__ = (
+        "_listener_tasks",
+    )
 
     def __init__(self) -> None:
         self._listener_tasks: weakref.WeakSet[asyncio.Task] = weakref.WeakSet()
@@ -44,14 +48,23 @@ def set_event_manager(event_manager: EventManager) -> None:
     _EVENT_MANAGER = event_manager
 
 
-class EventDispatcher:
+class EventDispatcher(Generic[ListenerT]):
     """
     Dispatches specific sets of listeners that correspond to the specific component on events
     """
 
-    def __init__(self, listeners) -> None:
+    __slots__ = (
+        "_event_manager",
+        "_listeners",
+    )
+
+    def __init__(self, listeners: Sequence[ListenerT]) -> None:
         self._event_manager = _EVENT_MANAGER
         self._listeners = listeners
+
+    @property
+    def as_listener(self) -> ListenerT:
+        return cast(ListenerT, self)
 
     async def execute_listeners(self, event_handler_name: str, *args, **kwargs) -> None:
         """
@@ -90,6 +103,10 @@ class ListenerRegistry(Generic[ListenerT]):
     """
     A listener registry that helps to register component-wide listeners
     """
+
+    __slots__ = (
+        "_listeners",
+    )
 
     def __init__(self) -> None:
         self._listeners: list[ListenerT] = []
