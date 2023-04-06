@@ -23,6 +23,9 @@ class EventManager:
         await asyncio.gather(*list(self._listener_tasks))
 
     async def cancel_tasks(self) -> None:
+        """
+        Cancel all inflight listener tasks
+        """
         for task in self._listener_tasks:
             task.cancel()
 
@@ -71,7 +74,6 @@ class EventDispatcher:
         """
 
         async def handle_event(*args, **kwargs) -> None:
-            # TODO: Should we keep the task reference to eventually cancel it on app shutdown?
             listener_task = asyncio.create_task(self.execute_listeners(
                 event_handler_name,
                 *args,
@@ -84,19 +86,17 @@ class EventDispatcher:
         return handle_event
 
 
-class GlobalListeners(Generic[ListenerT]):
+class ListenerRegistry(Generic[ListenerT]):
     """
-    A global listener registry that helps to register component-wide listeners
+    A listener registry that helps to register component-wide listeners
     """
 
     def __init__(self) -> None:
-        self._registry: dict[str, ListenerT] = {}
+        self._listeners: list[ListenerT] = []
 
+    @property
     def listeners(self) -> list[ListenerT]:
-        return list(self._registry.values())
+        return self._listeners
 
-    # TODO: classes won't be probably useful as we need instances to execute their methods
-    def register(self, class_) -> Callable:
-        self._registry[class_.__name__] = class_
-
-        return class_
+    def register(self, listener: ListenerT) -> None:
+        self._listeners.append(listener)
