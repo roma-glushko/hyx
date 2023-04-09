@@ -58,7 +58,7 @@ class EventDispatcher(Generic[ListenerT]):
         "_listeners",
     )
 
-    def __init__(self, listeners: Sequence[ListenerT]) -> None:
+    def __init__(self, listeners: Sequence[ListenerT] = None) -> None:
         self._event_manager = _EVENT_MANAGER
         self._listeners = listeners
 
@@ -70,6 +70,9 @@ class EventDispatcher(Generic[ListenerT]):
         """
         Execute all relevant listeners in parallel
         """
+        if not self._listeners:
+            return
+
         listeners = [
             getattr(listener, event_handler_name)(*args, **kwargs)
             for listener in self._listeners
@@ -87,6 +90,9 @@ class EventDispatcher(Generic[ListenerT]):
         """
 
         async def handle_event(*args, **kwargs) -> None:
+            if not self._listeners:
+                return
+
             listener_task = asyncio.create_task(self.execute_listeners(
                 event_handler_name,
                 *args,

@@ -21,10 +21,10 @@ class FallbackManager:
     def __init__(
         self,
         handler: FallbackT,
+        event_dispatcher: FallbackListener,
         exceptions: Optional[ExceptionsT] = None,
         predicate: Optional[PredicateT] = None,
         name: Optional[str] = None,
-        event_dispatcher: Optional[FallbackListener] = None,
     ) -> None:
         self._handler = handler
         self._exceptions = exceptions
@@ -38,14 +38,12 @@ class FallbackManager:
 
             if self._predicate and await self._predicate(result, *args, **kwargs):
                 await self._event_dispatcher.on_fallback(self, result, *args, **kwargs)
-
                 return await self._handler(result, *args, **kwargs)
 
             return result
         except Exception as e:
             if self._exceptions and isinstance(e, self._exceptions):
                 await self._event_dispatcher.on_fallback(self, e, *args, **kwargs)
-
                 return await self._handler(e, *args, **kwargs)
 
             raise e

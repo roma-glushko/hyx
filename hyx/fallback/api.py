@@ -25,7 +25,8 @@ def fallback(
     * **on** *(None | Exception | tuple[Exception, ...])* - Fall back on the give exception(s)
     * **if_** *(None | Callable)* - Fall back if the given predicate function returns True
         on the original function result
-    * **name** *(None | str)* - Unique component name or ID
+    * **name** *(None | str)* - A component name or ID (will be passed to listeners and mention in metrics)
+    * **listeners** *(None | Sequence[TimeoutListener])* - List of listeners of this concreate component state
     """
     if not on and not if_:
         raise ValueError("Either on or if_ param should be specified when using the fallback decorator")

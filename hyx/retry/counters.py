@@ -1,4 +1,4 @@
-from hyx.retry.exceptions import MaxAttemptsExceeded
+from hyx.retry.exceptions import AttemptsExceeded
 from hyx.retry.typing import AttemptsT
 
 
@@ -48,7 +48,7 @@ class AttemptCounter(Counter):
         super().__iadd__(attempts)
 
         if not self:
-            raise MaxAttemptsExceeded()
+            raise AttemptsExceeded()
 
         return self
 

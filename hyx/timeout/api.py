@@ -14,7 +14,9 @@ class timeout:
 
     **Parameters:**
 
-    * **timeout_secs** - Max amount of time to wait for the action in seconds
+    * **timeout_secs** *(float)* - Max amount of time to wait for the action in seconds
+    * **name** *(None | str)* - A component name or ID (will be passed to listeners and mention in metrics)
+    * **listeners** *(None | Sequence[TimeoutListener])* - List of listeners of this concreate component state
     """
 
     __slots__ = (
