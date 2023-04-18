@@ -19,6 +19,7 @@ class bulkhead:
     * **max_capacity** *(int)* - Overall max number of executions (concurrent and queued).
         If the number is exceeded, new executions are going to be rejected
     """
+
     __slots__ = ("_manager",)
 
     def __init__(self, max_concurrency: int, max_capacity: int) -> None:

@@ -1,7 +1,9 @@
 import functools
-from typing import Any, Callable, Optional, cast
+from typing import Any, Callable, Optional, Sequence, cast
 
+from hyx.common.events import EventDispatcher
 from hyx.common.typing import ExceptionsT, FuncT
+from hyx.fallback.listeners import FallbackListener
 from hyx.fallback.manager import FallbackManager
 from hyx.fallback.typing import FallbackT, PredicateT
 
@@ -9,8 +11,10 @@ from hyx.fallback.typing import FallbackT, PredicateT
 def fallback(
     handler: FallbackT,
     *,
+    name: Optional[str] = None,
     on: Optional[ExceptionsT] = Exception,
     if_: Optional[PredicateT] = None,
+    listeners: Optional[Sequence[FallbackListener]] = None,
 ) -> Callable[[Callable], Callable]:
     """
     Provides a fallback on exceptions and/or specific result of the original function
@@ -21,14 +25,18 @@ def fallback(
     * **on** *(None | Exception | tuple[Exception, ...])* - Fall back on the give exception(s)
     * **if_** *(None | Callable)* - Fall back if the given predicate function returns True
         on the original function result
+    * **name** *(None | str)* - A component name or ID (will be passed to listeners and mention in metrics)
+    * **listeners** *(None | Sequence[TimeoutListener])* - List of listeners of this concreate component state
     """
     if not on and not if_:
         raise ValueError("Either on or if_ param should be specified when using the fallback decorator")
 
     manager = FallbackManager(
+        name=name,
         handler=handler,
         exceptions=on,
         predicate=if_,
+        event_dispatcher=EventDispatcher(listeners).as_listener,
     )
 
     def _decorator(func: FuncT) -> FuncT:

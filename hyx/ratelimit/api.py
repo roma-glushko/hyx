@@ -54,7 +54,8 @@ class tokenbucket:
         that are permitted to happen during bursts.
         The burst is when no executions have happened for a long time, and then you are receiving a
         bunch of them at the same time. Equal to *max_executions* by default.
-   """
+    """
+
     __slots__ = ("_limiter",)
 
     def __init__(self, max_executions: float, per_time_secs: float, bucket_size: Optional[float] = None) -> None:

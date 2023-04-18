@@ -1,7 +1,7 @@
 import pytest
 
 from hyx.retry import retry
-from hyx.retry.exceptions import MaxAttemptsExceeded
+from hyx.retry.exceptions import AttemptsExceeded
 
 
 async def test__retry__decorate_async_func() -> None:
@@ -17,7 +17,7 @@ async def test__retry__max_retry_exceeded() -> None:
     async def faulty_func() -> float:
         return 1 / 0
 
-    with pytest.raises(MaxAttemptsExceeded):
+    with pytest.raises(AttemptsExceeded):
         await faulty_func()
 
 
