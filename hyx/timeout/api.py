@@ -54,8 +54,8 @@ class timeout:
 
     async def __aexit__(
         self,
-        exc_type: Optional[Type[BaseException]],
-        exc_val: Optional[BaseException],
+        exc_type: Optional[Type[Exception]],
+        exc_val: Optional[Exception],
         exc_tb: Optional[TracebackType],
     ) -> Optional[bool]:
         if self._timeout_manager:

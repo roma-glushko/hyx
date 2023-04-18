@@ -34,7 +34,7 @@ class TimeoutManager:
     def name(self) -> str:
         return self._name
 
-    async def _on_timeout(self, watched_task: Optional[asyncio.Task]) -> None:
+    def _on_timeout(self, watched_task: Optional[asyncio.Task]) -> None:
         if self._is_timeout:
             self._is_timeout.set()
 
@@ -42,7 +42,7 @@ class TimeoutManager:
             watched_task.cancel()
 
         self._timeout_task = None
-        await self._event_dispatcher.on_timeout(self)
+        asyncio.ensure_future(self._event_dispatcher.on_timeout(self))
 
     async def start(self) -> None:
         """
@@ -52,11 +52,12 @@ class TimeoutManager:
         watched_task = asyncio.current_task()
 
         self._timeout_task = asyncio.get_running_loop().call_later(
-            delay=self._timeout_secs,
-            callback=asyncio.ensure_future(self._on_timeout(watched_task)),  # type: ignore[arg-type]
+            self._timeout_secs,
+            self._on_timeout,
+            watched_task
         )
 
-    async def stop(self, error: Optional[Type[BaseException]] = None) -> None:
+    async def stop(self, error: Optional[Type[Exception]] = None) -> None:
         """
         Stop measuring the code block execution time
         """
