@@ -27,11 +27,7 @@ class timeout:
     )
 
     def __init__(
-        self,
-        timeout_secs: float,
-        *,
-        name: Optional[str] = None,
-        listeners: Optional[Sequence[TimeoutListener]] = None
+        self, timeout_secs: float, *, name: Optional[str] = None, listeners: Optional[Sequence[TimeoutListener]] = None
     ) -> None:
         self._timeout_secs = timeout_secs
         self._timeout_manager: Optional[TimeoutManager] = None
@@ -43,7 +39,7 @@ class timeout:
         return TimeoutManager(
             name=self._name,
             timeout_secs=self._timeout_secs,
-            event_dispatcher=EventDispatcher(self._listeners).as_listener
+            event_dispatcher=EventDispatcher(self._listeners).as_listener,
         )
 
     async def __aenter__(self) -> "timeout":

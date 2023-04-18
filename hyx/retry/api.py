@@ -1,5 +1,5 @@
 import functools
-from typing import Any, Callable, cast, Optional, Sequence
+from typing import Any, Callable, Optional, Sequence, cast
 
 from hyx.common.events import EventDispatcher
 from hyx.common.typing import ExceptionsT, FuncT
@@ -14,7 +14,7 @@ def retry(
     attempts: AttemptsT = 3,
     backoff: BackoffsT = 0.5,
     name: Optional[str] = None,
-    listeners: Optional[Sequence[RetryListener]] = None
+    listeners: Optional[Sequence[RetryListener]] = None,
 ) -> Callable[[Callable], Callable]:
     """
     `@retry()` decorator retries the function `on` exceptions for the given number of `attempts`.
@@ -34,7 +34,7 @@ def retry(
         exceptions=on,
         attempts=attempts,
         backoff=backoff,
-        event_dispatcher=EventDispatcher(listeners).as_listener
+        event_dispatcher=EventDispatcher(listeners).as_listener,
     )
 
     def _decorator(func: FuncT) -> FuncT:

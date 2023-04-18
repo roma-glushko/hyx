@@ -1,4 +1,3 @@
-
 import pytest
 
 from hyx.bulkhead import bulkhead

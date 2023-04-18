@@ -14,10 +14,10 @@ class BulkheadManager:
 
     def __init__(self, max_concurrency: int, max_capacity: int) -> None:
         if max_concurrency <= 0:
-            raise ValueError(f"max_concurrency should be greater than zero (\"{max_concurrency}\" given)")
+            raise ValueError(f'max_concurrency should be greater than zero ("{max_concurrency}" given)')
 
         if max_capacity <= 0:
-            raise ValueError(f"max_capacity should be greater than zero (\"{max_capacity}\" given)")
+            raise ValueError(f'max_capacity should be greater than zero ("{max_capacity}" given)')
 
         if max_capacity < max_concurrency:
             raise ValueError("max_capacity should be equal or greater than max_concurrency")

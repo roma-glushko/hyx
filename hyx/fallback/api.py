@@ -1,5 +1,5 @@
 import functools
-from typing import Any, Callable, Optional, cast, Sequence
+from typing import Any, Callable, Optional, Sequence, cast
 
 from hyx.common.events import EventDispatcher
 from hyx.common.typing import ExceptionsT, FuncT
@@ -14,7 +14,7 @@ def fallback(
     name: Optional[str] = None,
     on: Optional[ExceptionsT] = Exception,
     if_: Optional[PredicateT] = None,
-    listeners: Optional[Sequence[FallbackListener]] = None
+    listeners: Optional[Sequence[FallbackListener]] = None,
 ) -> Callable[[Callable], Callable]:
     """
     Provides a fallback on exceptions and/or specific result of the original function
@@ -36,7 +36,7 @@ def fallback(
         handler=handler,
         exceptions=on,
         predicate=if_,
-        event_dispatcher=EventDispatcher(listeners).as_listener
+        event_dispatcher=EventDispatcher(listeners).as_listener,
     )
 
     def _decorator(func: FuncT) -> FuncT:

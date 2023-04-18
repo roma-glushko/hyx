@@ -10,14 +10,7 @@ from hyx.retry.typing import AttemptsT, BackoffsT
 
 
 class RetryManager:
-    __slots__ = (
-        "_name",
-        "_exceptions",
-        "_attempts",
-        "_backoff",
-        "_waiter",
-        "_event_dispatcher"
-    )
+    __slots__ = ("_name", "_exceptions", "_attempts", "_backoff", "_waiter", "_event_dispatcher")
 
     def __init__(
         self,

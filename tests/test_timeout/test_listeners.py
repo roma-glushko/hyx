@@ -3,7 +3,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from hyx.common.events import set_event_manager, EventManager
+from hyx.common.events import EventManager, set_event_manager
 from hyx.timeout import timeout
 from hyx.timeout.exceptions import MaxDurationExceeded
 from hyx.timeout.listeners import TimeoutListener
