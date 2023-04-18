@@ -51,11 +51,7 @@ class TimeoutManager:
         self._is_timeout = asyncio.Event()
         watched_task = asyncio.current_task()
 
-        self._timeout_task = asyncio.get_running_loop().call_later(
-            self._timeout_secs,
-            self._on_timeout,
-            watched_task
-        )
+        self._timeout_task = asyncio.get_running_loop().call_later(self._timeout_secs, self._on_timeout, watched_task)
 
     async def stop(self, error: Optional[Type[Exception]] = None) -> None:
         """
