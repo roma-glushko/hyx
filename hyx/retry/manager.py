@@ -41,5 +41,4 @@ class RetryManager:
 
         except AttemptsExceeded:
             await self._event_dispatcher.on_attempts_exceeded(self)
-
             raise

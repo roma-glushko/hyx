@@ -17,7 +17,8 @@ async def get_user_avatar(user_id: str) -> bytes:
     """
     Get user avatar from the object storage
     """
-    ...
+    # ...
+    return b""
 
 
 asyncio.run(get_user_avatar(user_id="1234"))

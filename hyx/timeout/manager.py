@@ -27,18 +27,20 @@ class TimeoutManager:
         self._is_timeout: Optional[asyncio.Event] = None
         self._timeout_task: Optional[asyncio.TimerHandle] = None
 
-        self._name = name
+        self._name = name or ""
         self._event_dispatcher = event_dispatcher
 
     @property
     def name(self) -> str:
         return self._name
 
-    async def _on_timeout(self, watched_task: asyncio.Task) -> None:
+    async def _on_timeout(self, watched_task: Optional[asyncio.Task]) -> None:
         if self._is_timeout:
             self._is_timeout.set()
 
-        watched_task.cancel()
+        if watched_task:
+            watched_task.cancel()
+
         self._timeout_task = None
         await self._event_dispatcher.on_timeout(self)
 
@@ -50,8 +52,8 @@ class TimeoutManager:
         watched_task = asyncio.current_task()
 
         self._timeout_task = asyncio.get_running_loop().call_later(
-            self._timeout_secs,
-            asyncio.ensure_future(self._on_timeout(watched_task)),
+            delay=self._timeout_secs,
+            callback=asyncio.ensure_future(self._on_timeout(watched_task)),  # type: ignore[arg-type]
         )
 
     async def stop(self, error: Optional[Type[BaseException]] = None) -> None:

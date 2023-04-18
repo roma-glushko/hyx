@@ -2,7 +2,7 @@ import asyncio
 import weakref
 from typing import Callable, Generic, Optional, Sequence, TypeVar, cast
 
-ListenerT = TypeVar("ListenerT", covariant=True)
+ListenerT = TypeVar("ListenerT")
 
 _EVENT_MANAGER: Optional["EventManager"] = None
 
@@ -56,7 +56,7 @@ class EventDispatcher(Generic[ListenerT]):
         "_listeners",
     )
 
-    def __init__(self, listeners: Sequence[ListenerT] = None) -> None:
+    def __init__(self, listeners: Optional[Sequence[ListenerT]] = None) -> None:
         self._event_manager = _EVENT_MANAGER
         self._listeners = listeners
 
