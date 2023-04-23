@@ -2,7 +2,7 @@ import functools
 from types import TracebackType
 from typing import Any, Optional, Sequence, Type, cast
 
-from hyx.bulkhead import BulkheadListener
+from hyx.bulkhead.listeners import BulkheadListener
 from hyx.bulkhead.manager import BulkheadManager
 from hyx.common.events import EventDispatcher
 from hyx.common.typing import FuncT
@@ -32,6 +32,7 @@ class bulkhead:
         name: Optional[str] = None,
         listeners: Optional[Sequence[BulkheadListener]] = None,
     ) -> None:
+
         self._manager = BulkheadManager(
             max_concurrency=max_concurrency,
             max_capacity=max_capacity,

@@ -3,13 +3,13 @@ from typing import TYPE_CHECKING
 from hyx.common.events import ListenerRegistry
 
 if TYPE_CHECKING:
-    pass
+    from hyx.bulkhead.manager import BulkheadManager
 
 _BULKHEAD_LISTENERS: ListenerRegistry["BulkheadListener"] = ListenerRegistry()
 
 
 class BulkheadListener:
-    async def on_limit_exceed(self) -> None:
+    async def on_bulkhead_full(self, bulkhead: "BulkheadManager") -> None:
         ...
 
 

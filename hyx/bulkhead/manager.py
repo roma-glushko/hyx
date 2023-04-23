@@ -31,12 +31,13 @@ class BulkheadManager:
 
         self._concurrency_limiter = asyncio.Semaphore(max_concurrency)
         self._total_execs_limiter = asyncio.Semaphore(max_capacity)
+
         self._name = name
         self._event_dispatcher = event_dispatcher
 
     async def _raise_on_exceed(self) -> None:
         if self._total_execs_limiter.locked():
-            await self._event_dispatcher.on_limit_exceed()
+            await self._event_dispatcher.on_bulkhead_full(self)
 
             raise BulkheadFull
 

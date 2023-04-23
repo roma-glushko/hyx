@@ -1,18 +1,34 @@
 import asyncio
+from unittest.mock import Mock
 
 import pytest
 
-from hyx.bulkhead import bulkhead
+from hyx.bulkhead import BulkheadListener, bulkhead
 from hyx.bulkhead.exceptions import BulkheadFull
+from hyx.bulkhead.manager import BulkheadManager
+from tests.conftest import event_manager
+
+
+class Listener(BulkheadListener):
+    def __init__(self) -> None:
+        self.is_full = Mock()
+
+    async def on_bulkhead_full(self, bulkhead: "BulkheadManager") -> None:
+        self.is_full()
 
 
 async def test__bulkhead__decorator() -> None:
-    @bulkhead(max_capacity=3, max_concurrency=2)
+    listener = Listener()
+
+    @bulkhead(max_capacity=3, max_concurrency=2, listeners=(listener,))
     async def calculations() -> float:
         await asyncio.sleep(0.5)
         return 42
 
     assert await calculations() == 42
+
+    await event_manager.wait_for_tasks()
+    listener.is_full.assert_not_called()
 
 
 async def test__bulkhead__context() -> None:
@@ -22,13 +38,17 @@ async def test__bulkhead__context() -> None:
 
 
 async def test__bulkhead__capacity_exceeded() -> None:
-    bh = bulkhead(max_capacity=2, max_concurrency=2)
+    listener = Listener()
+    bh = bulkhead(max_capacity=2, max_concurrency=2, listeners=(listener,))
 
     with pytest.raises(BulkheadFull):
         async with bh:
             async with bh:
                 async with bh:
                     assert True
+
+    await event_manager.wait_for_tasks()
+    listener.is_full.assert_called()
 
 
 async def test__bulkhead__capacity_exceeded_from_different_coroutines() -> None:
