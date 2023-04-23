@@ -2,15 +2,12 @@ from unittest.mock import Mock
 
 import pytest
 
-from hyx.common.events import EventManager, set_event_manager
 from hyx.retry import retry
 from hyx.retry.counters import Counter
 from hyx.retry.exceptions import AttemptsExceeded
 from hyx.retry.listeners import RetryListener
 from hyx.retry.manager import RetryManager
-
-event_manager = EventManager()
-set_event_manager(event_manager)
+from tests.conftest import event_manager
 
 
 class Listener(RetryListener):
