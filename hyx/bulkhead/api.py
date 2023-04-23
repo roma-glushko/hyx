@@ -1,8 +1,10 @@
 import functools
 from types import TracebackType
-from typing import Any, Optional, Type, cast
+from typing import Any, Optional, Sequence, Type, cast
 
+from hyx.bulkhead import BulkheadListener
 from hyx.bulkhead.manager import BulkheadManager
+from hyx.common.events import EventDispatcher
 from hyx.common.typing import FuncT
 
 
@@ -22,10 +24,19 @@ class bulkhead:
 
     __slots__ = ("_manager",)
 
-    def __init__(self, max_concurrency: int, max_capacity: int) -> None:
+    def __init__(
+        self,
+        max_concurrency: int,
+        max_capacity: int,
+        *,
+        name: Optional[str] = None,
+        listeners: Optional[Sequence[BulkheadListener]] = None,
+    ) -> None:
         self._manager = BulkheadManager(
             max_concurrency=max_concurrency,
             max_capacity=max_capacity,
+            name=name,
+            event_dispatcher=EventDispatcher(listeners).as_listener,
         )
 
     async def __aenter__(self) -> "bulkhead":
