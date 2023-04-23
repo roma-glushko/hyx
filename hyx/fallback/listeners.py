@@ -16,7 +16,7 @@ class FallbackListener:
 
 def register_timeout_listener(listener: FallbackListener) -> None:
     """
-    Register a listener that will listen to all fallback components in the system
+    Register a listener that will listen to all timeout components in the system
     """
     global _FALLBACK_LISTENERS
 

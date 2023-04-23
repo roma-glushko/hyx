@@ -1,5 +1,6 @@
 from typing import Any, Optional
 
+from hyx.circuitbreaker import BreakerListener
 from hyx.circuitbreaker.config import BreakerConfig
 from hyx.circuitbreaker.states import BreakerState, WorkingState
 from hyx.circuitbreaker.typing import DelayT
@@ -11,7 +12,7 @@ class ConsecutiveCircuitBreaker:
     Watch for consecutive exceptions that exceed a given threshold
     """
 
-    __slots__ = ("_config", "_state")
+    __slots__ = ("_config", "_name", "_state", "_event_dispatcher")
 
     def __init__(
         self,
@@ -19,7 +20,11 @@ class ConsecutiveCircuitBreaker:
         failure_threshold: int,
         recovery_time_secs: DelayT,
         recovery_threshold: int,
+        event_dispatcher: BreakerListener,
+        name: Optional[str] = None,
     ) -> None:
+        self._name = name
+
         self._config = BreakerConfig(
             exceptions=exceptions,
             failure_threshold=failure_threshold,
@@ -28,6 +33,7 @@ class ConsecutiveCircuitBreaker:
         )
 
         self._state: BreakerState = WorkingState(self._config)
+        self._event_dispatcher = event_dispatcher
 
     @property
     def state(self) -> BreakerState:
