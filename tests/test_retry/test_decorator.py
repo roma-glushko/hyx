@@ -1,7 +1,25 @@
+from unittest.mock import Mock
+
 import pytest
 
 from hyx.retry import retry
+from hyx.retry.counters import Counter
 from hyx.retry.exceptions import AttemptsExceeded
+from hyx.retry.listeners import RetryListener
+from hyx.retry.manager import RetryManager
+from tests.conftest import event_manager
+
+
+class Listener(RetryListener):
+    def __init__(self) -> None:
+        self.retries = 0
+        self.attempts_exceeded = Mock()
+
+    async def on_retry(self, retry: "RetryManager", exception: Exception, counter: "Counter") -> None:
+        self.retries += 1
+
+    async def on_attempts_exceeded(self, retry: "RetryManager") -> None:
+        self.attempts_exceeded()
 
 
 async def test__retry__decorate_async_func() -> None:
@@ -13,12 +31,18 @@ async def test__retry__decorate_async_func() -> None:
 
 
 async def test__retry__max_retry_exceeded() -> None:
-    @retry()
+    listener = Listener()
+
+    @retry(listeners=(listener,))
     async def faulty_func() -> float:
         return 1 / 0
 
     with pytest.raises(AttemptsExceeded):
         await faulty_func()
+
+    await event_manager.wait_for_tasks()
+
+    listener.attempts_exceeded.assert_called()
 
 
 async def test__retry__pass_different_error() -> None:
@@ -39,8 +63,9 @@ async def test__retry__pass_different_error() -> None:
 
 async def test__retry__infinite_retries() -> None:
     execs = 0
+    listener = Listener()
 
-    @retry(on=RuntimeError, attempts=None)
+    @retry(on=RuntimeError, attempts=None, listeners=(listener,))
     async def flaky_error() -> int:
         nonlocal execs
 
@@ -50,4 +75,7 @@ async def test__retry__infinite_retries() -> None:
 
         return 42
 
+    await event_manager.wait_for_tasks()
+
     assert await flaky_error() == 42
+    assert listener.retries == execs
