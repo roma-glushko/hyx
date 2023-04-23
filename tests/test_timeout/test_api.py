@@ -35,6 +35,8 @@ async def test__timeout__context() -> None:
         await asyncio.sleep(0.01)
 
     assert var == 42
+
+    await event_manager.wait_for_tasks()
     listener.timed_out.assert_not_called()
 
 
