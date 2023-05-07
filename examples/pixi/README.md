@@ -1,5 +1,5 @@
 <p align="center">
-<img src="/examples/pixi/frontend/static/logo.png" width="300px" alt="Pixi Jewelery Shop" />
+<img src="/examples/pixi/frontend/static/logo.png" width="400px" alt="Pixi Jewelery Shop" />
 </p>
 
 # Pixi 💎
