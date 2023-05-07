@@ -2,7 +2,7 @@ import functools
 from types import TracebackType
 from typing import Any, Optional, Sequence, Type, cast
 
-from hyx.common.events import EventDispatcher
+from hyx.common.events import EventDispatcher, get_default_name
 from hyx.common.typing import FuncT
 from hyx.timeout.listeners import TimeoutListener
 from hyx.timeout.manager import TimeoutManager
@@ -32,7 +32,7 @@ class timeout:
         self._timeout_secs = timeout_secs
         self._timeout_manager: Optional[TimeoutManager] = None
 
-        self._name = name  # TODO: set default name on None
+        self._name = name or get_default_name()
         self._listeners = listeners
 
     def _create_timeout(self) -> TimeoutManager:
