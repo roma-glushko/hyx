@@ -10,6 +10,8 @@ _BREAKER_LISTENERS: ListenerRegistry["BreakerListener"] = ListenerRegistry()
 
 
 class BreakerListener:
+    # TODO: add on success and on exception methods
+
     async def on_working(self, current_state: BreakerState, next_state: WorkingState) -> None:
         ...
 
