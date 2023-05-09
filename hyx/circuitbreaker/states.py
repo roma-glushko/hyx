@@ -8,7 +8,7 @@ from hyx.circuitbreaker.exceptions import BreakerFailing
 class BreakerState:
     NAME: str = "base"
 
-    __slots__ = ("_config",)
+    __slots__ = ("_config", "_event_dispatcher")
 
     def __init__(self, config: BreakerConfig) -> None:
         self._config = config
@@ -65,7 +65,10 @@ class WorkingState(BreakerState):
         self._consecutive_exceptions += 1
 
         if self._consecutive_exceptions >= self._config.failure_threshold:
-            return FailingState(self._config)
+            failing_state = FailingState(self._config)
+            await self._config.event_dispatcher.on_failing(self, failing_state)
+
+            return failing_state
 
         return self
 
@@ -128,7 +131,10 @@ class FailingState(BreakerState):
         if self.remain:
             raise BreakerFailing("Circuit Breaker is in the failing state")
 
-        return RecoveringState(self._config)
+        recovering_state = RecoveringState(self._config)
+        await self._config.event_dispatcher.on_recovering(self, recovering_state)
+
+        return recovering_state
 
 
 class RecoveringState(BreakerState):
@@ -157,9 +163,15 @@ class RecoveringState(BreakerState):
         self._consecutive_successes += 1
 
         if self.consecutive_successes >= self._config.recovery_threshold:
-            return WorkingState(self._config)
+            working_state = WorkingState(self._config)
+            await self._config.event_dispatcher.on_working(self, working_state)
+
+            return working_state
 
         return self
 
     async def on_exception(self) -> "BreakerState":
-        return FailingState(self._config)
+        failing_state = FailingState(self._config)
+        await self._config.event_dispatcher.on_failing(self, failing_state)
+
+        return failing_state

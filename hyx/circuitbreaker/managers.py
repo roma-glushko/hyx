@@ -30,10 +30,10 @@ class ConsecutiveCircuitBreaker:
             failure_threshold=failure_threshold,
             recovery_time_secs=recovery_time_secs,
             recovery_threshold=recovery_threshold,
+            event_dispatcher=event_dispatcher,
         )
 
         self._state: BreakerState = WorkingState(self._config)
-        self._event_dispatcher = event_dispatcher
 
     @property
     def state(self) -> BreakerState:
