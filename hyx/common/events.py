@@ -1,10 +1,18 @@
 import asyncio
+import sys
+import traceback
 import weakref
 from typing import Callable, Generic, Optional, Sequence, TypeVar, cast
 
 ListenerT = TypeVar("ListenerT")
 
 _EVENT_MANAGER: Optional["EventManager"] = None
+
+
+def get_default_name() -> str:
+    stack = traceback.extract_stack(limit=3)
+    print(stack)
+    return ""
 
 
 class EventManager:
