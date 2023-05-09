@@ -1,6 +1,9 @@
 SOURCE?=hyx docs/snippets
 TESTS?=tests
 
+install: ## Install project dependencies
+	@poetry install
+
 clean: ## Clean temporary files
 	@echo "🧹 Cleaning temporary files.."
 	@rm -rf dist

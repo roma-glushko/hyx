@@ -1,8 +1,11 @@
 import dataclasses
+from typing import TYPE_CHECKING
 
-from hyx.circuitbreaker import BreakerListener
 from hyx.circuitbreaker.typing import DelayT
 from hyx.common.typing import ExceptionsT
+
+if TYPE_CHECKING:
+    from hyx.circuitbreaker import BreakerListener
 
 
 @dataclasses.dataclass
@@ -11,4 +14,4 @@ class BreakerConfig:
     failure_threshold: int
     recovery_time_secs: DelayT
     recovery_threshold: int
-    event_dispatcher: BreakerListener
+    event_dispatcher: "BreakerListener"

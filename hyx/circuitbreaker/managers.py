@@ -1,10 +1,12 @@
-from typing import Any, Optional
+from typing import Any, Optional, TYPE_CHECKING
 
-from hyx.circuitbreaker import BreakerListener
 from hyx.circuitbreaker.config import BreakerConfig
 from hyx.circuitbreaker.states import BreakerState, WorkingState
 from hyx.circuitbreaker.typing import DelayT
 from hyx.common.typing import ExceptionsT, FuncT
+
+if TYPE_CHECKING:
+    from hyx.circuitbreaker import BreakerListener
 
 
 class ConsecutiveCircuitBreaker:
@@ -20,7 +22,7 @@ class ConsecutiveCircuitBreaker:
         failure_threshold: int,
         recovery_time_secs: DelayT,
         recovery_threshold: int,
-        event_dispatcher: BreakerListener,
+        event_dispatcher: "BreakerListener",
         name: Optional[str] = None,
     ) -> None:
         self._name = name
