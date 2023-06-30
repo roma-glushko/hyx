@@ -41,13 +41,13 @@ The breakers come into two flavours:
 
 === "decorator"
 
-    ```Python hl_lines="15 18"
+    ```Python hl_lines="6 15-19 22"
     {!> ./snippets/circuit_breakers/breaker_decorator.py !}
     ```
 
 === "context manager"
 
-    ```Python hl_lines="15 19"
+    ```Python hl_lines="6 15-19 23"
     {!> ./snippets/circuit_breakers/breaker_context.py !}
     ```
 

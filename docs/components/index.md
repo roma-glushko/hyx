@@ -89,3 +89,16 @@ Here is a list of components that Hyx is currently providing:
 - [Bulkheads](bulkhead.md)
 - [Rate Limiters](rate_limiter.md)
 - [Cache](cache.md)
+
+
+## Alternatives
+
+For the sake of completeness, it's worth mentioning that Hyx is one of the ways to solve reliability issues.
+There are two more ways to think about the solution:
+
+- Service Meshes. In cloud-native container-based environment, it's possible to delegate resiliency handling to service mesh sidecars running side-by-side with your application. 
+    The sidecar can be used to communicate through it with other microservices in the system. 
+    This is a way to decouple resiliency pieces from the application logic.
+    People usually use [Envoy-based sidecars](https://www.envoyproxy.io/) to achieve this.
+- Asynchronous Event-driven Communication. Modern event/message queues deployed in highly available setup can help to improve resiliency as well. 
+  They can provide resiliency patterns built-in into their transport protocol and some unique ways to organize communication in the system. [Apache Kafka](https://kafka.apache.org/) could be an example of such queue.

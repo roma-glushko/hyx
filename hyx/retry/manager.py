@@ -1,35 +1,44 @@
-from typing import Any
+import asyncio
+from typing import Any, Optional
 
 from hyx.common.typing import ExceptionsT, FuncT
-from hyx.common.waiter import wait
 from hyx.retry.backoffs import create_backoff
 from hyx.retry.counters import create_counter
+from hyx.retry.exceptions import AttemptsExceeded
+from hyx.retry.listeners import RetryListener
 from hyx.retry.typing import AttemptsT, BackoffsT
 
 
 class RetryManager:
-    __slots__ = ("_exceptions", "_attempts", "_backoff", "_waiter")
+    __slots__ = ("_name", "_exceptions", "_attempts", "_backoff", "_waiter", "_event_dispatcher")
 
     def __init__(
         self,
         exceptions: ExceptionsT,
         attempts: AttemptsT,
         backoff: BackoffsT,
+        event_dispatcher: RetryListener,
+        name: Optional[str] = None,
     ) -> None:
+        self._name = name
         self._exceptions = exceptions
         self._attempts = attempts
         self._backoff = create_backoff(backoff)
-        self._waiter = wait
+        self._event_dispatcher = event_dispatcher
 
     async def __call__(self, func: FuncT) -> Any:
         counter = create_counter(self._attempts)
         backoff = iter(self._backoff)
 
-        while bool(counter):
-            try:
-                return await func()
-            except self._exceptions:
-                counter += 1
+        try:
+            while bool(counter):
+                try:
+                    return await func()
+                except self._exceptions as e:
+                    counter += 1
+                    await self._event_dispatcher.on_retry(self, e, counter)
+                    await asyncio.sleep(next(backoff))
 
-                next_delay = next(backoff)
-                await self._waiter(next_delay)
+        except AttemptsExceeded:
+            await self._event_dispatcher.on_attempts_exceeded(self)
+            raise

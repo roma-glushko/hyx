@@ -12,7 +12,11 @@ class InventoryTemporaryError(RuntimeError):
     """
 
 
-breaker = consecutive_breaker(exceptions=(InventoryTemporaryError,), failure_threshold=5, recovery_delay_secs=30)
+breaker = consecutive_breaker(
+    exceptions=(InventoryTemporaryError,),
+    failure_threshold=5,
+    recovery_time_secs=30,
+)
 
 
 async def get_product_qty_left(product_sku: str) -> dict[str, Any]:

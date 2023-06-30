@@ -1,10 +1,45 @@
 [tool.poetry]
 name = "hyx"
-version = "0.0.2.rc0"
+version = "0.0.2"
 description = "Lightweight fault tolerance primitives for your modern Python microservices"
 authors = ["Roman Glushko <roman.glushko.m@gmail.com>"]
-license = "Apache License 2.0"
+license = "Apache-2.0"
 readme = "README.md"
+
+homepage = "https://hyx.readthedocs.io/en/latest/"
+repository = "https://github.com/roma-glushko/hyx"
+documentation = "https://hyx.readthedocs.io/en/latest/"
+
+keywords = [
+    "resiliency",
+    "stability",
+    "retries",
+    "bulkhead",
+    "rate limiting",
+    "concurrency limiting",
+    "stability",
+    "microservices",
+    "distributed systems",
+    "timeouts",
+    "circuit breakers"
+]
+
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: Implementation :: Stackless",
+    "Topic :: Software Development",
+    "Topic :: Software Development :: Libraries :: Application Frameworks",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: System :: Networking",
+]
 
 [tool.poetry.dependencies]
 python = ">=3.9,<4.0"
@@ -12,7 +47,7 @@ python = ">=3.9,<4.0"
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.2.0"
 mypy = "^0.991"
-ruff = "^0.0.182"
+ruff = "0.0.261"
 black = "^22.12.0"
 isort = "^5.11.2"
 pytest-asyncio = "^0.20.3"
@@ -20,19 +55,15 @@ coverage = "^7.0.1"
 mutmut = "^2.4.3"
 pytest-cov = "^4.0.0"
 
-
 [tool.poetry.group.docs.dependencies]
 mkdocs = "^1.4.2"
 mkdocs-material = "^8.5.11"
 mdx-include = "^1.4.2"
 mkautodoc = "^0.2.0"
 httpx = "^0.23.1"
-
-[project.urls]
-Homepage = "https://github.com/roma-glushko/hyx"
+fastapi = "^0.95.1"
 
 [tool.black]
-
 line-length = 120
 target-version = ['py39']
 

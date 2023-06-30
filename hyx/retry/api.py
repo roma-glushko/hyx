@@ -1,7 +1,9 @@
 import functools
-from typing import Any, Callable, cast
+from typing import Any, Callable, Optional, Sequence, cast
 
+from hyx.common.events import EventDispatcher
 from hyx.common.typing import ExceptionsT, FuncT
+from hyx.retry.listeners import RetryListener
 from hyx.retry.manager import RetryManager
 from hyx.retry.typing import AttemptsT, BackoffsT
 
@@ -11,6 +13,8 @@ def retry(
     on: ExceptionsT = Exception,
     attempts: AttemptsT = 3,
     backoff: BackoffsT = 0.5,
+    name: Optional[str] = None,
+    listeners: Optional[Sequence[RetryListener]] = None,
 ) -> Callable[[Callable], Callable]:
     """
     `@retry()` decorator retries the function `on` exceptions for the given number of `attempts`.
@@ -22,12 +26,15 @@ def retry(
     * **attempts** - How many times do we need to retry. If `None`, it will infinitely retry until the success.
     * **backoff** - Backoff Strategy that defines delays on each retry.
         Takes `float` numbers (delay in secs), `list[floats]` (delays on each retry attempt), or `Iterator[float]`
-
+    * **name** *(None | str)* - A component name or ID (will be passed to listeners and mention in metrics)
+    * **listeners** *(None | Sequence[TimeoutListener])* - List of listeners of this concreate component state
     """
     manager = RetryManager(
+        name=name,
         exceptions=on,
         attempts=attempts,
         backoff=backoff,
+        event_dispatcher=EventDispatcher(listeners).as_listener,
     )
 
     def _decorator(func: FuncT) -> FuncT:
