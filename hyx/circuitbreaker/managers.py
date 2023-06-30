@@ -28,6 +28,7 @@ class ConsecutiveCircuitBreaker:
         self._name = name
 
         self._config = BreakerConfig(
+            breaker_name=name,
             exceptions=exceptions,
             failure_threshold=failure_threshold,
             recovery_time_secs=recovery_time_secs,

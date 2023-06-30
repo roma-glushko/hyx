@@ -10,6 +10,7 @@ if TYPE_CHECKING:
 
 @dataclasses.dataclass
 class BreakerConfig:
+    breaker_name: str
     exceptions: ExceptionsT
     failure_threshold: int
     recovery_time_secs: DelayT
