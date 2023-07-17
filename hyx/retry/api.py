@@ -2,8 +2,9 @@ import functools
 from typing import Any, Callable, Optional, Sequence, cast
 from hyx.common.events import EventDispatcher
 from hyx.common.typing import ExceptionsT, FuncT
+from hyx.ratelimit.managers import TokenBucketLimiter
 from hyx.retry.listeners import RetryListener
-from hyx.retry.manager import RetryManager, GlobalRetryLimiter
+from hyx.retry.manager import RetryManager
 from hyx.retry.typing import AttemptsT, BackoffsT, BucketRetryT
 
 def retry(
@@ -62,8 +63,8 @@ def bucket_retry(
 
     """
     limiter = (
-        GlobalRetryLimiter(attempts, per_time_secs, bucket_size)
-        if attempts and per_time_secs and bucket_size
+        TokenBucketLimiter(attempts, per_time_secs, bucket_size)
+        if attempts and per_time_secs
         else None
     )
     

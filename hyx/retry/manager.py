@@ -9,17 +9,6 @@ from hyx.retry.listeners import RetryListener
 from hyx.retry.typing import AttemptsT, BackoffsT
 from hyx.ratelimit.managers import TokenBucketLimiter
 
-class GlobalRetryLimiter:
-    def __init__(self, attempts: float, per_time_secs: float, bucket_size: Optional[float] = None) -> None:
-        self._limiter = TokenBucketLimiter(
-            max_executions=attempts,
-            per_time_secs=per_time_secs,
-            bucket_size=bucket_size,
-        )
-
-    async def acquire(self):
-        await self._limiter.acquire()
-
 class RetryManager:
     __slots__ = ("_name", "_exceptions", "_attempts", "_backoff", "_waiter", "_event_dispatcher", "_limiter")
 
@@ -29,7 +18,7 @@ class RetryManager:
         attempts: AttemptsT,
         backoff: BackoffsT,
         event_dispatcher: RetryListener,
-        limiter: Optional[GlobalRetryLimiter] = None,
+        limiter: Optional[TokenBucketLimiter] = None,
         name: Optional[str] = None,
     ) -> None:
         self._name = name
@@ -47,7 +36,7 @@ class RetryManager:
             while bool(counter):
                 try:
                     if self._limiter is not None:
-                        await self._limiter.acquire()  # Use token bucket here
+                        await self._limiter.acquire()
                     return await func()
                 except self._exceptions as e:
                     counter += 1
