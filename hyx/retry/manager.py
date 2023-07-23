@@ -7,10 +7,10 @@ from hyx.retry.counters import create_counter
 from hyx.retry.exceptions import AttemptsExceeded
 from hyx.retry.listeners import RetryListener
 from hyx.retry.typing import AttemptsT, BackoffsT
-
+from hyx.ratelimit.managers import TokenBucketLimiter
 
 class RetryManager:
-    __slots__ = ("_name", "_exceptions", "_attempts", "_backoff", "_waiter", "_event_dispatcher")
+    __slots__ = ("_name", "_exceptions", "_attempts", "_backoff", "_waiter", "_event_dispatcher", "_limiter")
 
     def __init__(
         self,
@@ -18,6 +18,7 @@ class RetryManager:
         attempts: AttemptsT,
         backoff: BackoffsT,
         event_dispatcher: RetryListener,
+        limiter: Optional[TokenBucketLimiter] = None,
         name: Optional[str] = None,
     ) -> None:
         self._name = name
@@ -25,6 +26,7 @@ class RetryManager:
         self._attempts = attempts
         self._backoff = create_backoff(backoff)
         self._event_dispatcher = event_dispatcher
+        self._limiter = limiter
 
     async def __call__(self, func: FuncT) -> Any:
         counter = create_counter(self._attempts)
@@ -33,6 +35,8 @@ class RetryManager:
         try:
             while bool(counter):
                 try:
+                    if self._limiter is not None:
+                        await self._limiter.acquire()
                     return await func()
                 except self._exceptions as e:
                     counter += 1
@@ -42,3 +46,4 @@ class RetryManager:
         except AttemptsExceeded:
             await self._event_dispatcher.on_attempts_exceeded(self)
             raise
+
