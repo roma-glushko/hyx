@@ -119,6 +119,7 @@ So I wanted to pause for a moment to say a huge thanks wholeheartedly :heart: to
 
 - [App-vNext/Polly](https://github.com/App-vNext/Polly)
 - [resilience4j/resilience4j](https://github.com/resilience4j/resilience4j)
+- [failsafe-lib/failsafe](https://failsafe.dev/)
 - and tons of other projects previously published on the similar topics
 
 ## License

@@ -2,7 +2,7 @@ import functools
 from types import TracebackType
 from typing import Any, Optional, Type, cast
 
-from hyx.circuitbreaker.managers import ConsecutiveCircuitBreaker
+from hyx.circuitbreaker.breakers import ConsecutiveCircuitBreaker
 from hyx.circuitbreaker.states import BreakerState
 from hyx.circuitbreaker.typing import DelayT
 from hyx.common.typing import ExceptionsT, FuncT

@@ -93,6 +93,7 @@ nav:
     - Introduction: components/index.md
     - Retries: components/retry.md
     - Circuit Breakers: components/circuit_breakers.md
+    - Cache: components/cache.md
     - Timeouts: components/timeout.md
     - Fallbacks: components/fallback.md
     - Rate Limiters: components/rate_limiter.md

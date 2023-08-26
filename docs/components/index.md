@@ -88,6 +88,8 @@ Here is a list of components that Hyx is currently providing:
 
 - [Bulkheads](bulkhead.md)
 - [Rate Limiters](rate_limiter.md)
+- [Cache](cache.md)
+
 
 ## Alternatives
 
