@@ -1,7 +1,6 @@
 from unittest.mock import Mock
 
 import pytest
-from hyx.ratelimit.exceptions import RateLimitExceeded
 
 from hyx.retry import retry
 from hyx.retry.api import bucket_retry
@@ -10,6 +9,7 @@ from hyx.retry.exceptions import AttemptsExceeded
 from hyx.retry.listeners import RetryListener
 from hyx.retry.manager import RetryManager
 from tests.conftest import event_manager
+
 
 class Listener(RetryListener):
     def __init__(self) -> None:
@@ -81,13 +81,16 @@ async def test__retry__infinite_retries() -> None:
     assert await flaky_error() == 42
     assert listener.retries == execs
 
+
 async def test__retry__global_retry_limit() -> None:
     listener = Listener()
-    attempts=4
+    attempts = 4
     per_time_secs = 1
     bucket_size = 4
 
-    @bucket_retry(on=RuntimeError, attempts=attempts, per_time_secs=per_time_secs, bucket_size=bucket_size, listeners=(listener,))
+    @bucket_retry(
+        on=RuntimeError, attempts=attempts, per_time_secs=per_time_secs, bucket_size=bucket_size, listeners=(listener,)
+    )
     async def faulty_func() -> int:
         raise RuntimeError
 
@@ -99,16 +102,19 @@ async def test__retry__global_retry_limit() -> None:
 
     assert listener.retries == attempts
 
+
 async def test__retry__token_bucket_limiter():
     listener = Listener()
     attempts = 5
     per_time_secs = 2
     bucket_size = 3
-    
+
     calls = 0
     exceptions = 0
 
-    @bucket_retry(on=RuntimeError,attempts=attempts, per_time_secs=per_time_secs, bucket_size=bucket_size, listeners=(listener,))
+    @bucket_retry(
+        on=RuntimeError, attempts=attempts, per_time_secs=per_time_secs, bucket_size=bucket_size, listeners=(listener,)
+    )
     async def faulty_func():
         nonlocal calls, exceptions
         calls += 1

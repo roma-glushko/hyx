@@ -1,5 +1,5 @@
 import dataclasses
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from hyx.circuitbreaker.typing import DelayT
 from hyx.common.typing import ExceptionsT
@@ -9,8 +9,8 @@ if TYPE_CHECKING:
 
 
 @dataclasses.dataclass
-class BreakerConfig:
-    breaker_name: str
+class BreakerContext:
+    breaker_name: Optional[str]
     exceptions: ExceptionsT
     failure_threshold: int
     recovery_time_secs: DelayT

@@ -1,17 +1,17 @@
 from datetime import datetime, timedelta
 from typing import Optional
 
-from hyx.circuitbreaker.config import BreakerConfig
+from hyx.circuitbreaker.context import BreakerContext
 from hyx.circuitbreaker.exceptions import BreakerFailing
 
 
 class BreakerState:
     NAME: str = "base"
 
-    __slots__ = ("_config", "_event_dispatcher")
+    __slots__ = ("_context", "_event_dispatcher")
 
-    def __init__(self, config: BreakerConfig) -> None:
-        self._config = config
+    def __init__(self, context: BreakerContext) -> None:
+        self._context = context
 
     @property
     def name(self) -> str:
@@ -38,8 +38,8 @@ class WorkingState(BreakerState):
 
     __slots__ = ("_consecutive_exceptions",)
 
-    def __init__(self, config: BreakerConfig) -> None:
-        super().__init__(config)
+    def __init__(self, context: BreakerContext) -> None:
+        super().__init__(context)
 
         self._consecutive_exceptions: int = 0
 
@@ -64,9 +64,9 @@ class WorkingState(BreakerState):
         """
         self._consecutive_exceptions += 1
 
-        if self._consecutive_exceptions >= self._config.failure_threshold:
-            failing_state = FailingState(self._config)
-            await self._config.event_dispatcher.on_failing(self, failing_state)
+        if self._consecutive_exceptions >= self._context.failure_threshold:
+            failing_state = FailingState(self._context)
+            await self._context.event_dispatcher.on_failing(self._context, self, failing_state)
 
             return failing_state
 
@@ -88,8 +88,8 @@ class FailingState(BreakerState):
         "_failing_until",
     )
 
-    def __init__(self, config: BreakerConfig) -> None:
-        super().__init__(config)
+    def __init__(self, context: BreakerContext) -> None:
+        super().__init__(context)
 
         self._failing_since = self._get_failing_since()
         self._failing_until = self._get_failing_until(self._failing_since)
@@ -99,7 +99,7 @@ class FailingState(BreakerState):
         return datetime.utcnow()
 
     def _get_failing_until(self, since: datetime) -> datetime:
-        return since + timedelta(seconds=self._config.recovery_time_secs)
+        return since + timedelta(seconds=self._context.recovery_time_secs)
 
     @property
     def until(self) -> datetime:
@@ -131,8 +131,8 @@ class FailingState(BreakerState):
         if self.remain:
             raise BreakerFailing("Circuit Breaker is in the failing state")
 
-        recovering_state = RecoveringState(self._config)
-        await self._config.event_dispatcher.on_recovering(self, recovering_state)
+        recovering_state = RecoveringState(self._context)
+        await self._context.event_dispatcher.on_recovering(self._context, self, recovering_state)
 
         return recovering_state
 
@@ -150,8 +150,8 @@ class RecoveringState(BreakerState):
 
     __slots__ = ("_consecutive_successes",)
 
-    def __init__(self, config: BreakerConfig) -> None:
-        super().__init__(config)
+    def __init__(self, context: BreakerContext) -> None:
+        super().__init__(context)
 
         self._consecutive_successes: int = 0
 
@@ -162,16 +162,16 @@ class RecoveringState(BreakerState):
     async def on_success(self) -> "BreakerState":
         self._consecutive_successes += 1
 
-        if self.consecutive_successes >= self._config.recovery_threshold:
-            working_state = WorkingState(self._config)
-            await self._config.event_dispatcher.on_working(self, working_state)
+        if self.consecutive_successes >= self._context.recovery_threshold:
+            working_state = WorkingState(self._context)
+            await self._context.event_dispatcher.on_working(self._context, self, working_state)
 
             return working_state
 
         return self
 
     async def on_exception(self) -> "BreakerState":
-        failing_state = FailingState(self._config)
-        await self._config.event_dispatcher.on_failing(self, failing_state)
+        failing_state = FailingState(self._context)
+        await self._context.event_dispatcher.on_failing(self._context, self, failing_state)
 
         return failing_state

@@ -48,8 +48,8 @@ class consecutive_breaker:
         failure_threshold: int = 5,
         recovery_time_secs: DelayT = 30,
         recovery_threshold: int = 3,
-        name: Optional[str] = None,
         listeners: Optional[Sequence[BreakerListener]] = None,
+        name: Optional[str] = None,
     ) -> None:
         self._manager = ConsecutiveCircuitBreaker(
             name=name,

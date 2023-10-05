@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING
 
+from hyx.circuitbreaker.context import BreakerContext
 from hyx.common.events import ListenerRegistry
 
 if TYPE_CHECKING:
@@ -11,13 +12,28 @@ _BREAKER_LISTENERS: ListenerRegistry["BreakerListener"] = ListenerRegistry()
 class BreakerListener:
     # TODO: add on success and on exception methods
 
-    async def on_working(self, current_state: "BreakerState", next_state: "WorkingState") -> None:
+    async def on_working(
+        self,
+        context: BreakerContext,
+        current_state: "BreakerState",
+        next_state: "WorkingState",
+    ) -> None:
         ...
 
-    async def on_recovering(self, current_state: "BreakerState", next_state: "RecoveringState") -> None:
+    async def on_recovering(
+        self,
+        context: BreakerContext,
+        current_state: "BreakerState",
+        next_state: "RecoveringState",
+    ) -> None:
         ...
 
-    async def on_failing(self, current_state: "BreakerState", next_state: "FailingState") -> None:
+    async def on_failing(
+        self,
+        context: BreakerContext,
+        current_state: "BreakerState",
+        next_state: "FailingState",
+    ) -> None:
         ...
 
 
