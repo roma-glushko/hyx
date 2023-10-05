@@ -1,11 +1,41 @@
 import asyncio
-from typing import cast
+from typing import List, cast
 
 import pytest
 
-from hyx.circuitbreaker import consecutive_breaker
+from hyx.circuitbreaker import BreakerListener, consecutive_breaker
+from hyx.circuitbreaker.context import BreakerContext
 from hyx.circuitbreaker.exceptions import BreakerFailing
-from hyx.circuitbreaker.states import FailingState, RecoveringState, WorkingState
+from hyx.circuitbreaker.states import BreakerState, FailingState, RecoveringState, WorkingState
+
+
+class Listener(BreakerListener):
+    def __init__(self) -> None:
+        self.state_history: List[BreakerState] = []
+
+    async def on_working(
+        self,
+        context: BreakerContext,
+        current_state: BreakerState,
+        next_state: WorkingState,
+    ) -> None:
+        self.state_history.append(next_state)
+
+    async def on_recovering(
+        self,
+        context: BreakerContext,
+        current_state: BreakerState,
+        next_state: RecoveringState,
+    ) -> None:
+        self.state_history.append(next_state)
+
+    async def on_failing(
+        self,
+        context: BreakerContext,
+        current_state: BreakerState,
+        next_state: FailingState,
+    ) -> None:
+        self.state_history.append(next_state)
 
 
 async def test__circuitbreaker__decorator_context_success() -> None:

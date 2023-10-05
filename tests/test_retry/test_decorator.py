@@ -113,7 +113,11 @@ async def test__retry__token_bucket_limiter():
     exceptions = 0
 
     @bucket_retry(
-        on=RuntimeError, attempts=attempts, per_time_secs=per_time_secs, bucket_size=bucket_size, listeners=(listener,)
+        on=RuntimeError,
+        attempts=attempts,
+        per_time_secs=per_time_secs,
+        bucket_size=bucket_size,
+        listeners=(listener,),
     )
     async def faulty_func():
         nonlocal calls, exceptions
