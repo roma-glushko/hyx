@@ -15,6 +15,10 @@
   <img loading="lazy" src="https://img.shields.io/pypi/pyversions/hyx.svg?color=%2318afba" alt="Supported Python Versions">
 </a>
 
+<a href="https://discord.gg/EUt2P9jrU7" target="_blank">
+    <img alt="Discord" src="https://img.shields.io/discord/1124268798699118633?label=discord">
+</a>
+
 <br/>
 
 <a href="https://hyx.readthedocs.io/en/latest/?badge=latest">
