@@ -6,7 +6,7 @@ if TYPE_CHECKING:
     from hyx.timeout.manager import TimeoutManager
 
 
-_TIMEOUT_LISTENERS: ListenerRegistry["TimeoutListener"] = ListenerRegistry()
+_TIMEOUT_LISTENERS: ListenerRegistry["TimeoutManager", "TimeoutListener"] = ListenerRegistry()
 
 
 class TimeoutListener:

@@ -1,12 +1,12 @@
 from typing import TYPE_CHECKING
 
-from hyx.events import ListenerRegistry
+from hyx.events import ListenerFactoryT, ListenerRegistry
 
 if TYPE_CHECKING:
     from hyx.retry.counters import Counter
     from hyx.retry.manager import RetryManager
 
-_RETRY_LISTENERS: ListenerRegistry["RetryListener"] = ListenerRegistry()
+_RETRY_LISTENERS: ListenerRegistry["RetryManager", "RetryListener"] = ListenerRegistry()
 
 
 class RetryListener:
@@ -20,7 +20,7 @@ class RetryListener:
         ...
 
 
-def register_retry_listener(listener: RetryListener) -> None:
+def register_retry_listener(listener: RetryListener | ListenerFactoryT) -> None:
     """
     Register a listener that will dispatch on all retry components in the system
     """

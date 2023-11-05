@@ -3,7 +3,7 @@ from typing import Any, Callable, Optional, Sequence, cast
 
 from hyx.events import EventDispatcher, get_default_name
 from hyx.ratelimit.managers import TokenBucketLimiter
-from hyx.retry.events import RetryListener
+from hyx.retry.events import _RETRY_LISTENERS, RetryListener
 from hyx.retry.manager import RetryManager
 from hyx.retry.typing import AttemptsT, BackoffsT, BucketRetryT
 from hyx.typing import ExceptionsT, FuncT
@@ -32,13 +32,17 @@ def retry(
     """
 
     def _decorator(func: FuncT) -> FuncT:
+        event_dispatcher = EventDispatcher[RetryManager, RetryListener](listeners, _RETRY_LISTENERS)
+
         manager = RetryManager(
             name=name or get_default_name(func),
             exceptions=on,
             attempts=attempts,
             backoff=backoff,
-            event_dispatcher=EventDispatcher(listeners).as_listener,
+            event_dispatcher=event_dispatcher.as_listener,
         )
+
+        event_dispatcher.set_component(manager)
 
         @functools.wraps(func)
         async def _wrapper(*args: Any, **kwargs: Any) -> Any:

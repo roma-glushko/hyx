@@ -6,7 +6,7 @@ from hyx.fallback.typing import ResultT
 if TYPE_CHECKING:
     from hyx.fallback.manager import FallbackManager
 
-_FALLBACK_LISTENERS: ListenerRegistry["FallbackListener"] = ListenerRegistry()
+_FALLBACK_LISTENERS: ListenerRegistry["FallbackManager", "FallbackListener"] = ListenerRegistry()
 
 
 class FallbackListener:

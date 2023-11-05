@@ -1,28 +1,12 @@
 import asyncio
 import traceback
 import weakref
-from typing import Callable, Generic, Optional, Sequence, TypeVar, cast
+from typing import Callable, Generic, Optional, Protocol, Sequence, TypeVar, cast, runtime_checkable
 
+ComponentT = TypeVar("ComponentT")
 ListenerT = TypeVar("ListenerT")
 
 _EVENT_MANAGER: Optional["EventManager"] = None
-
-
-def get_default_name(func: Optional[Callable] = None) -> str:
-    """
-    Get the default name of the component based on code context where it's being used
-    """
-    if func:
-        # we have function when we are in the decorator mode
-        try:
-            return func.__qualname__
-        except AttributeError:
-            return func.__name__
-
-    # this is more for context managers
-    traceback.extract_stack(limit=3)
-    # TODO:
-    return ""
 
 
 class EventManager:
@@ -64,41 +48,65 @@ def set_event_manager(event_manager: EventManager) -> None:
     _EVENT_MANAGER = event_manager
 
 
-class EventDispatcher(Generic[ListenerT]):
+@runtime_checkable
+class ListenerFactoryT(Protocol):
+    async def __call__(self, component: ComponentT) -> ListenerT:
+        ...
+
+
+class ListenerRegistry(Generic[ComponentT, ListenerT]):
+    """
+    A listener registry that helps to register component-wide listeners
+    """
+
+    __slots__ = ("_listeners",)
+
+    def __init__(self) -> None:
+        self._listeners: list[ListenerT | ListenerFactoryT] = []
+
+    @property
+    def listeners(self) -> list[ListenerT | ListenerFactoryT]:
+        return self._listeners
+
+    def register(self, listener: ListenerT | ListenerFactoryT) -> None:
+        self._listeners.append(listener)
+
+
+class EventDispatcher(Generic[ComponentT, ListenerT]):
     """
     Dispatches specific sets of listeners that correspond to the specific component on events
     """
 
     __slots__ = (
         "_event_manager",
-        "_listeners",
+        "_local_listeners",
+        "_global_listener_registry",
+        "_component",
+        "_listeners_inited",
+        "_inited_listeners",
     )
 
-    def __init__(self, listeners: Optional[Sequence[ListenerT]] = None) -> None:
-        self._event_manager = _EVENT_MANAGER
-        self._listeners = listeners
+    def __init__(
+        self,
+        local_listeners: Optional[Sequence[ListenerT | ListenerFactoryT]] = None,
+        global_listener_registry: Optional[ListenerRegistry] = None,
+        event_manager: Optional["EventManager"] = None,
+    ) -> None:
+        self._event_manager = event_manager if event_manager else _EVENT_MANAGER
+
+        self._local_listeners = local_listeners or []
+        self._global_listener_registry = global_listener_registry
+
+        self._component: Optional[ComponentT] = None
+        self._listeners_inited: bool = False
+        self._inited_listeners: list[ListenerT] = []
 
     @property
     def as_listener(self) -> ListenerT:
         return cast(ListenerT, self)
 
-    async def execute_listeners(self, event_handler_name: str, *args, **kwargs) -> None:
-        """
-        Execute all relevant listeners in parallel
-        """
-        if not self._listeners:
-            return
-
-        listeners = [
-            getattr(listener, event_handler_name)(*args, **kwargs)
-            for listener in self._listeners
-            if hasattr(listener, event_handler_name)
-        ]
-
-        if not listeners:
-            return
-
-        await asyncio.gather(*listeners)
+    def set_component(self, component: ComponentT) -> None:
+        self._component = component
 
     def __getattr__(self, event_handler_name: str) -> Callable:  # TODO: improve return type
         """
@@ -106,7 +114,7 @@ class EventDispatcher(Generic[ListenerT]):
         """
 
         async def handle_event(*args, **kwargs) -> None:
-            if not self._listeners:
+            if not self._inited_listeners:
                 return
 
             listener_task = asyncio.create_task(
@@ -122,20 +130,59 @@ class EventDispatcher(Generic[ListenerT]):
 
         return handle_event
 
+    async def execute_listeners(self, event_handler_name: str, *args, **kwargs) -> None:
+        """
+        Execute all relevant listeners in parallel
+        """
+        if not self._inited_listeners:
+            return
 
-class ListenerRegistry(Generic[ListenerT]):
+        listeners = [
+            getattr(listener, event_handler_name)(*args, **kwargs)
+            for listener in self._inited_listeners
+            if hasattr(listener, event_handler_name)
+        ]
+
+        if not listeners:
+            return
+
+        await asyncio.gather(*listeners)
+
+    async def _init_listeners(self) -> None:
+        if self._listeners_inited:
+            return
+
+        assert self._component is not None
+
+        self._inited_listeners = []
+
+        global_listeners = self._global_listener_registry.listeners if self._global_listener_registry else []
+
+        for listeners in [self._local_listeners, global_listeners]:
+            for listener in listeners:
+                if isinstance(listener, ListenerFactoryT):
+                    # factory
+                    self._inited_listeners.append(await listener(self._component))
+                    continue
+
+                # singletons
+                self._inited_listeners.append(listener)
+
+        return None
+
+
+def get_default_name(func: Optional[Callable] = None) -> str:
     """
-    A listener registry that helps to register component-wide listeners
+    Get the default name of the component based on code context where it's being used
     """
+    if func:
+        # we have function when we are in the decorator mode
+        try:
+            return func.__qualname__
+        except AttributeError:
+            return func.__name__
 
-    __slots__ = ("_listeners",)
-
-    def __init__(self) -> None:
-        self._listeners: list[ListenerT] = []
-
-    @property
-    def listeners(self) -> list[ListenerT]:
-        return self._listeners
-
-    def register(self, listener: ListenerT) -> None:
-        self._listeners.append(listener)
+    # this is more for context managers
+    traceback.extract_stack(limit=3)
+    # TODO:
+    return ""

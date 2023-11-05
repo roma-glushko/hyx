@@ -5,7 +5,7 @@ from hyx.events import ListenerRegistry
 if TYPE_CHECKING:
     from hyx.bulkhead.manager import BulkheadManager
 
-_BULKHEAD_LISTENERS: ListenerRegistry["BulkheadListener"] = ListenerRegistry()
+_BULKHEAD_LISTENERS: ListenerRegistry["BulkheadManager", "BulkheadListener"] = ListenerRegistry()
 
 
 class BulkheadListener:
