@@ -2,10 +2,10 @@ import functools
 from types import TracebackType
 from typing import Any, Optional, Sequence, Type, cast
 
-from hyx.bulkhead.listeners import BulkheadListener
+from hyx.bulkhead.events import BulkheadListener
 from hyx.bulkhead.manager import BulkheadManager
-from hyx.common.events import EventDispatcher
-from hyx.common.typing import FuncT
+from hyx.events import EventDispatcher
+from hyx.typing import FuncT
 
 
 class bulkhead:

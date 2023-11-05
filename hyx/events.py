@@ -1,5 +1,4 @@
 import asyncio
-import sys
 import traceback
 import weakref
 from typing import Callable, Generic, Optional, Sequence, TypeVar, cast
@@ -9,9 +8,20 @@ ListenerT = TypeVar("ListenerT")
 _EVENT_MANAGER: Optional["EventManager"] = None
 
 
-def get_default_name() -> str:
-    stack = traceback.extract_stack(limit=3)
-    print(stack)
+def get_default_name(func: Optional[Callable] = None) -> str:
+    """
+    Get the default name of the component based on code context where it's being used
+    """
+    if func:
+        # we have function when we are in the decorator mode
+        try:
+            return func.__qualname__
+        except AttributeError:
+            return func.__name__
+
+    # this is more for context managers
+    traceback.extract_stack(limit=3)
+    # TODO:
     return ""
 
 

@@ -2,8 +2,8 @@ import functools
 from types import TracebackType
 from typing import Any, Optional, Type, cast
 
-from hyx.common.typing import FuncT
 from hyx.ratelimit.managers import RateLimiter, TokenBucketLimiter
+from hyx.typing import FuncT
 
 
 class ratelimiter:

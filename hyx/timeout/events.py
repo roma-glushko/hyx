@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING
 
-from hyx.common.events import ListenerRegistry
+from hyx.events import ListenerRegistry
 
 if TYPE_CHECKING:
     from hyx.timeout.manager import TimeoutManager

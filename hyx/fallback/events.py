@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, Any
 
-from hyx.common.events import ListenerRegistry
+from hyx.events import ListenerRegistry
 from hyx.fallback.typing import ResultT
 
 if TYPE_CHECKING:

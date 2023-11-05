@@ -1,11 +1,11 @@
 import functools
 from typing import Any, Callable, Optional, Sequence, cast
 
-from hyx.common.events import EventDispatcher
-from hyx.common.typing import ExceptionsT, FuncT
-from hyx.fallback.listeners import FallbackListener
+from hyx.events import EventDispatcher
+from hyx.fallback.events import FallbackListener
 from hyx.fallback.manager import FallbackManager
 from hyx.fallback.typing import FallbackT, PredicateT
+from hyx.typing import ExceptionsT, FuncT
 
 
 def fallback(

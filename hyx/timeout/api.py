@@ -2,10 +2,10 @@ import functools
 from types import TracebackType
 from typing import Any, Optional, Sequence, Type, cast
 
-from hyx.common.events import EventDispatcher, get_default_name
-from hyx.common.typing import FuncT
-from hyx.timeout.listeners import TimeoutListener
+from hyx.events import EventDispatcher, get_default_name
+from hyx.timeout.events import TimeoutListener
 from hyx.timeout.manager import TimeoutManager
+from hyx.typing import FuncT
 
 
 class timeout:
