@@ -9,6 +9,14 @@ clean: ## Clean temporary files
 	@rm -rf .mutmut-cache
 	@rm -rf site
 
+lint-check: ## Lint source code without modifying it
+	@echo "🧹 Ruff"
+	@ruff $(SOURCE) $(TESTS)
+	@echo "🧹 Black"
+	@black --check $(SOURCE) $(TESTS)
+	@echo "🧽 MyPy"
+	@mypy --pretty $(SOURCE) $(TESTS)
+
 lint: ## Lint source code
 	@echo "🧹 Ruff"
 	@ruff --fix $(SOURCE) $(TESTS)

@@ -46,7 +46,8 @@ jobs:
 
       - run: poetry install --no-interaction
 
-        # TODO: add linting [https://github.com/roma-glushko/hyx/issues/12]
+      - name: "Linting"
+        run: "make lint-check"
 
       - name: "Build package & docs"
         run: "make build"
