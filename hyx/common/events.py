@@ -1,5 +1,4 @@
 import asyncio
-import sys
 import traceback
 import weakref
 from typing import Callable, Generic, Optional, Sequence, TypeVar, cast

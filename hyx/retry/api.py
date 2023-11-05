@@ -1,11 +1,13 @@
 import functools
 from typing import Any, Callable, Optional, Sequence, cast
+
 from hyx.common.events import EventDispatcher
 from hyx.common.typing import ExceptionsT, FuncT
 from hyx.ratelimit.managers import TokenBucketLimiter
 from hyx.retry.listeners import RetryListener
 from hyx.retry.manager import RetryManager
 from hyx.retry.typing import AttemptsT, BackoffsT, BucketRetryT
+
 
 def retry(
     *,
@@ -48,6 +50,7 @@ def retry(
 
     return _decorator
 
+
 def bucket_retry(
     *,
     on: ExceptionsT = Exception,
@@ -56,18 +59,14 @@ def bucket_retry(
     name: Optional[str] = None,
     listeners: Optional[Sequence[RetryListener]] = None,
     per_time_secs: BucketRetryT = 1,
-    bucket_size: BucketRetryT = 3
+    bucket_size: BucketRetryT = 3,
 ) -> Callable[[Callable], Callable]:
     """
     `@bucket_retry()` decorator retries until we have tokens in the bucket and at most that number of times per request.
 
     """
-    limiter = (
-        TokenBucketLimiter(attempts, per_time_secs, bucket_size)
-        if attempts and per_time_secs
-        else None
-    )
-    
+    limiter = TokenBucketLimiter(attempts, per_time_secs, bucket_size) if attempts and per_time_secs else None
+
     manager = RetryManager(
         name=name,
         exceptions=on,
