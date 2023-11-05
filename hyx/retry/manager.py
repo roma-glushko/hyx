@@ -2,12 +2,13 @@ import asyncio
 from typing import Any, Optional
 
 from hyx.common.typing import ExceptionsT, FuncT
+from hyx.ratelimit.managers import TokenBucketLimiter
 from hyx.retry.backoffs import create_backoff
 from hyx.retry.counters import create_counter
 from hyx.retry.exceptions import AttemptsExceeded
 from hyx.retry.listeners import RetryListener
 from hyx.retry.typing import AttemptsT, BackoffsT
-from hyx.ratelimit.managers import TokenBucketLimiter
+
 
 class RetryManager:
     __slots__ = ("_name", "_exceptions", "_attempts", "_backoff", "_waiter", "_event_dispatcher", "_limiter")
@@ -46,4 +47,3 @@ class RetryManager:
         except AttemptsExceeded:
             await self._event_dispatcher.on_attempts_exceeded(self)
             raise
-
