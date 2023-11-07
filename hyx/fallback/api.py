@@ -1,8 +1,8 @@
 import functools
 from typing import Any, Callable, Optional, Sequence, cast
 
-from hyx.events import EventDispatcher
-from hyx.fallback.events import FallbackListener
+from hyx.events import EventDispatcher, get_default_name, EventManager
+from hyx.fallback.events import _FALLBACK_LISTENERS, FallbackListener
 from hyx.fallback.manager import FallbackManager
 from hyx.fallback.typing import FallbackT, PredicateT
 from hyx.typing import ExceptionsT, FuncT
@@ -15,6 +15,7 @@ def fallback(
     on: Optional[ExceptionsT] = Exception,
     if_: Optional[PredicateT] = None,
     listeners: Optional[Sequence[FallbackListener]] = None,
+    event_manager: Optional["EventManager"] = None,
 ) -> Callable[[Callable], Callable]:
     """
     Provides a fallback on exceptions and/or specific result of the original function
@@ -31,15 +32,23 @@ def fallback(
     if not on and not if_:
         raise ValueError("Either on or if_ param should be specified when using the fallback decorator")
 
-    manager = FallbackManager(
-        name=name,
-        handler=handler,
-        exceptions=on,
-        predicate=if_,
-        event_dispatcher=EventDispatcher(listeners).as_listener,
-    )
-
     def _decorator(func: FuncT) -> FuncT:
+        event_dispatcher = EventDispatcher[FallbackManager, FallbackListener](
+            listeners,
+            _FALLBACK_LISTENERS,
+            event_manager=event_manager,
+        )
+
+        manager = FallbackManager(
+            name=name or get_default_name(func),
+            handler=handler,
+            exceptions=on,
+            predicate=if_,
+            event_dispatcher=event_dispatcher.as_listener,
+        )
+
+        event_dispatcher.set_component(manager)
+
         @functools.wraps(func)
         async def _wrapper(*args: Any, **kwargs: Any) -> Any:
             return await manager(func, *args, **kwargs)

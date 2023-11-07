@@ -2,9 +2,9 @@ import functools
 from types import TracebackType
 from typing import Any, Optional, Sequence, Type, cast
 
-from hyx.bulkhead.events import BulkheadListener
+from hyx.bulkhead.events import _BULKHEAD_LISTENERS, BulkheadListener
 from hyx.bulkhead.manager import BulkheadManager
-from hyx.events import EventDispatcher
+from hyx.events import EventDispatcher, EventManager
 from hyx.typing import FuncT
 
 
@@ -31,14 +31,22 @@ class bulkhead:
         *,
         name: Optional[str] = None,
         listeners: Optional[Sequence[BulkheadListener]] = None,
+        event_manager: Optional["EventManager"] = None,
     ) -> None:
+        event_dispatcher = EventDispatcher[BulkheadManager, BulkheadListener](
+            listeners,
+            _BULKHEAD_LISTENERS,
+            event_manager=event_manager,
+        )
 
         self._manager = BulkheadManager(
             max_concurrency=max_concurrency,
             max_capacity=max_capacity,
             name=name,
-            event_dispatcher=EventDispatcher(listeners).as_listener,
+            event_dispatcher=event_dispatcher.as_listener,
         )
+
+        event_dispatcher.set_component(self._manager)
 
     async def __aenter__(self) -> "bulkhead":
         await self._manager.acquire()

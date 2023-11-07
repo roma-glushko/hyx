@@ -2,13 +2,13 @@ from unittest.mock import Mock
 
 import pytest
 
+from hyx.events import EventManager
 from hyx.retry import retry
 from hyx.retry.api import bucket_retry
 from hyx.retry.counters import Counter
 from hyx.retry.events import RetryListener
 from hyx.retry.exceptions import AttemptsExceeded
 from hyx.retry.manager import RetryManager
-from tests.conftest import event_manager
 
 
 class Listener(RetryListener):
@@ -32,9 +32,10 @@ async def test__retry__decorate_async_func() -> None:
 
 
 async def test__retry__max_retry_exceeded() -> None:
+    event_manager = EventManager()
     listener = Listener()
 
-    @retry(listeners=(listener,))
+    @retry(listeners=(listener,), event_manager=event_manager)
     async def faulty_func() -> float:
         return 1 / 0
 
@@ -64,9 +65,10 @@ async def test__retry__pass_different_error() -> None:
 
 async def test__retry__infinite_retries() -> None:
     execs = 0
+    event_manager = EventManager()
     listener = Listener()
 
-    @retry(on=RuntimeError, attempts=None, listeners=(listener,))
+    @retry(on=RuntimeError, attempts=None, listeners=(listener,), event_manager=event_manager)
     async def flaky_error() -> int:
         nonlocal execs
 
@@ -83,10 +85,12 @@ async def test__retry__infinite_retries() -> None:
 
 
 async def test__retry__global_retry_limit() -> None:
-    listener = Listener()
     attempts = 4
     per_time_secs = 1
     bucket_size = 4
+
+    listener = Listener()
+    event_manager = EventManager()
 
     @bucket_retry(
         on=RuntimeError,
@@ -94,6 +98,7 @@ async def test__retry__global_retry_limit() -> None:
         per_time_secs=per_time_secs,
         bucket_size=bucket_size,
         listeners=(listener,),
+        event_manager=event_manager,
     )
     async def faulty_func() -> int:
         raise RuntimeError
@@ -108,7 +113,6 @@ async def test__retry__global_retry_limit() -> None:
 
 
 async def test__retry__token_bucket_limiter():
-    listener = Listener()
     attempts = 5
     per_time_secs = 2
     bucket_size = 3
@@ -116,12 +120,16 @@ async def test__retry__token_bucket_limiter():
     calls = 0
     exceptions = 0
 
+    event_manager = EventManager()
+    listener = Listener()
+
     @bucket_retry(
         on=RuntimeError,
         attempts=attempts,
         per_time_secs=per_time_secs,
         bucket_size=bucket_size,
         listeners=(listener,),
+        event_manager=event_manager,
     )
     async def faulty_func():
         nonlocal calls, exceptions

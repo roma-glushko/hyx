@@ -1,7 +1,7 @@
 import asyncio
 import traceback
 import weakref
-from typing import Callable, Generic, Optional, Protocol, Sequence, TypeVar, cast, runtime_checkable
+from typing import Callable, Generic, List, Optional, Protocol, Sequence, TypeVar, cast, runtime_checkable
 
 ComponentT = TypeVar("ComponentT")
 ListenerT = TypeVar("ListenerT")
@@ -98,8 +98,7 @@ class EventDispatcher(Generic[ComponentT, ListenerT]):
         self._global_listener_registry = global_listener_registry
 
         self._component: Optional[ComponentT] = None
-        self._listeners_inited: bool = False
-        self._inited_listeners: list[ListenerT] = []
+        self._inited_listeners: Optional[List[ListenerT]] = None
 
     @property
     def as_listener(self) -> ListenerT:
@@ -114,7 +113,7 @@ class EventDispatcher(Generic[ComponentT, ListenerT]):
         """
 
         async def handle_event(*args, **kwargs) -> None:
-            if not self._inited_listeners:
+            if not await self._get_or_init_listeners():
                 return
 
             listener_task = asyncio.create_task(
@@ -134,25 +133,27 @@ class EventDispatcher(Generic[ComponentT, ListenerT]):
         """
         Execute all relevant listeners in parallel
         """
-        if not self._inited_listeners:
+        local_listeners = await self._get_or_init_listeners()
+
+        if not local_listeners:
             return
 
-        listeners = [
+        listeners_to_wakeup = [
             getattr(listener, event_handler_name)(*args, **kwargs)
-            for listener in self._inited_listeners
+            for listener in local_listeners
             if hasattr(listener, event_handler_name)
         ]
 
-        if not listeners:
+        if not listeners_to_wakeup:
             return
 
-        await asyncio.gather(*listeners)
+        await asyncio.gather(*listeners_to_wakeup)
 
-    async def _init_listeners(self) -> None:
-        if self._listeners_inited:
-            return
+    async def _get_or_init_listeners(self) -> List[ListenerT]:
+        if self._inited_listeners is not None:
+            return self._inited_listeners
 
-        assert self._component is not None
+        assert self._component is not None, "Component has not been assigned to event dispatcher"
 
         self._inited_listeners = []
 
@@ -168,7 +169,7 @@ class EventDispatcher(Generic[ComponentT, ListenerT]):
                 # singletons
                 self._inited_listeners.append(listener)
 
-        return None
+        return self._inited_listeners
 
 
 def get_default_name(func: Optional[Callable] = None) -> str:

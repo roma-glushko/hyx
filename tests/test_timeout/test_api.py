@@ -3,10 +3,10 @@ from unittest.mock import Mock
 
 import pytest
 
+from hyx.events import EventManager
 from hyx.timeout import TimeoutListener, timeout
 from hyx.timeout.exceptions import MaxDurationExceeded
 from hyx.timeout.manager import TimeoutManager
-from tests.conftest import event_manager
 
 
 class Listener(TimeoutListener):
@@ -27,10 +27,12 @@ async def test__timeout__decorator() -> None:
 
 
 async def test__timeout__context() -> None:
-    var = 41
+    event_manager = EventManager()
     listener = Listener()
 
-    async with timeout(0.5, listeners=(listener,)):
+    var = 41
+
+    async with timeout(0.5, listeners=(listener,), event_manager=event_manager):
         var += 1
         await asyncio.sleep(0.01)
 
@@ -41,10 +43,11 @@ async def test__timeout__context() -> None:
 
 
 async def test__timeout__context_timeout_exceeded() -> None:
+    event_manager = EventManager()
     listener = Listener()
 
     with pytest.raises(MaxDurationExceeded):
-        async with timeout(0.01, listeners=(listener,)):
+        async with timeout(0.01, listeners=(listener,), event_manager=event_manager):
             await asyncio.sleep(1)
 
     await event_manager.wait_for_tasks()
@@ -53,9 +56,10 @@ async def test__timeout__context_timeout_exceeded() -> None:
 
 
 async def test__timeout__duration_equal() -> None:
+    event_manager = EventManager()
     listener1, listener2 = Listener(), Listener()
 
-    @timeout(0.1, listeners=(listener1, listener2))
+    @timeout(0.1, listeners=(listener1, listener2), event_manager=event_manager)
     async def func() -> float:
         await asyncio.sleep(0.1)
         return 42
