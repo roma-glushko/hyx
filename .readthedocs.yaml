@@ -8,7 +8,7 @@ build:
     python: "3.9"
   jobs:
     post_install:
-      - pip install poetry==1.2.0b1
+      - pip install poetry==1.4.2
       - poetry config virtualenvs.create false
       - poetry install --with doc
 
