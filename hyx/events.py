@@ -1,7 +1,7 @@
 import asyncio
 import traceback
 import weakref
-from typing import Callable, Generic, List, Optional, Protocol, Sequence, TypeVar, cast, runtime_checkable
+from typing import Callable, Generic, List, Optional, Protocol, Sequence, TypeVar, Union, cast, runtime_checkable
 
 ComponentT = TypeVar("ComponentT")
 ListenerT = TypeVar("ListenerT")
@@ -62,13 +62,13 @@ class ListenerRegistry(Generic[ComponentT, ListenerT]):
     __slots__ = ("_listeners",)
 
     def __init__(self) -> None:
-        self._listeners: list[ListenerT | ListenerFactoryT] = []
+        self._listeners: list[Union[ListenerT, ListenerFactoryT]] = []
 
     @property
-    def listeners(self) -> list[ListenerT | ListenerFactoryT]:
+    def listeners(self) -> list[Union[ListenerT, ListenerFactoryT]]:
         return self._listeners
 
-    def register(self, listener: ListenerT | ListenerFactoryT) -> None:
+    def register(self, listener: Union[ListenerT, ListenerFactoryT]) -> None:
         self._listeners.append(listener)
 
 
@@ -88,7 +88,7 @@ class EventDispatcher(Generic[ComponentT, ListenerT]):
 
     def __init__(
         self,
-        local_listeners: Optional[Sequence[ListenerT | ListenerFactoryT]] = None,
+        local_listeners: Optional[Sequence[Union[ListenerT, ListenerFactoryT]]] = None,
         global_listener_registry: Optional[ListenerRegistry] = None,
         event_manager: Optional["EventManager"] = None,
     ) -> None:
