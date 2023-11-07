@@ -1,6 +1,7 @@
 import asyncio
 from typing import Optional
 
+from hyx.ratelimit.events import RateLimiterListener
 from hyx.ratelimit.exceptions import RateLimitExceeded
 
 
@@ -26,7 +27,14 @@ class TokenBucketLimiter(RateLimiter):
         "_next_replenish_at",
     )
 
-    def __init__(self, max_executions: float, per_time_secs: float, bucket_size: Optional[float] = None) -> None:
+    def __init__(
+        self,
+        name: str,
+        max_executions: float,
+        per_time_secs: float,
+        event_dispatcher: RateLimiterListener,
+        bucket_size: Optional[float] = None,
+    ) -> None:
         self._max_executions = max_executions
         self._per_time_secs = per_time_secs
 
