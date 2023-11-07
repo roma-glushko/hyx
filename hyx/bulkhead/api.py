@@ -4,7 +4,7 @@ from typing import Any, Optional, Sequence, Type, cast
 
 from hyx.bulkhead.events import _BULKHEAD_LISTENERS, BulkheadListener
 from hyx.bulkhead.manager import BulkheadManager
-from hyx.events import EventDispatcher, EventManager
+from hyx.events import EventDispatcher, EventManager, get_default_name
 from hyx.typing import FuncT
 
 
@@ -40,9 +40,9 @@ class bulkhead:
         )
 
         self._manager = BulkheadManager(
+            name=name or get_default_name(),
             max_concurrency=max_concurrency,
             max_capacity=max_capacity,
-            name=name,
             event_dispatcher=event_dispatcher.as_listener,
         )
 

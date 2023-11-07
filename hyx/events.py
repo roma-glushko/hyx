@@ -184,6 +184,6 @@ def get_default_name(func: Optional[Callable] = None) -> str:
             return func.__name__
 
     # this is more for context managers
-    traceback.extract_stack(limit=3)
-    # TODO:
-    return ""
+    stack = traceback.extract_stack(limit=3)
+
+    return stack[0].name
