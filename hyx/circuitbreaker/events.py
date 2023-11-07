@@ -1,12 +1,13 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 
 from hyx.circuitbreaker.context import BreakerContext
-from hyx.common.events import ListenerRegistry
+from hyx.circuitbreaker.managers import ConsecutiveCircuitBreaker
+from hyx.events import ListenerFactoryT, ListenerRegistry
 
 if TYPE_CHECKING:
     from hyx.circuitbreaker.states import BreakerState, FailingState, RecoveringState, WorkingState
 
-_BREAKER_LISTENERS: ListenerRegistry["BreakerListener"] = ListenerRegistry()
+_BREAKER_LISTENERS: ListenerRegistry["ConsecutiveCircuitBreaker", "BreakerListener"] = ListenerRegistry()
 
 
 class BreakerListener:
@@ -37,7 +38,7 @@ class BreakerListener:
         ...
 
 
-def register_breaker_listener(listener: BreakerListener) -> None:
+def register_breaker_listener(listener: Union[BreakerListener, ListenerFactoryT]) -> None:
     """
     Register a listener that will listen to all circuit breaker components in the system
     """

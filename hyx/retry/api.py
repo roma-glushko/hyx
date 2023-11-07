@@ -9,7 +9,6 @@ from hyx.retry.typing import AttemptsT, BackoffsT, BucketRetryT
 from hyx.typing import ExceptionsT, FuncT
 
 
-
 def retry(
     *,
     on: ExceptionsT = Exception,

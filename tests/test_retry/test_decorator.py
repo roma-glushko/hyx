@@ -11,7 +11,6 @@ from hyx.retry.exceptions import AttemptsExceeded
 from hyx.retry.manager import RetryManager
 
 
-
 class Listener(RetryListener):
     def __init__(self) -> None:
         self.retries = 0
@@ -100,16 +99,20 @@ async def test__retry__infinite_retries() -> None:
     listener.succeed.assert_called()
 
 
-
 async def test__retry__global_retry_limit() -> None:
     attempts = 4
     per_time_secs = 1
     bucket_size = 4
 
     listener = Listener()
-    event_manager = EventManager()@bucket_retry(
-        on=RuntimeError, attempts=attempts, per_time_secs=per_time_secs, bucket_size=bucket_size, listeners=(listener,)
-    ,
+    event_manager = EventManager()
+
+    @bucket_retry(
+        on=RuntimeError,
+        attempts=attempts,
+        per_time_secs=per_time_secs,
+        bucket_size=bucket_size,
+        listeners=(listener,),
         event_manager=event_manager,
     )
     async def faulty_func() -> int:

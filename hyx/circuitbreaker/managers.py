@@ -18,12 +18,12 @@ class ConsecutiveCircuitBreaker:
 
     def __init__(
         self,
+        name: str,
         exceptions: ExceptionsT,
         failure_threshold: int,
         recovery_time_secs: DelayT,
         recovery_threshold: int,
         event_dispatcher: "BreakerListener",
-        name: Optional[str] = None,
     ) -> None:
         self._name = name
 
