@@ -1,7 +1,7 @@
 import dataclasses
 
 from hyx.circuitbreaker.typing import DelayT
-from hyx.common.typing import ExceptionsT
+from hyx.typing import ExceptionsT
 
 
 @dataclasses.dataclass

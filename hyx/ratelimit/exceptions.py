@@ -1,4 +1,4 @@
-from hyx.common.exceptions import HyxError
+from hyx.exceptions import HyxError
 
 
 class RateLimitExceeded(HyxError):

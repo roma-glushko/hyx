@@ -1,10 +1,10 @@
 import asyncio
 from typing import Any, Optional, Type
 
-from hyx.common.typing import FuncT
+from hyx.timeout.events import TimeoutListener
 from hyx.timeout.exceptions import MaxDurationExceeded
-from hyx.timeout.listeners import TimeoutListener
 from hyx.timeout.typing import DurationT
+from hyx.typing import FuncT
 
 
 class TimeoutManager:

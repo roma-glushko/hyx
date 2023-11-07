@@ -3,7 +3,7 @@ from typing import Any, Optional
 from hyx.circuitbreaker.config import BreakerConfig
 from hyx.circuitbreaker.states import BreakerState, WorkingState
 from hyx.circuitbreaker.typing import DelayT
-from hyx.common.typing import ExceptionsT, FuncT
+from hyx.typing import ExceptionsT, FuncT
 
 
 class ConsecutiveCircuitBreaker:
