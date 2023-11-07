@@ -40,11 +40,7 @@ class Listener(BreakerListener):
     ) -> None:
         self.state_history.append(next_state.NAME)
 
-    async def on_success(
-        self,
-        context: BreakerContext,
-        state: "BreakerState"
-    ) -> None:
+    async def on_success(self, context: BreakerContext, state: "BreakerState") -> None:
         self.state_history.append(state.NAME)
         self.succeed()
 
@@ -71,7 +67,6 @@ async def test__circuitbreaker__decorator_context_success() -> None:
     await event_manager.wait_for_tasks()
 
     listener.succeed.assert_called()
-
 
 
 async def test__circuitbreaker__decorator__pass_known_exceptions() -> None:
@@ -156,8 +151,7 @@ async def test__circuitbreaker__consecutive__state_transitions_with_success_in_t
     await event_manager.wait_for_tasks()
 
     listener.succeed.assert_called()
-    assert listener.state_history == ['failing', 'recovering', 'recovering', 'recovering', 'working']
-
+    assert listener.state_history == ["failing", "recovering", "recovering", "recovering", "working"]
 
 
 async def test__circuitbreaker__consecutive__state_transitions_with_failure_in_the_end() -> None:

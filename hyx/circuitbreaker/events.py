@@ -37,11 +37,7 @@ class BreakerListener:
     ) -> None:
         ...
 
-    async def on_success(
-        self,
-        context: BreakerContext,
-        state: "BreakerState"
-    ) -> None:
+    async def on_success(self, context: BreakerContext, state: "BreakerState") -> None:
         ...
 
 
