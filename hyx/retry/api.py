@@ -1,7 +1,7 @@
 import functools
 from typing import Any, Callable, Optional, Sequence, cast
 
-from hyx.events import EventDispatcher, get_default_name, EventManager
+from hyx.events import EventDispatcher, EventManager, get_default_name
 from hyx.ratelimit.managers import TokenBucketLimiter
 from hyx.retry.events import _RETRY_LISTENERS, RetryListener
 from hyx.retry.manager import RetryManager

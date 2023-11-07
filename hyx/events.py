@@ -133,14 +133,14 @@ class EventDispatcher(Generic[ComponentT, ListenerT]):
         """
         Execute all relevant listeners in parallel
         """
-        local_listeners = await self._get_or_init_listeners()
+        listeners = await self._get_or_init_listeners()
 
-        if not local_listeners:
+        if not listeners:
             return
 
         listeners_to_wakeup = [
             getattr(listener, event_handler_name)(*args, **kwargs)
-            for listener in local_listeners
+            for listener in listeners
             if hasattr(listener, event_handler_name)
         ]
 

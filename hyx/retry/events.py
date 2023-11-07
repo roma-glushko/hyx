@@ -16,7 +16,7 @@ class RetryListener:
     async def on_attempts_exceeded(self, retry: "RetryManager") -> None:
         ...
 
-    async def on_success(self, retry: "RetryManager", counter: "Counter"):
+    async def on_success(self, retry: "RetryManager", counter: "Counter") -> None:
         ...
 
 

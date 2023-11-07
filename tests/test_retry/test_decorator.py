@@ -15,6 +15,7 @@ class Listener(RetryListener):
     def __init__(self) -> None:
         self.retries = 0
         self.attempts_exceeded = Mock()
+        self.succeed = Mock()
 
     async def on_retry(self, retry: "RetryManager", exception: Exception, counter: "Counter", backoff: float) -> None:
         self.retries += 1
@@ -22,13 +23,24 @@ class Listener(RetryListener):
     async def on_attempts_exceeded(self, retry: "RetryManager") -> None:
         self.attempts_exceeded()
 
+    async def on_success(self, retry: "RetryManager", counter: "Counter") -> None:
+        self.succeed()
+
 
 async def test__retry__decorate_async_func() -> None:
-    @retry()
+    event_manager = EventManager()
+    listener = Listener()
+
+    @retry(listeners=(listener,), event_manager=event_manager)
     async def simple_func() -> int:
         return 2022
 
     await simple_func()
+
+    await event_manager.wait_for_tasks()
+
+    listener.succeed.assert_called()
+    listener.attempts_exceeded.assert_not_called()
 
 
 async def test__retry__max_retry_exceeded() -> None:
@@ -45,6 +57,7 @@ async def test__retry__max_retry_exceeded() -> None:
     await event_manager.wait_for_tasks()
 
     listener.attempts_exceeded.assert_called()
+    listener.succeed.assert_not_called()
 
 
 async def test__retry__pass_different_error() -> None:
@@ -78,10 +91,12 @@ async def test__retry__infinite_retries() -> None:
 
         return 42
 
+    assert await flaky_error() == 42
+
     await event_manager.wait_for_tasks()
 
-    assert await flaky_error() == 42
     assert listener.retries == execs
+    listener.succeed.assert_called()
 
 
 async def test__retry__global_retry_limit() -> None:
@@ -134,12 +149,17 @@ async def test__retry__token_bucket_limiter():
     async def faulty_func():
         nonlocal calls, exceptions
         calls += 1
+
         if calls <= attempts:
             exceptions += 1
             raise RuntimeError
+
         return True
 
     result = await faulty_func()
     assert result is True
-
     assert exceptions <= attempts
+
+    await event_manager.wait_for_tasks()
+
+    listener.succeed.assert_called()
