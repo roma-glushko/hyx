@@ -3,10 +3,10 @@ from unittest.mock import Mock
 
 import pytest
 
+from hyx.events import EventManager
 from hyx.fallback import FallbackListener, fallback
 from hyx.fallback.manager import FallbackManager
 from hyx.fallback.typing import ResultT
-from tests.conftest import event_manager
 
 
 class Listener(FallbackListener):
@@ -18,12 +18,13 @@ class Listener(FallbackListener):
 
 
 async def test__fallback__decorator() -> None:
+    event_manager = EventManager()
+    listener = Listener()
+
     async def handler(result: ResultT, *args: Any, **kwargs: Any) -> str:
         return "falling back"
 
-    listener = Listener()
-
-    @fallback(handler, on=Exception, listeners=(listener,))
+    @fallback(handler, on=Exception, listeners=(listener,), event_manager=event_manager)
     async def imokay(degree: str = "a", *, totally: bool = True) -> str:
         adverb: str = "totally " if totally else ""
 
@@ -38,12 +39,13 @@ async def test__fallback__decorator() -> None:
 
 
 async def test__fallback__on_failure() -> None:
+    event_manager = EventManager()
+    listener = Listener()
+
     async def handler(result: ResultT, *args, **kwargs) -> str:
         return "falling back"
 
-    listener = Listener()
-
-    @fallback(handler, on=(RuntimeError,), listeners=(listener,))
+    @fallback(handler, on=(RuntimeError,), listeners=(listener,), event_manager=event_manager)
     async def imokay() -> str:
         raise RuntimeError("runtime is not okay")
 

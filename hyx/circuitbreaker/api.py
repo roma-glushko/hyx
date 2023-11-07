@@ -7,7 +7,7 @@ from hyx.circuitbreaker.managers import ConsecutiveCircuitBreaker
 from hyx.circuitbreaker.states import BreakerState
 from hyx.circuitbreaker.typing import DelayT
 from hyx.common.events import EventDispatcher
-from hyx.common.typing import ExceptionsT, FuncT
+from hyx.typing import ExceptionsT, FuncT
 
 
 class consecutive_breaker:

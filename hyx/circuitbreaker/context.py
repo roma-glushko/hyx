@@ -2,7 +2,7 @@ import dataclasses
 from typing import TYPE_CHECKING, Optional
 
 from hyx.circuitbreaker.typing import DelayT
-from hyx.common.typing import ExceptionsT
+from hyx.typing import ExceptionsT
 
 if TYPE_CHECKING:
     from hyx.circuitbreaker import BreakerListener

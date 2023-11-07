@@ -1,0 +1,26 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: Hyx
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file
+type: software
+authors:
+  - given-names: Roman
+    family-names: Hlushko
+    email: roman.glushko.m@gmail.com
+repository-code: 'https://github.com/roma-glushko/hyx'
+url: 'https://hyx.readthedocs.io/en/latest/'
+abstract: >-
+  Lightweight fault tolerant primitives for your modern
+  asyncio Python microservices
+keywords:
+  - distributed systems
+  - resiliency patterns
+  - microservices
+  - circuit breakers
+  - retries
+  - bulkheads
+license: MIT

@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Any, Optional
 from hyx.circuitbreaker.context import BreakerContext
 from hyx.circuitbreaker.states import BreakerState, WorkingState
 from hyx.circuitbreaker.typing import DelayT
-from hyx.common.typing import ExceptionsT, FuncT
+from hyx.typing import ExceptionsT, FuncT
 
 if TYPE_CHECKING:
     from hyx.circuitbreaker import BreakerListener
