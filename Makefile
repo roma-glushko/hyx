@@ -1,6 +1,14 @@
 SOURCE?=hyx docs/snippets
 TESTS?=tests
 
+.PHONY: help
+
+help:
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+
+install: ## Install project dependencies
+	@poetry install
+
 clean: ## Clean temporary files
 	@echo "🧹 Cleaning temporary files.."
 	@rm -rf dist
@@ -22,6 +30,8 @@ lint: ## Lint source code
 	@poetry run ruff --fix $(SOURCE) $(TESTS)
 	@echo "🧹 Black"
 	@poetry run black $(SOURCE) $(TESTS)
+	@echo "🧹 Ruff"
+	@ruff --fix $(SOURCE) $(TESTS)
 	@echo "🧽 MyPy"
 	@poetry run mypy --pretty $(SOURCE) $(TESTS)
 

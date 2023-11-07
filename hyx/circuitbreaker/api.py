@@ -1,10 +1,12 @@
 import functools
 from types import TracebackType
-from typing import Any, Optional, Type, cast
+from typing import Any, Optional, Sequence, Type, cast
 
+from hyx.circuitbreaker.events import _BREAKER_LISTENERS, BreakerListener
 from hyx.circuitbreaker.managers import ConsecutiveCircuitBreaker
 from hyx.circuitbreaker.states import BreakerState
 from hyx.circuitbreaker.typing import DelayT
+from hyx.events import EventDispatcher, EventManager, get_default_name
 from hyx.typing import ExceptionsT, FuncT
 
 
@@ -46,13 +48,26 @@ class consecutive_breaker:
         failure_threshold: int = 5,
         recovery_time_secs: DelayT = 30,
         recovery_threshold: int = 3,
+        listeners: Optional[Sequence[BreakerListener]] = None,
+        name: Optional[str] = None,
+        event_manager: Optional["EventManager"] = None,
     ) -> None:
+        event_dispatcher = EventDispatcher[ConsecutiveCircuitBreaker, BreakerListener](
+            listeners,
+            _BREAKER_LISTENERS,
+            event_manager=event_manager,
+        )
+
         self._manager = ConsecutiveCircuitBreaker(
+            name=name or get_default_name(),
             exceptions=exceptions,
             failure_threshold=failure_threshold,
             recovery_time_secs=recovery_time_secs,
             recovery_threshold=recovery_threshold,
+            event_dispatcher=event_dispatcher.as_listener,
         )
+
+        event_dispatcher.set_component(self._manager)
 
     @property
     def state(self) -> "BreakerState":

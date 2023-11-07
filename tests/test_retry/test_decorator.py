@@ -47,7 +47,7 @@ async def test__retry__max_retry_exceeded() -> None:
     event_manager = EventManager()
     listener = Listener()
 
-    @retry(listeners=(listener,), event_manager=event_manager)
+    @retry(backoff=0.1, listeners=(listener,), event_manager=event_manager)
     async def faulty_func() -> float:
         return 1 / 0
 
@@ -61,11 +61,11 @@ async def test__retry__max_retry_exceeded() -> None:
 
 
 async def test__retry__pass_different_error() -> None:
-    @retry(on=ValueError)
+    @retry(on=ValueError, backoff=0.1)
     async def faulty_func() -> float:
         return 1 / 0
 
-    @retry(on=(ValueError, ZeroDivisionError))
+    @retry(on=(ValueError, ZeroDivisionError), backoff=0.1)
     async def runtime_func() -> float:
         raise RuntimeError("unhandled error")
 
@@ -81,7 +81,7 @@ async def test__retry__infinite_retries() -> None:
     event_manager = EventManager()
     listener = Listener()
 
-    @retry(on=RuntimeError, attempts=None, listeners=(listener,), event_manager=event_manager)
+    @retry(on=RuntimeError, attempts=None, backoff=0.1, listeners=(listener,), event_manager=event_manager)
     async def flaky_error() -> int:
         nonlocal execs
 
@@ -110,6 +110,7 @@ async def test__retry__global_retry_limit() -> None:
     @bucket_retry(
         on=RuntimeError,
         attempts=attempts,
+        backoff=0.1,
         per_time_secs=per_time_secs,
         bucket_size=bucket_size,
         listeners=(listener,),
@@ -129,7 +130,7 @@ async def test__retry__global_retry_limit() -> None:
 
 async def test__retry__token_bucket_limiter():
     attempts = 5
-    per_time_secs = 2
+    per_time_secs = 1
     bucket_size = 3
 
     calls = 0
@@ -157,6 +158,7 @@ async def test__retry__token_bucket_limiter():
         return True
 
     result = await faulty_func()
+
     assert result is True
     assert exceptions <= attempts
 
