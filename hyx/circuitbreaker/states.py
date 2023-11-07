@@ -55,6 +55,7 @@ class WorkingState(BreakerState):
         Reset the failure counter
         """
         self._reset_exceptions_count()
+        await self._context.event_dispatcher.on_success(self._context, self)
 
         return self
 
@@ -161,6 +162,7 @@ class RecoveringState(BreakerState):
 
     async def on_success(self) -> "BreakerState":
         self._consecutive_successes += 1
+        await self._context.event_dispatcher.on_success(self._context, self)
 
         if self.consecutive_successes >= self._context.recovery_threshold:
             working_state = WorkingState(self._context)
