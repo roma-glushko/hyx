@@ -11,3 +11,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+load('ext://helm_resource', 'helm_resource', 'helm_repo')
+
+helm_repo('signoz', 'https://charts.signoz.io')
+helm_resource(
+    'observability',
+    'signoz/signoz',
+    # namespace="observability",
+)
