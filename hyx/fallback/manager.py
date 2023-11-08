@@ -1,8 +1,8 @@
 from typing import Any, Optional
 
-from hyx.common.typing import ExceptionsT, FuncT
-from hyx.fallback.listeners import FallbackListener
+from hyx.fallback.events import FallbackListener
 from hyx.fallback.typing import FallbackT, PredicateT
+from hyx.typing import ExceptionsT, FuncT
 
 
 class FallbackManager:

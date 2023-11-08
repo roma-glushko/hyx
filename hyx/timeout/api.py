@@ -2,10 +2,10 @@ import functools
 from types import TracebackType
 from typing import Any, Optional, Sequence, Type, cast
 
-from hyx.common.events import EventDispatcher, get_default_name
-from hyx.common.typing import FuncT
-from hyx.timeout.listeners import TimeoutListener
+from hyx.events import EventDispatcher, EventManager, get_default_name
+from hyx.timeout.events import _TIMEOUT_LISTENERS, TimeoutListener
 from hyx.timeout.manager import TimeoutManager
+from hyx.typing import FuncT
 
 
 class timeout:
@@ -23,24 +23,42 @@ class timeout:
         "_timeout_secs",
         "_timeout_manager",
         "_name",
-        "_listeners",
+        "_event_manager",
+        "_local_listeners",
     )
 
     def __init__(
-        self, timeout_secs: float, *, name: Optional[str] = None, listeners: Optional[Sequence[TimeoutListener]] = None
+        self,
+        timeout_secs: float,
+        *,
+        name: Optional[str] = None,
+        listeners: Optional[Sequence[TimeoutListener]] = None,
+        event_manager: Optional["EventManager"] = None,
     ) -> None:
         self._timeout_secs = timeout_secs
         self._timeout_manager: Optional[TimeoutManager] = None
 
         self._name = name or get_default_name()
-        self._listeners = listeners
+
+        self._event_manager = event_manager
+        self._local_listeners = listeners
 
     def _create_timeout(self) -> TimeoutManager:
-        return TimeoutManager(
+        event_dispatcher = EventDispatcher[TimeoutManager, TimeoutListener](
+            self._local_listeners,
+            _TIMEOUT_LISTENERS,
+            event_manager=self._event_manager,
+        )
+
+        timeout = TimeoutManager(
             name=self._name,
             timeout_secs=self._timeout_secs,
-            event_dispatcher=EventDispatcher(self._listeners).as_listener,
+            event_dispatcher=event_dispatcher.as_listener,
         )
+
+        event_dispatcher.set_component(timeout)
+
+        return timeout
 
     async def __aenter__(self) -> "timeout":
         if self._timeout_manager is not None:

@@ -2,39 +2,52 @@ from unittest.mock import Mock
 
 import pytest
 
+from hyx.events import EventManager
 from hyx.retry import retry
 from hyx.retry.api import bucket_retry
 from hyx.retry.counters import Counter
+from hyx.retry.events import RetryListener
 from hyx.retry.exceptions import AttemptsExceeded
-from hyx.retry.listeners import RetryListener
 from hyx.retry.manager import RetryManager
-from tests.conftest import event_manager
 
 
 class Listener(RetryListener):
     def __init__(self) -> None:
         self.retries = 0
         self.attempts_exceeded = Mock()
+        self.succeed = Mock()
 
-    async def on_retry(self, retry: "RetryManager", exception: Exception, counter: "Counter") -> None:
+    async def on_retry(self, retry: "RetryManager", exception: Exception, counter: "Counter", backoff: float) -> None:
         self.retries += 1
 
     async def on_attempts_exceeded(self, retry: "RetryManager") -> None:
         self.attempts_exceeded()
 
+    async def on_success(self, retry: "RetryManager", counter: "Counter") -> None:
+        self.succeed()
+
 
 async def test__retry__decorate_async_func() -> None:
-    @retry()
+    event_manager = EventManager()
+    listener = Listener()
+
+    @retry(listeners=(listener,), event_manager=event_manager)
     async def simple_func() -> int:
         return 2022
 
     await simple_func()
 
+    await event_manager.wait_for_tasks()
+
+    listener.succeed.assert_called()
+    listener.attempts_exceeded.assert_not_called()
+
 
 async def test__retry__max_retry_exceeded() -> None:
+    event_manager = EventManager()
     listener = Listener()
 
-    @retry(listeners=(listener,))
+    @retry(backoff=0.1, listeners=(listener,), event_manager=event_manager)
     async def faulty_func() -> float:
         return 1 / 0
 
@@ -44,14 +57,15 @@ async def test__retry__max_retry_exceeded() -> None:
     await event_manager.wait_for_tasks()
 
     listener.attempts_exceeded.assert_called()
+    listener.succeed.assert_not_called()
 
 
 async def test__retry__pass_different_error() -> None:
-    @retry(on=ValueError)
+    @retry(on=ValueError, backoff=0.1)
     async def faulty_func() -> float:
         return 1 / 0
 
-    @retry(on=(ValueError, ZeroDivisionError))
+    @retry(on=(ValueError, ZeroDivisionError), backoff=0.1)
     async def runtime_func() -> float:
         raise RuntimeError("unhandled error")
 
@@ -64,9 +78,10 @@ async def test__retry__pass_different_error() -> None:
 
 async def test__retry__infinite_retries() -> None:
     execs = 0
+    event_manager = EventManager()
     listener = Listener()
 
-    @retry(on=RuntimeError, attempts=None, listeners=(listener,))
+    @retry(on=RuntimeError, attempts=None, backoff=0.1, listeners=(listener,), event_manager=event_manager)
     async def flaky_error() -> int:
         nonlocal execs
 
@@ -76,24 +91,30 @@ async def test__retry__infinite_retries() -> None:
 
         return 42
 
+    assert await flaky_error() == 42
+
     await event_manager.wait_for_tasks()
 
-    assert await flaky_error() == 42
     assert listener.retries == execs
+    listener.succeed.assert_called()
 
 
 async def test__retry__global_retry_limit() -> None:
-    listener = Listener()
     attempts = 4
     per_time_secs = 1
     bucket_size = 4
 
+    listener = Listener()
+    event_manager = EventManager()
+
     @bucket_retry(
         on=RuntimeError,
         attempts=attempts,
+        backoff=0.1,
         per_time_secs=per_time_secs,
         bucket_size=bucket_size,
         listeners=(listener,),
+        event_manager=event_manager,
     )
     async def faulty_func() -> int:
         raise RuntimeError
@@ -108,13 +129,15 @@ async def test__retry__global_retry_limit() -> None:
 
 
 async def test__retry__token_bucket_limiter():
-    listener = Listener()
     attempts = 5
-    per_time_secs = 2
+    per_time_secs = 1
     bucket_size = 3
 
     calls = 0
     exceptions = 0
+
+    event_manager = EventManager()
+    listener = Listener()
 
     @bucket_retry(
         on=RuntimeError,
@@ -122,16 +145,23 @@ async def test__retry__token_bucket_limiter():
         per_time_secs=per_time_secs,
         bucket_size=bucket_size,
         listeners=(listener,),
+        event_manager=event_manager,
     )
     async def faulty_func():
         nonlocal calls, exceptions
         calls += 1
+
         if calls <= attempts:
             exceptions += 1
             raise RuntimeError
+
         return True
 
     result = await faulty_func()
-    assert result is True
 
+    assert result is True
     assert exceptions <= attempts
+
+    await event_manager.wait_for_tasks()
+
+    listener.succeed.assert_called()

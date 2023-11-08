@@ -1,9 +1,9 @@
 import asyncio
 from typing import Any, Optional
 
+from hyx.bulkhead.events import BulkheadListener
 from hyx.bulkhead.exceptions import BulkheadFull
-from hyx.bulkhead.listeners import BulkheadListener
-from hyx.common.typing import FuncT
+from hyx.typing import FuncT
 
 
 class BulkheadManager:

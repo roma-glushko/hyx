@@ -6,7 +6,7 @@ import pytest
 from hyx.bulkhead import BulkheadListener, bulkhead
 from hyx.bulkhead.exceptions import BulkheadFull
 from hyx.bulkhead.manager import BulkheadManager
-from tests.conftest import event_manager
+from hyx.events import EventManager
 
 
 class Listener(BulkheadListener):
@@ -18,9 +18,10 @@ class Listener(BulkheadListener):
 
 
 async def test__bulkhead__decorator() -> None:
+    event_manager = EventManager()
     listener = Listener()
 
-    @bulkhead(max_capacity=3, max_concurrency=2, listeners=(listener,))
+    @bulkhead(max_capacity=3, max_concurrency=2, listeners=(listener,), event_manager=event_manager)
     async def calculations() -> float:
         await asyncio.sleep(0.5)
         return 42
@@ -38,8 +39,10 @@ async def test__bulkhead__context() -> None:
 
 
 async def test__bulkhead__capacity_exceeded() -> None:
+    event_manager = EventManager()
     listener = Listener()
-    bh = bulkhead(max_capacity=2, max_concurrency=2, listeners=(listener,))
+
+    bh = bulkhead(max_capacity=2, max_concurrency=2, listeners=(listener,), event_manager=event_manager)
 
     with pytest.raises(BulkheadFull):
         async with bh:

@@ -68,7 +68,6 @@ line-length = 120
 target-version = ['py39']
 
 [tool.ruff]
-
 line-length = 120
 
 select = [
