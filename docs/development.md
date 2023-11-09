@@ -23,13 +23,23 @@ We should not assume our users are experts in configuring circuit breakers, for 
 and know the exact error rate to tolerate. 
 Our defaults should be reasonable to serve them well until they mature to fine-tune our components.
 
-### Predictable
+### Be Predictable
 
 TBU
 
-### Expressive
+### Be Expressive
 
 TBU
+
+## Other Principles
+
+### Be Lightweight
+
+Hyx wants to be a lightweight toolkit. This means we think twice before adding any external dependency 
+and rely heavily on [Python's standard libraries](https://docs.python.org/3/library/index.html). 
+
+If we want to integrate with other frameworks (which is on [our roadmap](roadmap.md)), 
+we separate integration-specific logic to separate packages, so they could be installed additionally if needed.
 
 ## Workflows
 
@@ -56,6 +66,12 @@ Hyx uses mypy, black, ruff to ensure code style and statically analyze the code.
 ```bash
 make lint
 ```
+
+Since we want to support as many users as possible, we should keep our typing compatible with Python 3.9. 
+
+This means we should use, for example:
+
+- `Optional[Union[Type[A], Type[B]]]` instead of `Type[A] | Type[B] | None`
 
 ### Tests
 
