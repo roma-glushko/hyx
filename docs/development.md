@@ -11,7 +11,7 @@ This page collects information useful during contributing to 🧘‍♀️Hyx.
 
 When developing or modifying Hyx's API, we want to stick to the following strategies:
 
-### Common Case Fast and Advance Case Possible
+### Make Common Cases Fast, Advance Cases Possible
 
 It's useful to divide functionality into these buckets:
 
@@ -96,3 +96,10 @@ make docs-build  # build a publishable files out of the documentation
 
 Any update to Hyx's API is only considered as done when the corresponding documentation is updated. 
 So users have a simple way to discover all improvements and adjustments.
+
+## Feedback
+
+If you have looked at Hyx's API, codebase, docs and have some ideas on how could we improve them, 
+tried to use Hyx to cover some use cases, but it was not enough, or wanted to apply Hyx in a new context, 
+we **really encourage** you to tell us about that in [Github Discussions](https://github.com/roma-glushko/hyx/discussions).
+
