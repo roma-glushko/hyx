@@ -21,7 +21,7 @@ This may give some ideas on what to expect from the project and what we might mi
 ### Goals
 
 * Provide the baseline implementation for all general reliability components
-* Init a documentation. Document the components
+* Init documentation. Document the components
 * Implement project's infrastructure
 
 ## M1: Observability

@@ -66,7 +66,7 @@ The `list[float]` and `tuple[float, ...]` backoffs are just aliases for the `int
 ### Exponential Backoff
 
 Exponential backoff is one of the most popular backoff strategies. 
-It produces delays that growth rapidly. That gives the faulty functionality more and more time to recover on each retry.
+It delays that growth rapidly. That gives the faulty functionality more and more time to recover on each retry.
 
 Hyx implements the Capped Exponential Backoff that allows to specify the `max_delay_secs` bound:
 
@@ -127,7 +127,7 @@ It was authored by [the Polly community](https://github.com/App-vNext/Polly/issu
 
 ### Custom Backoffs
 
-In the Hyx design, backoffs are just iterators that returns float numbers and can go on infinitely.
+In the Hyx design, backoffs are just iterators that return float numbers and can go on infinitely.
 
 Here is how the factorial backoff could be implemented: 
 

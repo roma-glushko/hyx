@@ -4,9 +4,9 @@
 
 The cloud engineering world loves ocean/ship analogies a lot. 
 Kubernetes, docker, containers, helm, pods, harbor, spinnaker, werf, shipwright, etc.
-One word from that vocabulary was actually reserved by resiliency engineering as well. It's bulkhead.
+One word from that vocabulary was actually reserved by resiliency engineering as well. It's a bulkhead.
 
-Bulkhead (a.k.a. bulwark) can be viewed a virtual room of certain capacity. That capacity is your resources that you allow to be used at the same time to process that action.
+Bulkhead (a.k.a. bulwark) can be viewed as a virtual room of certain capacity. That capacity is your resources that you allow to be used at the same time to process that action.
 You can define multiple bulkheads per different functionality in your microservice. 
 That will ensure that **one part of functionality won't be working at the expense of another**.
 
@@ -42,7 +42,7 @@ Hence, the bulkhead is essentially a **concurrency limiting mechanism**. In turn
 
 ## Adaptive Limiting
 
-Concurrency is possible to limit adaptively based on statistics around latency of completed requestes and some latency objective.
+Concurrency is possible to limit adaptively based on statistics around latency of completed requests and some latency objective.
 
 !!! note
     Hyx doesn't provide ARC implementation at this moment. [Let us know](../../faq/#missing-a-feature) if this is useful for you.
