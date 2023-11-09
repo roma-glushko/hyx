@@ -22,7 +22,7 @@ By state rate limiter can be grouped as:
 
 ## Use Cases
 
-* Protect the whole system from DoS by limiting rate of incoming requests to public API in <abbr title="a component, microservice or proxy that sits in front of all microservice API">Gateway</abbr>.
+* Protect the whole system from DoS by limiting the rate of incoming requests to public API in <abbr title="a component, microservice or proxy that sits in front of all microservice API">Gateway</abbr>.
 * Limit rate of requesting of external API or legacy systems on the client side
 * Apply rate limiting in private API to avoid friendly-fire DoS by misbehaving peer microservices
 * Ensure fair distribution of resources between API users
@@ -32,7 +32,7 @@ By state rate limiter can be grouped as:
 ### Static Rate Limiters
 
 In static rate limiters, you define the rate explicitly during the rate limiter configuration (e.g. 100 req/sec). 
-Then limiters employ disparate algorithms to count and enforce that limits.
+Then limiters employ disparate algorithms to count and enforce those limits.
 
 The rate value is usually determined by load testing of the microservice.
 
@@ -41,7 +41,7 @@ The rate value is usually determined by load testing of the microservice.
 This rate limiter is based on the token bucket algorithm. 
 In this approach, we have a notion of a bucket with tokens. 
 If the bucket has some tokens, a new request takes one out to come through.
-Otherwise, the request fails due reaching the limit.
+Otherwise, the request fails due to reaching the limit.
 
 The bucket gets replenished with new tokens with a constant rate that is equal to `1/request rate`.
 
@@ -75,12 +75,12 @@ In this situation, you can apply Adaptive Request Concurrency (a dynamic form of
 ### Local/In-memory Rate Limiters
 
 The simplest form of the rate limiting state is a state stored in-memory. 
-In this case, all instances of a microservice will have an own local state of requests served in a time window.
+In this case, all instances of a microservice will have its own local state of requests served in a time window.
 
-This is a simple, straightforward, database- and dependency less way to quickly introduce rate limiting. 
+This is a simple, straightforward, database- and dependency-less way to quickly introduce rate limiting. 
 At the same, that simplicity comes with the following specifics.
 
-As you scale microservice instance number up, the allowed rate limiting effectively grow as well. 
+As you scale microservice instance numbers up, the allowed rate limiting effectively grow as well. 
 For example, if you have specified to handle 10 req/sec for one microservice instance, then:
 
 * 1 instance handles 10 req/sec
@@ -90,7 +90,7 @@ For example, if you have specified to handle 10 req/sec for one microservice ins
 This may look odd, but it's still useful and efficient as you don't need to introduce an external database 
 to store your state, and you ensure that each particular instance is not going to be overloaded.
 
-Another issue with this approach is that you miss the state on instance redeploying.
+Another issue with this approach is that you miss the state of instance redeploying.
 
 If this behavior is not intended, or you have a well-specified SLA on your request rate, 
 you should look at more [complex distributed state](#distributed-rate-limiters).
@@ -122,18 +122,18 @@ Rate limiting rarely makes sense to apply on the global level.
 In that case, all requests would fall under the same shard.
 
 In practice, it makes sense to shard rate limits on different levels.
-For example, rate limits are often sharded by `user_id`, so each user has own rate quote.
+For example, rate limits are often sharded by `user_id`, so each user has their own rate quote.
 
 Another popular way to shard limits is based on request routes. 
 In this case, rate sharding can help to prioritize and separate traffic that microservice handles. 
 
 A similar way to shard is based on read/write operations or based on more/less resource-consuming API
 
-This can be seen as a some form of [bulkhead](./bulkhead.md).
+This can be seen as a form of [bulkhead](./bulkhead.md).
 
 ### Rate Limit Public API
 
-Public API is part of the system that are exposed to traffic sources outside your cluster like UI application, SDKs, etc.
+Public API is part of the system that is exposed to traffic sources outside your cluster like UI application, SDKs, etc.
 This type of API is usually the most loaded and under the hood they trigger requests to other components.
 
 If Public API has no rate limiting, this is the number one way to put your system down, 

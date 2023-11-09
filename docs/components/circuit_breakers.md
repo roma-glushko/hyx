@@ -37,7 +37,7 @@ Circuit breakers are implemented as state machines. The following states are sup
 
 ## Usage
 
-The breakers come into two flavours:
+The breakers come into two flavors:
 
 === "decorator"
 

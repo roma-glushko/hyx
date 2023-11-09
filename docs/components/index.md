@@ -99,4 +99,4 @@ There are two more ways to think about the solution:
     This is a way to decouple resiliency pieces from the application logic.
     People usually use [Envoy-based sidecars](https://www.envoyproxy.io/) to achieve this.
 - Asynchronous Event-driven Communication. Modern event/message queues deployed in highly available setup can help to improve resiliency as well. 
-  They can provide resiliency patterns built-in into their transport protocol and some unique ways to organize communication in the system. [Apache Kafka](https://kafka.apache.org/) could be an example of such queue.
+  They can provide resiliency patterns built-in into their transport protocol and some unique ways to organize communication in the system. [Apache Kafka](https://kafka.apache.org/) could be an example of such a queue.
