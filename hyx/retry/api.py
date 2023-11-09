@@ -78,6 +78,7 @@ def bucket_retry(
 
     def _decorator(func: FuncT) -> FuncT:
         limiter = TokenBucketLimiter(attempts, per_time_secs, bucket_size) if attempts and per_time_secs else None
+
         event_dispatcher = EventDispatcher[RetryManager, RetryListener](
             listeners,
             _RETRY_LISTENERS,

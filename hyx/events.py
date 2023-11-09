@@ -172,6 +172,14 @@ class EventDispatcher(Generic[ComponentT, ListenerT]):
         return self._inited_listeners
 
 
+class NoOpEventDispatcher(EventDispatcher):
+    def __getattr__(self, event_handler_name: str) -> Callable:
+        async def handle_event(*args, **kwargs) -> None:
+            pass
+
+        return handle_event
+
+
 def get_default_name(func: Optional[Callable] = None) -> str:
     """
     Get the default name of the component based on code context where it's being used
