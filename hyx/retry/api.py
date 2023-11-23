@@ -2,7 +2,7 @@ import functools
 from typing import Any, Callable, Optional, Sequence, cast
 
 from hyx.events import EventDispatcher, EventManager, get_default_name
-from hyx.ratelimit.managers import TokenBucketLimiter
+from hyx.ratelimit.buckets import TokenBucket
 from hyx.retry.events import _RETRY_LISTENERS, RetryListener
 from hyx.retry.manager import RetryManager
 from hyx.retry.typing import AttemptsT, BackoffsT, BucketRetryT
@@ -77,7 +77,7 @@ def bucket_retry(
     """
 
     def _decorator(func: FuncT) -> FuncT:
-        limiter = TokenBucketLimiter(attempts, per_time_secs, bucket_size) if attempts and per_time_secs else None
+        limiter = TokenBucket(attempts, per_time_secs, bucket_size) if attempts and per_time_secs else None
         event_dispatcher = EventDispatcher[RetryManager, RetryListener](
             listeners,
             _RETRY_LISTENERS,
