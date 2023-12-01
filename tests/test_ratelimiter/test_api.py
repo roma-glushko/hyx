@@ -3,7 +3,7 @@ import asyncio
 import pytest
 
 from hyx.ratelimit import TokenBucketLimiter, ratelimiter, tokenbucket
-from hyx.ratelimit.exceptions import RateLimitExceeded
+from hyx.ratelimit.exceptions import EmptyBucket
 
 
 async def test__ratelimiter__decorator() -> None:
@@ -45,7 +45,7 @@ async def test__ratelimiter__limit_exceeded() -> None:
     async def calc() -> float:
         return 42
 
-    with pytest.raises(RateLimitExceeded):
+    with pytest.raises(EmptyBucket):
         for _ in range(4):
             assert await calc() == 42
 

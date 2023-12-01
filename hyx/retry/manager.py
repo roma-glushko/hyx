@@ -49,7 +49,7 @@ class RetryManager:
             while bool(counter):
                 try:
                     if self._limiter is not None:
-                        await self._limiter.acquire()
+                        await self._limiter.take()
 
                     result = await func()
 

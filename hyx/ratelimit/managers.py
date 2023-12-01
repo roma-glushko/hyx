@@ -29,7 +29,7 @@ class TokenBucketLimiter(RateLimiter):
         return self._token_bucket.empty
 
     async def acquire(self) -> None:
-        await self._token_bucket.acquire()
+        await self._token_bucket.take()
 
 
 class LeakyTokenBucketLimiter(RateLimiter):
