@@ -12,7 +12,8 @@ async def test__token_bucket_success() -> None:
     for i in range(3):
         assert bucket.tokens == (3 - i)
         await bucket.take()
-    assert bucket.empty == True
+    assert bucket.empty is True
+
 
 async def test__token_bucket_limit_exceeded() -> None:
     bucket = TokenBucket(3, 1, 3)
@@ -20,6 +21,7 @@ async def test__token_bucket_limit_exceeded() -> None:
     with pytest.raises(EmptyBucket):
         for _ in range(4):
             await bucket.take()
+
 
 async def test__ratelimiter__fully_replenish_after_time_period() -> None:
     bucket = TokenBucket(3, 1, 3)
@@ -30,6 +32,4 @@ async def test__ratelimiter__fully_replenish_after_time_period() -> None:
     await asyncio.sleep(3)
 
     assert bucket.tokens == 3
-    assert bucket.empty == False
-    
-        
+    assert bucket.empty is False
