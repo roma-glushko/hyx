@@ -8,7 +8,7 @@ class TokenBucket:
     """
     Token Bucket Logic
     Replenish tokens as time passes on. If tokens are available, executions can be allowed.
-    Otherwise, it's going to be rejected with EmptyBucket
+    Otherwise, it's going to be rejected with an EmptyBucket error
     """
 
     __slots__ = (
@@ -35,16 +35,15 @@ class TokenBucket:
 
     @property
     def tokens(self) -> float:
-        self.__replenish()
+        self._replenish()
         return self._tokens
 
     @property
     def empty(self) -> bool:
-        self.__replenish()
+        self._replenish()
         return self._tokens <= 0
 
     async def take(self) -> None:
-        print(self.tokens)
         if not self.empty:
             self._tokens -= 1
             return
@@ -67,17 +66,19 @@ class TokenBucket:
         self._tokens = tokens_to_add - 1
         return
 
-    def __replenish(self) -> None:
+    def _replenish(self) -> None:
         now = self._loop.time()
 
         next_replenish = self._next_replenish_at
         until_next_replenish = next_replenish - now
 
-        if until_next_replenish <= 0:
-            tokens_to_add = min(self._bucket_size, 1 + abs(until_next_replenish / self._token_per_secs))
-            self._next_replenish_at = max(
-                next_replenish + tokens_to_add * self._token_per_secs,
-                now + self._token_per_secs,
-            )
-            self._tokens = tokens_to_add
+        if until_next_replenish > 0:
+            return
+
+        tokens_to_add = min(self._bucket_size, 1 + abs(until_next_replenish / self._token_per_secs))
+        self._next_replenish_at = max(
+            next_replenish + tokens_to_add * self._token_per_secs,
+            now + self._token_per_secs,
+        )
+        self._tokens = tokens_to_add
         return

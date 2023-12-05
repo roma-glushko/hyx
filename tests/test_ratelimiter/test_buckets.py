@@ -23,7 +23,7 @@ async def test__token_bucket_limit_exceeded() -> None:
             await bucket.take()
 
 
-async def test__ratelimiter__fully_replenish_after_time_period() -> None:
+async def test__token_bucket__fully_replenish_after_time_period() -> None:
     bucket = TokenBucket(3, 1, 3)
 
     for _ in range(3):

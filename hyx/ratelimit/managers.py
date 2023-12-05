@@ -1,6 +1,7 @@
 from typing import Optional
 
 from hyx.ratelimit.buckets import TokenBucket
+from hyx.ratelimit.exceptions import EmptyBucket, RateLimitExceeded
 
 
 class RateLimiter:
@@ -21,15 +22,14 @@ class TokenBucketLimiter(RateLimiter):
         self._token_bucket = TokenBucket(max_executions, per_time_secs, bucket_size)
 
     @property
-    def tokens(self) -> float:
-        return self._token_bucket.tokens
-
-    @property
-    def empty(self) -> bool:
-        return self._token_bucket.empty
+    def bucket(self) -> TokenBucket:
+        return self._token_bucket
 
     async def acquire(self) -> None:
-        await self._token_bucket.take()
+        try:
+            await self._token_bucket.take()
+        except EmptyBucket as e:
+            raise RateLimitExceeded from e
 
 
 class LeakyTokenBucketLimiter(RateLimiter):
