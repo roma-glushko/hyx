@@ -79,6 +79,12 @@ Hyx can be installed from [PyPi](https://pypi.org/project/hyx):
     poetry add hyx
     ```
 
+=== "pdm"
+
+    ``` sh
+    pdm add hyx
+    ```
+
 ## Components
 
 Here is a short overview of Hyx's components:
