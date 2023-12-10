@@ -1,7 +1,8 @@
 import asyncio
+import math
 from typing import Optional
 
-from hyx.ratelimit.exceptions import EmptyBucket
+from hyx.ratelimit.exceptions import EmptyBucket, FilledBucket
 
 
 class TokenBucket:
@@ -81,4 +82,56 @@ class TokenBucket:
             now + self._token_per_secs,
         )
         self._tokens = tokens_to_add
+        return
+
+
+class LeakyBucket:
+    """
+    Leaky Bucket Logic
+    Leak tokens as time passes on. If there is space in the bucket, executions can be allowed.
+    Otherwise, it's going to be rejected with an FilledBucket error
+    """
+
+    __slots__ = (
+        "_max_executions",
+        "_per_time_secs",
+        "_rate",
+        "_loop",
+        "_tokens",
+        "_last_bucket_check",
+    )
+
+    def __init__(self, max_executions: float, per_time_secs: float) -> None:
+        self._max_executions = max_executions
+        self._per_time_secs = per_time_secs
+        self._rate = self._max_executions / self._per_time_secs
+
+        self._loop = asyncio.get_running_loop()
+        self._tokens = 0.0
+
+        self._last_bucket_check = self._loop.time()
+
+    @property
+    def tokens(self) -> float:
+        self._leak_check()
+        return self._tokens
+
+    @property
+    def full(self) -> bool:
+        self._leak_check()
+        return math.ceil(self._tokens) >= self._max_executions
+
+    async def fill(self) -> None:
+        self._leak_check()
+        if self._tokens + 1 <= self._max_executions:
+            self._tokens += 1
+            return
+        else:
+            raise FilledBucket
+
+    def _leak_check(self) -> None:
+        now = self._loop.time()
+        time_elapsed = now - self._last_bucket_check
+        self._tokens = max(0, self._tokens - time_elapsed * self._rate)
+        self._last_bucket_check = now
         return
