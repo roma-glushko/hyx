@@ -18,27 +18,23 @@ class BreakerListener:
         context: BreakerContext,
         current_state: "BreakerState",
         next_state: "WorkingState",
-    ) -> None:
-        ...
+    ) -> None: ...
 
     async def on_recovering(
         self,
         context: BreakerContext,
         current_state: "BreakerState",
         next_state: "RecoveringState",
-    ) -> None:
-        ...
+    ) -> None: ...
 
     async def on_failing(
         self,
         context: BreakerContext,
         current_state: "BreakerState",
         next_state: "FailingState",
-    ) -> None:
-        ...
+    ) -> None: ...
 
-    async def on_success(self, context: BreakerContext, state: "BreakerState") -> None:
-        ...
+    async def on_success(self, context: BreakerContext, state: "BreakerState") -> None: ...
 
 
 def register_breaker_listener(listener: Union[BreakerListener, ListenerFactoryT]) -> None:

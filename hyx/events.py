@@ -50,8 +50,7 @@ def set_event_manager(event_manager: EventManager) -> None:
 
 @runtime_checkable
 class ListenerFactoryT(Protocol):
-    async def __call__(self, component: ComponentT) -> ListenerT:
-        ...
+    async def __call__(self, component: ComponentT) -> ListenerT: ...
 
 
 class ListenerRegistry(Generic[ComponentT, ListenerT]):

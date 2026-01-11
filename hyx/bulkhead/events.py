@@ -9,8 +9,7 @@ _BULKHEAD_LISTENERS: ListenerRegistry["BulkheadManager", "BulkheadListener"] = L
 
 
 class BulkheadListener:
-    async def on_bulkhead_full(self, bulkhead: "BulkheadManager") -> None:
-        ...
+    async def on_bulkhead_full(self, bulkhead: "BulkheadManager") -> None: ...
 
 
 def register_bulkhead_listener(listener: Union[BulkheadListener, ListenerFactoryT]) -> None:
