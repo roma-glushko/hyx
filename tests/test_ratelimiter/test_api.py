@@ -7,7 +7,14 @@ from hyx.ratelimit.exceptions import RateLimitExceeded
 
 
 async def test__ratelimiter__decorator() -> None:
-    @ratelimiter(limiter=TokenBucketLimiter(max_executions=4, per_time_secs=1, bucket_size=4))
+    limiter = TokenBucketLimiter(
+        name="hyx.tests.decorator",
+        max_executions=4,
+        per_time_secs=1,
+        bucket_size=4,
+    )
+
+    @ratelimiter(limiter=limiter)
     async def calc() -> float:
         return 42
 
@@ -25,7 +32,14 @@ async def test__ratelimiter__token_bucket_decorator() -> None:
 
 
 async def test__ratelimiter__context_manager() -> None:
-    limiter = ratelimiter(limiter=TokenBucketLimiter(max_executions=4, per_time_secs=1, bucket_size=4))
+    limiter = ratelimiter(
+        limiter=TokenBucketLimiter(
+            name="hyx.tests.ctxmgr",
+            max_executions=4,
+            per_time_secs=1,
+            bucket_size=4,
+        )
+    )
 
     for _ in range(4):
         async with limiter:
@@ -41,7 +55,14 @@ async def test__ratelimiter__token_bucket_context_manager() -> None:
 
 
 async def test__ratelimiter__limit_exceeded() -> None:
-    @ratelimiter(limiter=TokenBucketLimiter(max_executions=3, per_time_secs=1, bucket_size=3))
+    limiter = TokenBucketLimiter(
+        name="hyx.tests.limiter",
+        max_executions=3,
+        per_time_secs=1,
+        bucket_size=3,
+    )
+
+    @ratelimiter(limiter=limiter)
     async def calc() -> float:
         return 42
 
@@ -51,7 +72,14 @@ async def test__ratelimiter__limit_exceeded() -> None:
 
 
 async def test__ratelimiter__replenish_after_full_bucket() -> None:
-    @ratelimiter(limiter=TokenBucketLimiter(max_executions=3, per_time_secs=1, bucket_size=3))
+    limiter = TokenBucketLimiter(
+        name="hyx.tests.limiter",
+        max_executions=3,
+        per_time_secs=1,
+        bucket_size=3,
+    )
+
+    @ratelimiter(limiter=limiter)
     async def calc() -> float:
         return 42
 

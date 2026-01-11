@@ -21,6 +21,7 @@ from typing import TYPE_CHECKING, Any
 from hyx.bulkhead.events import BulkheadListener as BaseBulkheadListener
 from hyx.circuitbreaker.events import BreakerListener as BaseBreakerListener
 from hyx.fallback.events import FallbackListener as BaseFallbackListener
+from hyx.ratelimit.events import RateLimiterListener as BaseRateLimiterListener
 from hyx.retry.events import RetryListener as BaseRetryListener
 from hyx.timeout.events import TimeoutListener as BaseTimeoutListener
 
@@ -37,6 +38,7 @@ if TYPE_CHECKING:
     from hyx.circuitbreaker.states import BreakerState, FailingState, RecoveringState, WorkingState
     from hyx.fallback.manager import FallbackManager
     from hyx.fallback.typing import ResultT
+    from hyx.ratelimit.managers import RateLimiter
     from hyx.retry.counters import Counter as RetryCounter
     from hyx.retry.manager import RetryManager
     from hyx.timeout.manager import TimeoutManager
@@ -164,6 +166,23 @@ class BulkheadListener(BaseBulkheadListener):
         self._rejected_counter.labels(component=bulkhead.name).inc()
 
 
+class RateLimiterListener(BaseRateLimiterListener):
+    """Prometheus metrics listener for rate limiter components."""
+
+    def __init__(self, registry: CollectorRegistry | None = None) -> None:
+        registry = registry if registry is not None else REGISTRY
+
+        self._rate_limited_counter = Counter(
+            name="hyx_ratelimiter_rejected_total",
+            documentation="Number of operations rejected due to rate limiting",
+            labelnames=["component"],
+            registry=registry,
+        )
+
+    async def on_rate_limited(self, limiter: "RateLimiter") -> None:
+        self._rate_limited_counter.labels(component=limiter.name).inc()
+
+
 class FallbackListener(BaseFallbackListener):
     """Prometheus metrics listener for fallback components."""
 
@@ -193,7 +212,7 @@ def register_listeners(registry: CollectorRegistry | None = None) -> None:
     Register Prometheus listeners for all Hyx components.
 
     This is a convenience function that registers metric-emitting listeners
-    for retry, circuit breaker, timeout, bulkhead, and fallback components.
+    for retry, circuit breaker, timeout, bulkhead, rate limiter, and fallback components.
 
     Args:
         registry: Optional CollectorRegistry instance. If not provided,
@@ -209,6 +228,7 @@ def register_listeners(registry: CollectorRegistry | None = None) -> None:
     from hyx.bulkhead.events import register_bulkhead_listener
     from hyx.circuitbreaker.events import register_breaker_listener
     from hyx.fallback.events import register_fallback_listener
+    from hyx.ratelimit.events import register_ratelimiter_listener
     from hyx.retry.events import register_retry_listener
     from hyx.timeout.events import register_timeout_listener
 
@@ -216,4 +236,5 @@ def register_listeners(registry: CollectorRegistry | None = None) -> None:
     register_breaker_listener(CircuitBreakerListener(registry=registry))
     register_timeout_listener(TimeoutListener(registry=registry))
     register_bulkhead_listener(BulkheadListener(registry=registry))
+    register_ratelimiter_listener(RateLimiterListener(registry=registry))
     register_fallback_listener(FallbackListener(registry=registry))

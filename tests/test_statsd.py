@@ -176,6 +176,39 @@ async def test__statsd_bulkhead_listener__on_bulkhead_full(statsd_client):
     assert any("rejected" in m["stat"] for m in rejected)
 
 
+async def test__statsd_ratelimiter_listener__on_rate_limited(statsd_client):
+    from hyx.ratelimit import tokenbucket
+    from hyx.ratelimit.exceptions import RateLimitExceeded
+    from hyx.telemetry.statsd import RateLimiterListener
+
+    event_manager = EventManager()
+    listener = RateLimiterListener(client=statsd_client)
+
+    limiter = tokenbucket(
+        max_executions=1,
+        per_time_secs=10,
+        bucket_size=1,
+        name="test_limiter",
+        listeners=[listener],
+        event_manager=event_manager,
+    )
+
+    # First call should succeed
+    async with limiter:
+        pass
+
+    # Second call should be rate limited
+    with pytest.raises(RateLimitExceeded):
+        async with limiter:
+            pass
+
+    await event_manager.wait_for_tasks()
+
+    # Check rate limited metric
+    rejected = statsd_client.get_metrics_containing("ratelimiter")
+    assert any("rejected" in m["stat"] for m in rejected)
+
+
 async def test__statsd_fallback_listener__on_fallback(statsd_client):
     from hyx.fallback import fallback
     from hyx.telemetry.statsd import FallbackListener

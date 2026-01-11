@@ -172,6 +172,39 @@ async def test__prometheus_bulkhead_listener__on_bulkhead_full(registry):
     assert rejected == 1
 
 
+async def test__prometheus_ratelimiter_listener__on_rate_limited(registry):
+    from hyx.ratelimit import tokenbucket
+    from hyx.ratelimit.exceptions import RateLimitExceeded
+    from hyx.telemetry.prometheus import RateLimiterListener
+
+    event_manager = EventManager()
+    listener = RateLimiterListener(registry=registry)
+
+    limiter = tokenbucket(
+        max_executions=1,
+        per_time_secs=10,
+        bucket_size=1,
+        name="test_limiter",
+        listeners=[listener],
+        event_manager=event_manager,
+    )
+
+    # First call should succeed
+    async with limiter:
+        pass
+
+    # Second call should be rate limited
+    with pytest.raises(RateLimitExceeded):
+        async with limiter:
+            pass
+
+    await event_manager.wait_for_tasks()
+
+    # Check rate limited metric
+    rejected = get_metric_value(registry, "hyx_ratelimiter_rejected")
+    assert rejected == 1
+
+
 async def test__prometheus_fallback_listener__on_fallback(registry):
     from hyx.fallback import fallback
     from hyx.telemetry.prometheus import FallbackListener

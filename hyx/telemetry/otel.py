@@ -21,6 +21,7 @@ from typing import TYPE_CHECKING, Any
 from hyx.bulkhead.events import BulkheadListener as BaseBulkheadListener
 from hyx.circuitbreaker.events import BreakerListener as BaseBreakerListener
 from hyx.fallback.events import FallbackListener as BaseFallbackListener
+from hyx.ratelimit.events import RateLimiterListener as BaseRateLimiterListener
 from hyx.retry.events import RetryListener as BaseRetryListener
 from hyx.timeout.events import TimeoutListener as BaseTimeoutListener
 
@@ -38,6 +39,7 @@ if TYPE_CHECKING:
     from hyx.circuitbreaker.states import BreakerState, FailingState, RecoveringState, WorkingState
     from hyx.fallback.manager import FallbackManager
     from hyx.fallback.typing import ResultT
+    from hyx.ratelimit.managers import RateLimiter
     from hyx.retry.counters import Counter
     from hyx.retry.manager import RetryManager
     from hyx.timeout.manager import TimeoutManager
@@ -174,6 +176,22 @@ class BulkheadListener(BaseBulkheadListener):
         self._rejected_counter.add(1, {"component": bulkhead.name or ""})
 
 
+class RateLimiterListener(BaseRateLimiterListener):
+    """OpenTelemetry metrics listener for rate limiter components."""
+
+    def __init__(self, meter: Meter | None = None) -> None:
+        meter = _get_meter(meter)
+
+        self._rate_limited_counter = meter.create_counter(
+            name="hyx.ratelimiter.rejected",
+            description="Number of operations rejected due to rate limiting",
+            unit="1",
+        )
+
+    async def on_rate_limited(self, limiter: "RateLimiter") -> None:
+        self._rate_limited_counter.add(1, {"component": limiter.name or ""})
+
+
 class FallbackListener(BaseFallbackListener):
     """OpenTelemetry metrics listener for fallback components."""
 
@@ -203,7 +221,7 @@ def register_listeners(meter: Meter | None = None) -> None:
     Register OpenTelemetry listeners for all Hyx components.
 
     This is a convenience function that registers metric-emitting listeners
-    for retry, circuit breaker, timeout, bulkhead, and fallback components.
+    for retry, circuit breaker, timeout, bulkhead, rate limiter, and fallback components.
 
     Args:
         meter: Optional Meter instance. If not provided, uses the global meter provider.
@@ -218,6 +236,7 @@ def register_listeners(meter: Meter | None = None) -> None:
     from hyx.bulkhead.events import register_bulkhead_listener
     from hyx.circuitbreaker.events import register_breaker_listener
     from hyx.fallback.events import register_fallback_listener
+    from hyx.ratelimit.events import register_ratelimiter_listener
     from hyx.retry.events import register_retry_listener
     from hyx.timeout.events import register_timeout_listener
 
@@ -225,4 +244,5 @@ def register_listeners(meter: Meter | None = None) -> None:
     register_breaker_listener(CircuitBreakerListener(meter=meter))
     register_timeout_listener(TimeoutListener(meter=meter))
     register_bulkhead_listener(BulkheadListener(meter=meter))
+    register_ratelimiter_listener(RateLimiterListener(meter=meter))
     register_fallback_listener(FallbackListener(meter=meter))

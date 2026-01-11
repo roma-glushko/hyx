@@ -196,6 +196,41 @@ async def test__otel_bulkhead_listener__on_bulkhead_full(otel_setup):
     assert rejected_metrics[0]["value"] == 1
 
 
+async def test__otel_ratelimiter_listener__on_rate_limited(otel_setup):
+    from hyx.ratelimit import tokenbucket
+    from hyx.ratelimit.exceptions import RateLimitExceeded
+    from hyx.telemetry.otel import RateLimiterListener
+
+    reader, meter = otel_setup
+    event_manager = EventManager()
+    listener = RateLimiterListener(meter=meter)
+
+    limiter = tokenbucket(
+        max_executions=1,
+        per_time_secs=10,
+        bucket_size=1,
+        name="test_limiter",
+        listeners=[listener],
+        event_manager=event_manager,
+    )
+
+    # First call should succeed
+    async with limiter:
+        pass
+
+    # Second call should be rate limited
+    with pytest.raises(RateLimitExceeded):
+        async with limiter:
+            pass
+
+    await event_manager.wait_for_tasks()
+
+    # Check rate limited metric
+    rate_limited_metrics = get_metric_value(reader, "hyx.ratelimiter.rejected")
+    assert len(rate_limited_metrics) == 1
+    assert rate_limited_metrics[0]["value"] == 1
+
+
 async def test__otel_fallback_listener__on_fallback(otel_setup):
     from hyx.fallback import fallback
     from hyx.telemetry.otel import FallbackListener
