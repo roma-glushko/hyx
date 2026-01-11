@@ -1,5 +1,4 @@
 import asyncio
-from typing import Optional
 
 from hyx.ratelimit.exceptions import EmptyBucket
 
@@ -21,7 +20,7 @@ class TokenBucket:
         "_next_replenish_at",
     )
 
-    def __init__(self, max_executions: float, per_time_secs: float, bucket_size: Optional[float] = None) -> None:
+    def __init__(self, max_executions: float, per_time_secs: float, bucket_size: float | None = None) -> None:
         self._max_executions = max_executions
         self._per_time_secs = per_time_secs
 

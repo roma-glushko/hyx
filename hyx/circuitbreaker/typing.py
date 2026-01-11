@@ -1,3 +1,1 @@
-from typing import Union
-
-DelayT = Union[float, int]
+DelayT = float | int

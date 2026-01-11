@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta
-from typing import Optional
 
 from hyx.circuitbreaker.context import BreakerContext
 from hyx.circuitbreaker.exceptions import BreakerFailing
@@ -110,7 +109,7 @@ class FailingState(BreakerState):
         return self._failing_until
 
     @property
-    def remain(self) -> Optional[timedelta]:
+    def remain(self) -> timedelta | None:
         """
         Remaining time the breaker is going to fail
         """

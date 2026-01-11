@@ -1,10 +1,10 @@
-from typing import Callable, Iterator, Sequence, Union
+from collections.abc import Callable, Iterator, Sequence
 
 BackoffT = Iterator[float]
 JitterT = Callable[[float], float]
 
-AttemptsT = Union[None, int]
-BackoffsT = Union[int, float, Sequence[float], BackoffT]
-JittersT = Union[None, JitterT]
+AttemptsT = None | int
+BackoffsT = int | float | Sequence[float] | BackoffT
+JittersT = None | JitterT
 
-BucketRetryT = Union[None, int]
+BucketRetryT = None | int

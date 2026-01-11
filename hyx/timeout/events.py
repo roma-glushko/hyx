@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING
 
 from hyx.events import ListenerFactoryT, ListenerRegistry
 
@@ -20,7 +20,7 @@ class TimeoutListener:
         """
 
 
-def register_timeout_listener(listener: Union[TimeoutListener, ListenerFactoryT]) -> None:
+def register_timeout_listener(listener: TimeoutListener | ListenerFactoryT) -> None:
     """
     Register a listener that will listen to all timeout components in the system
     """

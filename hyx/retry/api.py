@@ -1,5 +1,6 @@
 import functools
-from typing import Any, Callable, Optional, Sequence, cast
+from collections.abc import Callable, Sequence
+from typing import Any, cast
 
 from hyx.events import EventDispatcher, EventManager, get_default_name
 from hyx.ratelimit.buckets import TokenBucket
@@ -14,9 +15,9 @@ def retry(
     on: ExceptionsT = Exception,
     attempts: AttemptsT = 3,
     backoff: BackoffsT = 0.5,
-    name: Optional[str] = None,
-    listeners: Optional[Sequence[RetryListener]] = None,
-    event_manager: Optional["EventManager"] = None,
+    name: str | None = None,
+    listeners: Sequence[RetryListener] | None = None,
+    event_manager: "EventManager | None" = None,
 ) -> Callable[[Callable], Callable]:
     """
     `@retry()` decorator retries the function `on` exceptions for the given number of `attempts`.
@@ -66,11 +67,11 @@ def bucket_retry(
     on: ExceptionsT = Exception,
     attempts: AttemptsT = 3,
     backoff: BackoffsT = 0.5,
-    name: Optional[str] = None,
+    name: str | None = None,
     per_time_secs: BucketRetryT = 1,
     bucket_size: BucketRetryT = 3,
-    listeners: Optional[Sequence[RetryListener]] = None,
-    event_manager: Optional["EventManager"] = None,
+    listeners: Sequence[RetryListener] | None = None,
+    event_manager: "EventManager | None" = None,
 ) -> Callable[[Callable], Callable]:
     """
     `@bucket_retry()` decorator retries until we have tokens in the bucket and at most that number of times per request.

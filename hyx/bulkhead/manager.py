@@ -1,5 +1,5 @@
 import asyncio
-from typing import Any, Optional
+from typing import Any
 
 from hyx.bulkhead.events import BulkheadListener
 from hyx.bulkhead.exceptions import BulkheadFull
@@ -18,7 +18,7 @@ class BulkheadManager:
         max_concurrency: int,
         max_capacity: int,
         event_dispatcher: BulkheadListener,
-        name: Optional[str] = None,
+        name: str | None = None,
     ) -> None:
         if max_concurrency <= 0:
             raise ValueError(f'max_concurrency should be greater than zero ("{max_concurrency}" given)')

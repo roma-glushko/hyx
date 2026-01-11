@@ -1,4 +1,4 @@
-from typing import Optional, Generic, Type, TypeVar
+from typing import Generic, TypeVar
 
 from hyx.retry import register_retry_listener
 from opentelemetry.metrics import Meter, MeterProvider
@@ -11,7 +11,7 @@ ListenerT = TypeVar("ListenerT")
 
 
 class Factory(Generic[ComponentT, ListenerT]):
-    def __init__(self, listener_class: Type[ListenerT], *args, **kwargs) -> None:
+    def __init__(self, listener_class: type[ListenerT], *args, **kwargs) -> None:
         self.listener_class = listener_class
 
         self.args = args
@@ -25,8 +25,8 @@ class HyxOtelInstrumentor:
     def instrument(
         self,
         namespace: str = "hyx.service",
-        meter: Optional[Meter] = None,
-        meter_provider: Optional[MeterProvider] = None,
+        meter: Meter | None = None,
+        meter_provider: MeterProvider | None = None,
     ) -> None:
         register_retry_listener(
             Factory[RetryManager, RetryMetricListener](

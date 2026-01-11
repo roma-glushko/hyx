@@ -1,5 +1,5 @@
 import asyncio
-from typing import List, cast
+from typing import cast
 from unittest.mock import Mock
 
 import pytest
@@ -13,7 +13,7 @@ from hyx.events import EventManager
 
 class Listener(BreakerListener):
     def __init__(self) -> None:
-        self.state_history: List[str] = []
+        self.state_history: list[str] = []
         self.succeed = Mock()
 
     async def on_working(

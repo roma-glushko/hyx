@@ -1,5 +1,3 @@
-from typing import Optional
-
 from hyx.ratelimit.buckets import TokenBucket
 from hyx.ratelimit.exceptions import EmptyBucket, RateLimitExceeded
 
@@ -18,7 +16,7 @@ class TokenBucketLimiter(RateLimiter):
 
     __slots__ = ("_token_bucket",)
 
-    def __init__(self, max_executions: float, per_time_secs: float, bucket_size: Optional[float] = None) -> None:
+    def __init__(self, max_executions: float, per_time_secs: float, bucket_size: float | None = None) -> None:
         self._token_bucket = TokenBucket(max_executions, per_time_secs, bucket_size)
 
     @property

@@ -1,5 +1,6 @@
 import functools
-from typing import Any, Callable, Optional, Sequence, cast
+from collections.abc import Callable, Sequence
+from typing import Any, cast
 
 from hyx.events import EventDispatcher, EventManager, get_default_name
 from hyx.fallback.events import _FALLBACK_LISTENERS, FallbackListener
@@ -11,11 +12,11 @@ from hyx.typing import ExceptionsT, FuncT
 def fallback(
     handler: FallbackT,
     *,
-    name: Optional[str] = None,
-    on: Optional[ExceptionsT] = Exception,
-    if_: Optional[PredicateT] = None,
-    listeners: Optional[Sequence[FallbackListener]] = None,
-    event_manager: Optional["EventManager"] = None,
+    name: str | None = None,
+    on: ExceptionsT | None = Exception,
+    if_: PredicateT | None = None,
+    listeners: Sequence[FallbackListener] | None = None,
+    event_manager: "EventManager | None" = None,
 ) -> Callable[[Callable], Callable]:
     """
     Provides a fallback on exceptions and/or specific result of the original function

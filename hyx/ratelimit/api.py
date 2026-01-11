@@ -1,6 +1,6 @@
 import functools
 from types import TracebackType
-from typing import Any, Optional, Type, cast
+from typing import Any, cast
 
 from hyx.ratelimit.managers import RateLimiter, TokenBucketLimiter
 from hyx.typing import FuncT
@@ -19,10 +19,10 @@ class ratelimiter:
 
     async def __aexit__(
         self,
-        exc_type: Optional[Type[BaseException]],
-        exc_val: Optional[BaseException],
-        exc_tb: Optional[TracebackType],
-    ) -> Optional[bool]:
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: TracebackType | None,
+    ) -> bool | None:
         return None
 
     def __call__(self, func: FuncT) -> FuncT:
@@ -58,7 +58,7 @@ class tokenbucket:
 
     __slots__ = ("_limiter",)
 
-    def __init__(self, max_executions: float, per_time_secs: float, bucket_size: Optional[float] = None) -> None:
+    def __init__(self, max_executions: float, per_time_secs: float, bucket_size: float | None = None) -> None:
         self._limiter = TokenBucketLimiter(
             max_executions=max_executions,
             per_time_secs=per_time_secs,
@@ -72,10 +72,10 @@ class tokenbucket:
 
     async def __aexit__(
         self,
-        exc_type: Optional[Type[BaseException]],
-        exc_val: Optional[BaseException],
-        exc_tb: Optional[TracebackType],
-    ) -> Optional[bool]:
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: TracebackType | None,
+    ) -> bool | None:
         return None
 
     def __call__(self, func: FuncT) -> FuncT:

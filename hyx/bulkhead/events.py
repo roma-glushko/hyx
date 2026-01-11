@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING
 
 from hyx.events import ListenerFactoryT, ListenerRegistry
 
@@ -12,7 +12,7 @@ class BulkheadListener:
     async def on_bulkhead_full(self, bulkhead: "BulkheadManager") -> None: ...
 
 
-def register_bulkhead_listener(listener: Union[BulkheadListener, ListenerFactoryT]) -> None:
+def register_bulkhead_listener(listener: BulkheadListener | ListenerFactoryT) -> None:
     """
     Register a listener that will listen to all fallback components in the system
     """

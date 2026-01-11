@@ -1,8 +1,7 @@
 import itertools
 import math
 import random
-from collections.abc import Sequence
-from typing import Iterator, Optional, Union
+from collections.abc import Iterator, Sequence
 
 from hyx.retry.typing import BackoffsT, BackoffT, JittersT
 
@@ -20,7 +19,7 @@ class const(Iterator[float]):
     * **jitter** *(optional)* - Decorrelate delays with the jitter. No jitter by default
     """
 
-    def __init__(self, delay_secs: Union[int, float], *, jitter: JittersT = None) -> None:
+    def __init__(self, delay_secs: int | float, *, jitter: JittersT = None) -> None:
         self._delay_secs = delay_secs
         self._jitter = jitter
 
@@ -83,7 +82,7 @@ class linear(Iterator[float]):
         *,
         min_delay_secs: float = 1,
         additive_secs: float = 1.0,
-        max_delay_secs: Optional[float] = None,
+        max_delay_secs: float | None = None,
         jitter: JittersT = None,
     ) -> None:
         self._min_delay_ms = min_delay_secs * SECS_TO_MS
@@ -130,7 +129,7 @@ class expo(Iterator[float]):
         *,
         min_delay_secs: float = 1,
         base: float = 2,
-        max_delay_secs: Optional[float] = None,
+        max_delay_secs: float | None = None,
         jitter: JittersT = None,
     ) -> None:
         self._min_delay_ms = min_delay_secs * SECS_TO_MS
@@ -181,7 +180,7 @@ class fibo(Iterator[float]):
         *,
         min_delay_secs: float = 1,
         factor_secs: float = 1,
-        max_delay_secs: Optional[float] = None,
+        max_delay_secs: float | None = None,
         jitter: JittersT = None,
     ) -> None:
         self._min_delay_ms = min_delay_secs * SECS_TO_MS
@@ -270,8 +269,8 @@ class softexp(Iterator[float]):
     def __init__(
         self,
         *,
-        median_delay_secs: Union[int, float],
-        max_delay_secs: Union[None, int, float] = None,
+        median_delay_secs: int | float,
+        max_delay_secs: None | int | float = None,
         pfactor: float = 4.0,
         rp_scaling_factor: float = 1 / 1.4,
     ) -> None:
