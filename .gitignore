@@ -8,8 +8,9 @@
 *.pyc
 
 .coverage
+.coverage.xml
+
 .mutmut-cache
-coverage.xml
 htmlcov
 
 site

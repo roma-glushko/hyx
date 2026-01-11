@@ -10,14 +10,13 @@ _RETRY_LISTENERS: ListenerRegistry["RetryManager", "RetryListener"] = ListenerRe
 
 
 class RetryListener:
-    async def on_retry(self, retry: "RetryManager", exception: Exception, counter: "Counter", backoff: float) -> None:
-        ...
+    async def on_retry(
+        self, retry: "RetryManager", exception: Exception, counter: "Counter", backoff: float
+    ) -> None: ...
 
-    async def on_attempts_exceeded(self, retry: "RetryManager") -> None:
-        ...
+    async def on_attempts_exceeded(self, retry: "RetryManager") -> None: ...
 
-    async def on_success(self, retry: "RetryManager", counter: "Counter") -> None:
-        ...
+    async def on_success(self, retry: "RetryManager", counter: "Counter") -> None: ...
 
 
 def register_retry_listener(listener: Union[RetryListener, ListenerFactoryT]) -> None:

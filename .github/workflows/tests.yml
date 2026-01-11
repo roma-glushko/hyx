@@ -6,6 +6,10 @@ on:
     branches: ["main"]
   pull_request:
     branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  pull-requests: write
 
 jobs:
   tests:
@@ -14,37 +18,22 @@ jobs:
 
     strategy:
       matrix:
-        python-version: ["3.9", "3.10", "3.11"]
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
 
     steps:
-      - uses: "actions/checkout@v3"
-      - uses: "actions/setup-python@v4"
+      - uses: "actions/checkout@v4"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
         with:
-          python-version: "${{ matrix.python-version }}"
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
 
-      - name: cache poetry install
-        uses: actions/cache@v2
-        with:
-          path: ~/.local
-          key: poetry-1.4.1-0
+      - name: Set up Python ${{ matrix.python-version }}
+        run: uv python install ${{ matrix.python-version }}
 
-      - uses: snok/install-poetry@v1
-        with:
-          version: 1.4.1
-          virtualenvs-create: true
-          virtualenvs-in-project: true
-
-      - name: cache deps
-        id: cache-deps
-        uses: actions/cache@v2
-        with:
-          path: .venv
-          key: py-${{ matrix.python-version }}-deps-${{ hashFiles('**/poetry.lock') }}
-
-      - run: poetry install --no-interaction --no-root
-        if: steps.cache-deps.outputs.cache-hit != 'true'
-
-      - run: poetry install --no-interaction
+      - name: Install dependencies
+        run: uv sync --all-groups
 
       - name: "Linting"
         run: "make lint-check"
@@ -55,5 +44,8 @@ jobs:
       - name: "Run tests"
         run: "make test"
 
-      - name: Upload Coverage to Codecov
-        uses: codecov/codecov-action@v2
+      - name: Get Cover
+        uses: orgoro/coverage@v3.2
+        with:
+          coverageFile: .coverage.xml
+          token: ${{ secrets.GITHUB_TOKEN }}

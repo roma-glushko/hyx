@@ -10,8 +10,7 @@ _FALLBACK_LISTENERS: ListenerRegistry["FallbackManager", "FallbackListener"] = L
 
 
 class FallbackListener:
-    async def on_fallback(self, fallback: "FallbackManager", result: ResultT, *args: Any, **kwargs: Any) -> None:
-        ...
+    async def on_fallback(self, fallback: "FallbackManager", result: ResultT, *args: Any, **kwargs: Any) -> None: ...
 
 
 def register_timeout_listener(listener: Union[FallbackListener, ListenerFactoryT]) -> None:
