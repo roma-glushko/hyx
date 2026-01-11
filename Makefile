@@ -45,7 +45,7 @@ docs-build: ## Build docs
 build: package-build docs-build
 
 test: ## Run tests
-	@uv run coverage run -m pytest $(TESTS) $(SOURCE)
+	@uv run coverage run -m pytest $(TESTS) $(SOURCE) --cov --cov-report=html --cov-report=term --cov-report xml:.coverage.xml
 
 test-meta: ## Test robustness of the test suit
 	@uv run mutmut run
