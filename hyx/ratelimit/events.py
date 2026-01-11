@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING
 
 from hyx.events import ListenerFactoryT, ListenerRegistry
 
@@ -9,12 +9,19 @@ _RATELIMITER_LISTENERS: ListenerRegistry["RateLimiter", "RateLimiterListener"] =
 
 
 class RateLimiterListener:
-    ...
-
-
-def register_ratelimiter_listener(listener: Union[RateLimiterListener, ListenerFactoryT]) -> None:
     """
-    Register a listener that will listen to all rate limiter components in the system
+    Listen to events dispatched by rate limiter components.
+    """
+
+    async def on_rate_limited(self, limiter: "RateLimiter") -> None:
+        """
+        Dispatch when a request is rejected due to rate limiting.
+        """
+
+
+def register_ratelimiter_listener(listener: RateLimiterListener | ListenerFactoryT) -> None:
+    """
+    Register a listener that will listen to all rate limiter components in the system.
     """
     global _RATELIMITER_LISTENERS
 

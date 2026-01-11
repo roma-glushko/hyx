@@ -1,4 +1,5 @@
 import functools
+from collections.abc import Sequence
 from types import TracebackType
 from typing import Any, cast
 
@@ -56,16 +57,39 @@ class tokenbucket:
         that are permitted to happen during bursts.
         The burst is when no executions have happened for a long time, and then you are receiving a
         bunch of them at the same time. Equal to *max_executions* by default.
+    * **name** *(None | str)* - A component name or ID (will be passed to listeners and mentioned in metrics)
+    * **listeners** *(None | Sequence[RateLimiterListener])* - List of listeners for this component
+    * **event_manager** *(None | EventManager)* - Event manager for tracking listener tasks
     """
 
-    __slots__ = ("_limiter",)
+    __slots__ = ("_limiter", "_name")
 
-    def __init__(self, max_executions: float, per_time_secs: float, bucket_size: float | None = None) -> None:
+    def __init__(
+        self,
+        max_executions: float,
+        per_time_secs: float,
+        bucket_size: float | None = None,
+        name: str | None = None,
+        listeners: Sequence[RateLimiterListener] | None = None,
+        event_manager: EventManager | None = None,
+    ) -> None:
+        self._name = name
+
+        event_dispatcher: EventDispatcher[TokenBucketLimiter, RateLimiterListener] = EventDispatcher(
+            listeners,
+            _RATELIMITER_LISTENERS,
+            event_manager=event_manager,
+        )
+
         self._limiter = TokenBucketLimiter(
             max_executions=max_executions,
             per_time_secs=per_time_secs,
             bucket_size=bucket_size,
+            name=name,
+            event_dispatcher=event_dispatcher.as_listener,
         )
+
+        event_dispatcher.set_component(self._limiter)
 
     async def __aenter__(self) -> "tokenbucket":
         await self._limiter.acquire()
@@ -84,6 +108,9 @@ class tokenbucket:
         """
         Apply ratelimiter as a decorator
         """
+        # Set name from function if not provided
+        if self._limiter._name is None:
+            self._limiter._name = get_default_name(func)
 
         @functools.wraps(func)
         async def _wrapper(*args: Any, **kwargs: Any) -> Any:

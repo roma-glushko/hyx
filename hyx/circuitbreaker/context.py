@@ -16,3 +16,7 @@ class BreakerContext:
     recovery_time_secs: DelayT
     recovery_threshold: int
     event_dispatcher: "BreakerListener"
+
+    @property
+    def name(self) -> str | None:
+        return self.breaker_name
