@@ -6,6 +6,10 @@ on:
     branches: ["main"]
   pull_request:
     branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  pull-requests: write
 
 jobs:
   tests:
@@ -40,5 +44,8 @@ jobs:
       - name: "Run tests"
         run: "make test"
 
-      - name: Upload Coverage to Codecov
-        uses: codecov/codecov-action@v4
+      - name: Get Cover
+        uses: orgoro/coverage@v3.2
+        with:
+          coverageFile: .coverage.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
