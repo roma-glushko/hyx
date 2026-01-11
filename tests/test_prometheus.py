@@ -24,8 +24,8 @@ def get_metric_value(registry: CollectorRegistry, metric_name: str, labels: dict
 
 
 async def test__prometheus_retry_listener__on_retry(registry):
-    from hyx.telemetry.prometheus import RetryListener
     from hyx.retry import retry
+    from hyx.telemetry.prometheus import RetryListener
 
     event_manager = EventManager()
     listener = RetryListener(registry=registry)
@@ -55,9 +55,9 @@ async def test__prometheus_retry_listener__on_retry(registry):
 
 
 async def test__prometheus_retry_listener__attempts_exceeded(registry):
-    from hyx.telemetry.prometheus import RetryListener
     from hyx.retry import retry
     from hyx.retry.exceptions import AttemptsExceeded
+    from hyx.telemetry.prometheus import RetryListener
 
     event_manager = EventManager()
     listener = RetryListener(registry=registry)
@@ -77,8 +77,8 @@ async def test__prometheus_retry_listener__attempts_exceeded(registry):
 
 
 async def test__prometheus_breaker_listener__state_transitions(registry):
-    from hyx.telemetry.prometheus import CircuitBreakerListener
     from hyx.circuitbreaker import consecutive_breaker
+    from hyx.telemetry.prometheus import CircuitBreakerListener
 
     event_manager = EventManager()
     listener = CircuitBreakerListener(registry=registry)
@@ -137,9 +137,9 @@ async def test__prometheus_timeout_listener__on_timeout(registry):
 async def test__prometheus_bulkhead_listener__on_bulkhead_full(registry):
     import asyncio
 
-    from hyx.telemetry.prometheus import BulkheadListener
     from hyx.bulkhead import bulkhead
     from hyx.bulkhead.exceptions import BulkheadFull
+    from hyx.telemetry.prometheus import BulkheadListener
 
     event_manager = EventManager()
     listener = BulkheadListener(registry=registry)
@@ -173,8 +173,8 @@ async def test__prometheus_bulkhead_listener__on_bulkhead_full(registry):
 
 
 async def test__prometheus_fallback_listener__on_fallback(registry):
-    from hyx.telemetry.prometheus import FallbackListener
     from hyx.fallback import fallback
+    from hyx.telemetry.prometheus import FallbackListener
 
     event_manager = EventManager()
     listener = FallbackListener(registry=registry)

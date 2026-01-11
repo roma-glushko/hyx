@@ -22,8 +22,7 @@ try:
     from prometheus_client import REGISTRY, CollectorRegistry, Counter
 except ImportError as e:
     raise ImportError(
-        "prometheus-client is required for Prometheus instrumentation. "
-        "Install it with: pip install hyx[prometheus]"
+        "prometheus-client is required for Prometheus instrumentation. Install it with: pip install hyx[prometheus]"
     ) from e
 
 if TYPE_CHECKING:
@@ -103,9 +102,7 @@ class CircuitBreakerListener:
         current_state: "BreakerState",
         next_state: "WorkingState",
     ) -> None:
-        self._state_counter.labels(
-            component=context.name, from_state=current_state.name, to_state="working"
-        ).inc()
+        self._state_counter.labels(component=context.name, from_state=current_state.name, to_state="working").inc()
 
     async def on_recovering(
         self,
@@ -113,9 +110,7 @@ class CircuitBreakerListener:
         current_state: "BreakerState",
         next_state: "RecoveringState",
     ) -> None:
-        self._state_counter.labels(
-            component=context.name, from_state=current_state.name, to_state="recovering"
-        ).inc()
+        self._state_counter.labels(component=context.name, from_state=current_state.name, to_state="recovering").inc()
 
     async def on_failing(
         self,
@@ -123,9 +118,7 @@ class CircuitBreakerListener:
         current_state: "BreakerState",
         next_state: "FailingState",
     ) -> None:
-        self._state_counter.labels(
-            component=context.name, from_state=current_state.name, to_state="failing"
-        ).inc()
+        self._state_counter.labels(component=context.name, from_state=current_state.name, to_state="failing").inc()
 
     async def on_success(self, context: "BreakerContext", state: "BreakerState") -> None:
         self._success_counter.labels(component=context.name, state=state.name).inc()

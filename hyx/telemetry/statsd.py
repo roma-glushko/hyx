@@ -26,10 +26,7 @@ from typing import TYPE_CHECKING, Any
 try:
     from statsd import StatsClient
 except ImportError as e:
-    raise ImportError(
-        "statsd is required for StatsD instrumentation. "
-        "Install it with: pip install hyx[statsd]"
-    ) from e
+    raise ImportError("statsd is required for StatsD instrumentation. Install it with: pip install hyx[statsd]") from e
 
 if TYPE_CHECKING:
     from hyx.bulkhead.manager import BulkheadManager

@@ -11,11 +11,13 @@ class MockStatsClient:
         self.metrics: list[dict] = []
 
     def incr(self, stat: str, count: int = 1, rate: float = 1) -> None:
-        self.metrics.append({
-            "type": "incr",
-            "stat": f"{self._prefix}.{stat}" if self._prefix else stat,
-            "count": count,
-        })
+        self.metrics.append(
+            {
+                "type": "incr",
+                "stat": f"{self._prefix}.{stat}" if self._prefix else stat,
+                "count": count,
+            }
+        )
 
     def get_metrics_containing(self, substring: str) -> list[dict]:
         """Get all metrics containing a substring."""

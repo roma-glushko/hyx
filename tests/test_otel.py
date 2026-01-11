@@ -30,10 +30,12 @@ def get_metric_value(reader: InMemoryMetricReader, metric_name: str) -> list[dic
                 for metric in scope_metrics.metrics:
                     if metric.name == metric_name:
                         for data_point in metric.data.data_points:
-                            results.append({
-                                "value": data_point.value,
-                                "attributes": dict(data_point.attributes),
-                            })
+                            results.append(
+                                {
+                                    "value": data_point.value,
+                                    "attributes": dict(data_point.attributes),
+                                }
+                            )
 
     return results
 

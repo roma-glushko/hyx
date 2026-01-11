@@ -23,8 +23,7 @@ try:
     from opentelemetry.metrics import Meter
 except ImportError as e:
     raise ImportError(
-        "OpenTelemetry is required for OTel instrumentation. "
-        "Install it with: pip install hyx[otel]"
+        "OpenTelemetry is required for OTel instrumentation. Install it with: pip install hyx[otel]"
     ) from e
 
 if TYPE_CHECKING:
