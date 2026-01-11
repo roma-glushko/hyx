@@ -29,10 +29,6 @@
     <img loading="lazy" src="https://github.com/roma-glushko/hyx/actions/workflows/tests.yml/badge.svg?branch=main" alt='Test Status' />
 </a>
 
-<a href="https://app.codecov.io/github/roma-glushko/hyx">
-    <img loading="lazy" src="https://img.shields.io/codecov/c/gh/roma-glushko/hyx" alt="Coverage" />
-</a>
-
 </p>
 
 ---
