@@ -1,5 +1,5 @@
 import asyncio
-from typing import Any, Optional, Type
+from typing import Any
 
 from hyx.timeout.events import TimeoutListener
 from hyx.timeout.exceptions import MaxDurationExceeded
@@ -20,12 +20,12 @@ class TimeoutManager:
         self,
         timeout_secs: DurationT,
         event_dispatcher: TimeoutListener,
-        name: Optional[str] = None,
+        name: str | None = None,
     ) -> None:
         self._timeout_secs = timeout_secs
 
-        self._is_timeout: Optional[asyncio.Event] = None
-        self._timeout_task: Optional[asyncio.TimerHandle] = None
+        self._is_timeout: asyncio.Event | None = None
+        self._timeout_task: asyncio.TimerHandle | None = None
 
         self._name = name or ""
         self._event_dispatcher = event_dispatcher
@@ -34,7 +34,7 @@ class TimeoutManager:
     def name(self) -> str:
         return self._name
 
-    def _on_timeout(self, watched_task: Optional[asyncio.Task]) -> None:
+    def _on_timeout(self, watched_task: asyncio.Task | None) -> None:
         if self._is_timeout:
             self._is_timeout.set()
 
@@ -53,7 +53,7 @@ class TimeoutManager:
 
         self._timeout_task = asyncio.get_running_loop().call_later(self._timeout_secs, self._on_timeout, watched_task)
 
-    async def stop(self, error: Optional[Type[Exception]] = None) -> None:
+    async def stop(self, error: type[Exception] | None = None) -> None:
         """
         Stop measuring the code block execution time
         """

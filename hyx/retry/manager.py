@@ -1,5 +1,5 @@
 import asyncio
-from typing import Any, Optional
+from typing import Any
 
 from hyx.ratelimit.buckets import TokenBucket
 from hyx.retry.backoffs import create_backoff
@@ -28,7 +28,7 @@ class RetryManager:
         attempts: AttemptsT,
         backoff: BackoffsT,
         event_dispatcher: RetryListener,
-        limiter: Optional[TokenBucket] = None,
+        limiter: TokenBucket | None = None,
     ) -> None:
         self._name = name
         self._exceptions = exceptions

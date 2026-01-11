@@ -1,6 +1,6 @@
-from typing import Any, Protocol, Union
+from typing import Any, Protocol
 
-ResultT = Union[BaseException, Any]
+ResultT = BaseException | Any
 
 
 class PredicateT(Protocol):

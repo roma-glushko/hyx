@@ -1,6 +1,7 @@
 import functools
+from collections.abc import Sequence
 from types import TracebackType
-from typing import Any, Optional, Sequence, Type, cast
+from typing import Any, cast
 
 from hyx.events import EventDispatcher, EventManager, get_default_name
 from hyx.timeout.events import _TIMEOUT_LISTENERS, TimeoutListener
@@ -31,12 +32,12 @@ class timeout:
         self,
         timeout_secs: float,
         *,
-        name: Optional[str] = None,
-        listeners: Optional[Sequence[TimeoutListener]] = None,
-        event_manager: Optional["EventManager"] = None,
+        name: str | None = None,
+        listeners: Sequence[TimeoutListener] | None = None,
+        event_manager: "EventManager | None" = None,
     ) -> None:
         self._timeout_secs = timeout_secs
-        self._timeout_manager: Optional[TimeoutManager] = None
+        self._timeout_manager: TimeoutManager | None = None
 
         self._name = name or get_default_name()
 
@@ -72,10 +73,10 @@ class timeout:
 
     async def __aexit__(
         self,
-        exc_type: Optional[Type[Exception]],
-        exc_val: Optional[Exception],
-        exc_tb: Optional[TracebackType],
-    ) -> Optional[bool]:
+        exc_type: type[Exception] | None,
+        exc_val: Exception | None,
+        exc_tb: TracebackType | None,
+    ) -> bool | None:
         if self._timeout_manager:
             await self._timeout_manager.stop(error=exc_type)
             self._timeout_manager = None

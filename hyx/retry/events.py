@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING
 
 from hyx.events import ListenerFactoryT, ListenerRegistry
 
@@ -19,7 +19,7 @@ class RetryListener:
     async def on_success(self, retry: "RetryManager", counter: "Counter") -> None: ...
 
 
-def register_retry_listener(listener: Union[RetryListener, ListenerFactoryT]) -> None:
+def register_retry_listener(listener: RetryListener | ListenerFactoryT) -> None:
     """
     Register a listener that will dispatch on all retry components in the system
     """

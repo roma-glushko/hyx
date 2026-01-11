@@ -1,3 +1,1 @@
-from typing import Union
-
-DurationT = Union[int, float]
+DurationT = int | float

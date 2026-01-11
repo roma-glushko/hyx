@@ -1,4 +1,4 @@
-from typing import Any, Callable, Coroutine, Tuple, Type, TypeVar, Union
+from typing import Any, Callable, Coroutine, TypeVar
 
 FuncT = TypeVar("FuncT", bound=Callable[..., Coroutine[Any, Any, Any]])
-ExceptionsT = Union[Type[Exception], Tuple[Type[Exception], ...]]
+ExceptionsT = type[Exception] | tuple[type[Exception], ...]

@@ -1,6 +1,7 @@
 import functools
+from collections.abc import Sequence
 from types import TracebackType
-from typing import Any, Optional, Sequence, Type, cast
+from typing import Any, cast
 
 from hyx.bulkhead.events import _BULKHEAD_LISTENERS, BulkheadListener
 from hyx.bulkhead.manager import BulkheadManager
@@ -29,9 +30,9 @@ class bulkhead:
         max_concurrency: int,
         max_capacity: int,
         *,
-        name: Optional[str] = None,
-        listeners: Optional[Sequence[BulkheadListener]] = None,
-        event_manager: Optional["EventManager"] = None,
+        name: str | None = None,
+        listeners: Sequence[BulkheadListener] | None = None,
+        event_manager: "EventManager | None" = None,
     ) -> None:
         event_dispatcher = EventDispatcher[BulkheadManager, BulkheadListener](
             listeners,
@@ -55,10 +56,10 @@ class bulkhead:
 
     async def __aexit__(
         self,
-        exc_type: Optional[Type[BaseException]],
-        exc_val: Optional[BaseException],
-        exc_tb: Optional[TracebackType],
-    ) -> Optional[bool]:
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: TracebackType | None,
+    ) -> bool | None:
         await self._manager.release()
 
         return None

@@ -1,6 +1,7 @@
 import functools
+from collections.abc import Sequence
 from types import TracebackType
-from typing import Any, Optional, Sequence, Type, cast
+from typing import Any, cast
 
 from hyx.circuitbreaker.events import _BREAKER_LISTENERS, BreakerListener
 from hyx.circuitbreaker.managers import ConsecutiveCircuitBreaker
@@ -48,9 +49,9 @@ class consecutive_breaker:
         failure_threshold: int = 5,
         recovery_time_secs: DelayT = 30,
         recovery_threshold: int = 3,
-        listeners: Optional[Sequence[BreakerListener]] = None,
-        name: Optional[str] = None,
-        event_manager: Optional["EventManager"] = None,
+        listeners: Sequence[BreakerListener] | None = None,
+        name: str | None = None,
+        event_manager: "EventManager | None" = None,
     ) -> None:
         event_dispatcher = EventDispatcher[ConsecutiveCircuitBreaker, BreakerListener](
             listeners,
@@ -80,10 +81,10 @@ class consecutive_breaker:
 
     async def __aexit__(
         self,
-        exc_type: Optional[Type[BaseException]],
-        exc_val: Optional[BaseException],
-        exc_tb: Optional[TracebackType],
-    ) -> Optional[bool]:
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: TracebackType | None,
+    ) -> bool | None:
         await self._manager.release(exc_val)
 
         return None

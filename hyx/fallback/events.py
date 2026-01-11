@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Union
+from typing import TYPE_CHECKING, Any
 
 from hyx.events import ListenerFactoryT, ListenerRegistry
 from hyx.fallback.typing import ResultT
@@ -13,7 +13,7 @@ class FallbackListener:
     async def on_fallback(self, fallback: "FallbackManager", result: ResultT, *args: Any, **kwargs: Any) -> None: ...
 
 
-def register_timeout_listener(listener: Union[FallbackListener, ListenerFactoryT]) -> None:
+def register_fallback_listener(listener: FallbackListener | ListenerFactoryT) -> None:
     """
     Register a listener that will listen to all fallback components in the system
     """
