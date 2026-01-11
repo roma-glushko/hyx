@@ -190,7 +190,7 @@ It takes a middle of the given interval and tries to add some additional delay d
 
 ### Jittered Backoffs
 
-[Decorrelated Exponential](#decorrelated-exponential-backoff) and [Soft Exponential](#soft-exponential-backoff) backoffs 
+[Decorrelated Exponential](#decorrelated-exponential-backoff) and [Soft Exponential](#soft-exponential-backoff-beta) backoffs 
 provide built-in decorrelation as a part of their algorithm.
 
 ### Custom Jitters
@@ -243,7 +243,7 @@ You can disable delays between retries, but that's **another antipattern** you s
 {!> ./snippets/retry/retry_no_delays.py !}
 ```
 
-Without delays, retries can easily heat your system and create a situation known as [the retry storm](#retry-storms).
+Without delays, retries can easily heat your system and create a situation known as [the retry storm](#avoid-retry-storms).
 
 ### When and What to Retry
 

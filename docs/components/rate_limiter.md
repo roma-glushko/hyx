@@ -96,7 +96,7 @@ If this behavior is not intended, or you have a well-specified SLA on your reque
 you should look at more [complex distributed state](#distributed-rate-limiters).
 
 !!! note
-    This is the only type of state that Hyx is supporting at the moment. [Let us know](../../faq/#missing-a-feature) if this is useful for you.
+    This is the only type of state that Hyx is supporting at the moment. [Let us know](../faq.md#missing-a-feature) if this is useful for you.
 
 ### Distributed Rate Limiters
 
@@ -112,7 +112,7 @@ Otherwise, if you don't have strong statements in favor of introducing a databas
 !!! note
     Hyx doesn't support distributed components currently. This may change in [the future](../roadmap.md). 
 
-    [Let us know](../../faq/#missing-a-feature) if this is useful for you.
+    [Let us know](../faq.md#missing-a-feature) if this is useful for you.
 
 ## Best Practices
 

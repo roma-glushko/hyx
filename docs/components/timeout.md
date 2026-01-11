@@ -63,4 +63,4 @@ This is called a distributed timeout (a.k.a. deadlines, timeout budget).
 !!! info
     Hyx doesn't yet provide a way to easily add a distributed budget 
     as it will require to integrate with the API framework of your choice. We have [some plans](../roadmap.md) to support that.
-    [Let us know](./faq/#missing-a-feature) if this is useful for you.
+    [Let us know](../faq.md#missing-a-feature) if this is useful for you.
