@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 from hyx.circuitbreaker.context import BreakerContext
 from hyx.circuitbreaker.states import BreakerState, WorkingState
@@ -48,7 +48,7 @@ class ConsecutiveCircuitBreaker:
     async def acquire(self) -> None:
         await self._transit_state(await self._state.before_execution())
 
-    async def release(self, exception: Optional[BaseException]) -> None:
+    async def release(self, exception: BaseException | None) -> None:
         if exception and isinstance(exception, self._context.exceptions):
             await self._transit_state(await self._state.on_exception())
             raise exception

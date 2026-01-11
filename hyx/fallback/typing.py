@@ -1,13 +1,11 @@
-from typing import Any, Protocol, Union
+from typing import Any, Protocol
 
-ResultT = Union[BaseException, Any]
+ResultT = BaseException | Any
 
 
 class PredicateT(Protocol):
-    async def __call__(self, result: Any, *args, **kwargs) -> bool:
-        ...
+    async def __call__(self, result: Any, *args, **kwargs) -> bool: ...
 
 
 class FallbackT(Protocol):
-    async def __call__(self, result: ResultT, *args: Any, **kwargs: Any) -> Any:
-        ...
+    async def __call__(self, result: ResultT, *args: Any, **kwargs: Any) -> Any: ...

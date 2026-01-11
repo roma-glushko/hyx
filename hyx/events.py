@@ -1,12 +1,13 @@
 import asyncio
 import traceback
 import weakref
-from typing import Callable, Generic, List, Optional, Protocol, Sequence, TypeVar, Union, cast, runtime_checkable
+from collections.abc import Callable, Sequence
+from typing import Generic, Protocol, TypeVar, cast, runtime_checkable
 
 ComponentT = TypeVar("ComponentT")
 ListenerT = TypeVar("ListenerT")
 
-_EVENT_MANAGER: Optional["EventManager"] = None
+_EVENT_MANAGER: "EventManager | None" = None
 
 
 class EventManager:
@@ -50,8 +51,7 @@ def set_event_manager(event_manager: EventManager) -> None:
 
 @runtime_checkable
 class ListenerFactoryT(Protocol):
-    async def __call__(self, component: ComponentT) -> ListenerT:
-        ...
+    async def __call__(self, component: ComponentT) -> ListenerT: ...
 
 
 class ListenerRegistry(Generic[ComponentT, ListenerT]):
@@ -62,13 +62,13 @@ class ListenerRegistry(Generic[ComponentT, ListenerT]):
     __slots__ = ("_listeners",)
 
     def __init__(self) -> None:
-        self._listeners: list[Union[ListenerT, ListenerFactoryT]] = []
+        self._listeners: list[ListenerT | ListenerFactoryT] = []
 
     @property
-    def listeners(self) -> list[Union[ListenerT, ListenerFactoryT]]:
+    def listeners(self) -> list[ListenerT | ListenerFactoryT]:
         return self._listeners
 
-    def register(self, listener: Union[ListenerT, ListenerFactoryT]) -> None:
+    def register(self, listener: ListenerT | ListenerFactoryT) -> None:
         self._listeners.append(listener)
 
 
@@ -88,17 +88,17 @@ class EventDispatcher(Generic[ComponentT, ListenerT]):
 
     def __init__(
         self,
-        local_listeners: Optional[Sequence[Union[ListenerT, ListenerFactoryT]]] = None,
-        global_listener_registry: Optional[ListenerRegistry] = None,
-        event_manager: Optional["EventManager"] = None,
+        local_listeners: Sequence[ListenerT | ListenerFactoryT] | None = None,
+        global_listener_registry: ListenerRegistry | None = None,
+        event_manager: "EventManager | None" = None,
     ) -> None:
         self._event_manager = event_manager if event_manager else _EVENT_MANAGER
 
         self._local_listeners = local_listeners or []
         self._global_listener_registry = global_listener_registry
 
-        self._component: Optional[ComponentT] = None
-        self._inited_listeners: Optional[List[ListenerT]] = None
+        self._component: ComponentT | None = None
+        self._inited_listeners: list[ListenerT] | None = None
 
     @property
     def as_listener(self) -> ListenerT:
@@ -149,7 +149,7 @@ class EventDispatcher(Generic[ComponentT, ListenerT]):
 
         await asyncio.gather(*listeners_to_wakeup)
 
-    async def _get_or_init_listeners(self) -> List[ListenerT]:
+    async def _get_or_init_listeners(self) -> list[ListenerT]:
         if self._inited_listeners is not None:
             return self._inited_listeners
 
@@ -172,15 +172,7 @@ class EventDispatcher(Generic[ComponentT, ListenerT]):
         return self._inited_listeners
 
 
-class NoOpEventDispatcher(EventDispatcher):
-    def __getattr__(self, event_handler_name: str) -> Callable:
-        async def handle_event(*args, **kwargs) -> None:
-            pass
-
-        return handle_event
-
-
-def get_default_name(func: Optional[Callable] = None) -> str:
+def get_default_name(func: Callable | None = None) -> str:
     """
     Get the default name of the component based on code context where it's being used
     """

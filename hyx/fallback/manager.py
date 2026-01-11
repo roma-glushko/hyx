@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any
 
 from hyx.fallback.events import FallbackListener
 from hyx.fallback.typing import FallbackT, PredicateT
@@ -22,9 +22,9 @@ class FallbackManager:
         self,
         handler: FallbackT,
         event_dispatcher: FallbackListener,
-        exceptions: Optional[ExceptionsT] = None,
-        predicate: Optional[PredicateT] = None,
-        name: Optional[str] = None,
+        exceptions: ExceptionsT | None = None,
+        predicate: PredicateT | None = None,
+        name: str | None = None,
     ) -> None:
         self._handler = handler
         self._exceptions = exceptions
