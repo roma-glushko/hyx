@@ -3,6 +3,8 @@
 Hyx provides built-in telemetry support to help you monitor your fault tolerance components in production.
 All components emit events that can be captured by listeners and forwarded to your observability stack.
 
+Telemetry is built on top of Hyx's [event system](./events.md). For details on creating custom listeners or understanding how events flow, see the Events documentation.
+
 ## Supported Backends
 
 | Backend | Installation | Description |
@@ -196,51 +198,4 @@ All metrics are prefixed with the client prefix (default: `hyx`).
 
 ## Custom Listeners
 
-You can create custom listeners by implementing the appropriate event handler methods. Each component type has its own listener interface:
-
-```python
-class MyRetryListener:
-    async def on_retry(self, retry, exception, counter, backoff):
-        print(f"Retrying {retry.name} after {type(exception).__name__}")
-
-    async def on_attempts_exceeded(self, retry):
-        print(f"Retry exhausted for {retry.name}")
-
-    async def on_success(self, retry, counter):
-        print(f"Success for {retry.name}")
-```
-
-Then register it globally or per-component:
-
-```python
-from hyx.retry.events import register_retry_listener
-from hyx.retry import retry
-
-# Global registration
-register_retry_listener(MyRetryListener())
-
-# Or per-component
-@retry(attempts=3, listeners=[MyRetryListener()])
-async def my_function():
-    ...
-```
-
-## Event Manager
-
-For advanced use cases, you can use the `EventManager` to control event processing:
-
-```python
-from hyx.events import EventManager
-from hyx.retry import retry
-
-event_manager = EventManager()
-
-@retry(attempts=3, event_manager=event_manager)
-async def my_function():
-    ...
-
-# Wait for all listener tasks to complete
-await event_manager.wait_for_tasks()
-```
-
-This is useful in tests or when you need to ensure all telemetry events have been processed before shutting down.
+For creating custom listeners, see the [Events documentation](./events.md#listener-interfaces).
