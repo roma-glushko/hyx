@@ -42,6 +42,7 @@ Hyx is meant to be [Hystrix (Java)](https://github.com/Netflix/Hystrix), [resili
 - Implements five commonly used resiliency patterns with various configurations based on advice and experience of industry leaders (e.g. AWS, Google, Netflix)
 - Idiomatic Pythonic implementation based on [decorators](https://realpython.com/primer-on-python-decorators) and [context managers](https://realpython.com/python-with-statement)
 - [AsyncIO](https://docs.python.org/3/library/asyncio.html) Native Implementation
+- Built-in [telemetry](https://hyx.readthedocs.io/en/latest/telemetry/) support for OpenTelemetry, Prometheus, and StatsD
 - Lightweight. Readable Codebase. High Test Coverage
 
 ## Requirements
@@ -58,6 +59,16 @@ pip install hyx
 
 # or via uv
 uv add hyx
+```
+
+### Optional Dependencies
+
+For telemetry support, install with the appropriate extras:
+
+```sh
+pip install hyx[otel]        # OpenTelemetry
+pip install hyx[prometheus]  # Prometheus
+pip install hyx[statsd]      # StatsD
 ```
 
 ## Component Map

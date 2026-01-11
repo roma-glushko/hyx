@@ -3,7 +3,7 @@ from collections.abc import Sequence
 from types import TracebackType
 from typing import Any, cast
 
-from hyx.events import EventDispatcher, EventManager, get_default_name
+from hyx.events import EventManager, create_manager, get_default_name
 from hyx.timeout.events import _TIMEOUT_LISTENERS, TimeoutListener
 from hyx.timeout.manager import TimeoutManager
 from hyx.typing import FuncT
@@ -45,21 +45,14 @@ class timeout:
         self._local_listeners = listeners
 
     def _create_timeout(self) -> TimeoutManager:
-        event_dispatcher = EventDispatcher[TimeoutManager, TimeoutListener](
+        return create_manager(
+            TimeoutManager,
             self._local_listeners,
             _TIMEOUT_LISTENERS,
             event_manager=self._event_manager,
-        )
-
-        timeout = TimeoutManager(
             name=self._name,
             timeout_secs=self._timeout_secs,
-            event_dispatcher=event_dispatcher.as_listener,
         )
-
-        event_dispatcher.set_component(timeout)
-
-        return timeout
 
     async def __aenter__(self) -> "timeout":
         if self._timeout_manager is not None:

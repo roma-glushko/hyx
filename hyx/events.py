@@ -82,7 +82,6 @@ class EventDispatcher(Generic[ComponentT, ListenerT]):
         "_local_listeners",
         "_global_listener_registry",
         "_component",
-        "_listeners_inited",
         "_inited_listeners",
     )
 
@@ -187,3 +186,44 @@ def get_default_name(func: Callable | None = None) -> str:
     stack = traceback.extract_stack(limit=3)
 
     return stack[0].name
+
+
+ManagerT = TypeVar("ManagerT")
+
+
+def create_manager(
+    manager_class: Callable[..., ManagerT],
+    listeners: Sequence[ListenerT] | None,
+    global_registry: "ListenerRegistry[ManagerT, ListenerT]",
+    event_manager: "EventManager | None" = None,
+    **manager_kwargs,
+) -> ManagerT:
+    """
+    Create a manager with event dispatcher wiring.
+
+    This helper reduces the boilerplate of:
+    1. Creating an EventDispatcher
+    2. Creating a manager with the dispatcher's listener interface
+    3. Wiring the manager back to the dispatcher
+
+    **Parameters:**
+
+    * **manager_class** - The manager class to instantiate
+    * **listeners** - Local listeners for this component instance
+    * **global_registry** - Global listener registry for this component type
+    * **event_manager** - Optional event manager for tracking listener tasks
+    * **manager_kwargs** - Additional keyword arguments passed to the manager constructor
+    """
+    event_dispatcher: EventDispatcher[ManagerT, ListenerT] = EventDispatcher(
+        listeners,
+        global_registry,
+        event_manager=event_manager,
+    )
+
+    manager = manager_class(
+        **manager_kwargs,
+        event_dispatcher=event_dispatcher.as_listener,
+    )
+
+    event_dispatcher.set_component(manager)
+    return manager

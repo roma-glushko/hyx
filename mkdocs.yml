@@ -97,6 +97,8 @@ nav:
     - Fallbacks: components/fallback.md
     - Rate Limiters: components/rate_limiter.md
     - Bulkheads: components/bulkhead.md
+- Events: events.md
+- Telemetry: telemetry.md
 - Roadmap: roadmap.md
 - FAQ: faq.md
 # - Release Notes: release_notes.md
