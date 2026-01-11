@@ -18,20 +18,18 @@ clean: ## Clean temporary files
 	@rm -rf site
 
 lint-check: ## Lint source code without modifying it
-	@echo "Ruff"
+	@echo "Ruff check"
 	@uv run ruff check $(SOURCE) $(TESTS)
-	@echo "Black"
-	@uv run black --check $(SOURCE) $(TESTS)
+	@echo "Ruff format"
+	@uv run ruff format --check $(SOURCE) $(TESTS)
 	@echo "MyPy"
 	@uv run mypy --pretty $(SOURCE) $(TESTS)
 
 lint: ## Lint source code
-	@echo "Ruff"
+	@echo "Ruff check"
 	@uv run ruff check --fix $(SOURCE) $(TESTS)
-	@echo "Black"
-	@uv run black $(SOURCE) $(TESTS)
-	@echo "Ruff"
-	@uv run ruff check --fix $(SOURCE) $(TESTS)
+	@echo "Ruff format"
+	@uv run ruff format $(SOURCE) $(TESTS)
 	@echo "MyPy"
 	@uv run mypy --pretty $(SOURCE) $(TESTS)
 
