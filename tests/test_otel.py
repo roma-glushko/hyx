@@ -19,7 +19,7 @@ def otel_setup():
 def get_metric_value(reader: InMemoryMetricReader, metric_name: str) -> list[dict]:
     """Extract metric data points from the reader."""
     metrics_data = reader.get_metrics_data()
-    results = []
+    results: list[dict] = []
 
     if metrics_data is None:
         return results
@@ -30,12 +30,10 @@ def get_metric_value(reader: InMemoryMetricReader, metric_name: str) -> list[dic
                 for metric in scope_metrics.metrics:
                     if metric.name == metric_name:
                         for data_point in metric.data.data_points:
-                            results.append(
-                                {
-                                    "value": data_point.value,
-                                    "attributes": dict(data_point.attributes),
-                                }
-                            )
+                            # NumberDataPoint has .value, histograms don't
+                            value = getattr(data_point, "value", None)
+                            attrs = dict(data_point.attributes) if data_point.attributes else {}
+                            results.append({"value": value, "attributes": attrs})
 
     return results
 

@@ -18,6 +18,12 @@ Usage:
 
 from typing import TYPE_CHECKING, Any
 
+from hyx.bulkhead.events import BulkheadListener as BaseBulkheadListener
+from hyx.circuitbreaker.events import BreakerListener as BaseBreakerListener
+from hyx.fallback.events import FallbackListener as BaseFallbackListener
+from hyx.retry.events import RetryListener as BaseRetryListener
+from hyx.timeout.events import TimeoutListener as BaseTimeoutListener
+
 try:
     from opentelemetry import metrics
     from opentelemetry.metrics import Meter
@@ -44,7 +50,7 @@ def _get_meter(meter: Meter | None = None) -> Meter:
     return meter if meter is not None else metrics.get_meter(METER_NAME)
 
 
-class RetryListener:
+class RetryListener(BaseRetryListener):
     """OpenTelemetry metrics listener for retry components."""
 
     def __init__(self, meter: Meter | None = None) -> None:
@@ -73,16 +79,16 @@ class RetryListener:
         counter: "Counter",
         backoff: float,
     ) -> None:
-        self._retry_counter.add(1, {"component": retry.name, "exception": type(exception).__name__})
+        self._retry_counter.add(1, {"component": retry.name or "", "exception": type(exception).__name__})
 
     async def on_attempts_exceeded(self, retry: "RetryManager") -> None:
-        self._exhausted_counter.add(1, {"component": retry.name})
+        self._exhausted_counter.add(1, {"component": retry.name or ""})
 
     async def on_success(self, retry: "RetryManager", counter: "Counter") -> None:
-        self._success_counter.add(1, {"component": retry.name})
+        self._success_counter.add(1, {"component": retry.name or ""})
 
 
-class CircuitBreakerListener:
+class CircuitBreakerListener(BaseBreakerListener):
     """OpenTelemetry metrics listener for circuit breaker components."""
 
     def __init__(self, meter: Meter | None = None) -> None:
@@ -107,7 +113,7 @@ class CircuitBreakerListener:
     ) -> None:
         self._state_counter.add(
             1,
-            {"component": context.name, "from_state": current_state.name, "to_state": "working"},
+            {"component": context.name or "", "from_state": current_state.name, "to_state": "working"},
         )
 
     async def on_recovering(
@@ -118,7 +124,7 @@ class CircuitBreakerListener:
     ) -> None:
         self._state_counter.add(
             1,
-            {"component": context.name, "from_state": current_state.name, "to_state": "recovering"},
+            {"component": context.name or "", "from_state": current_state.name, "to_state": "recovering"},
         )
 
     async def on_failing(
@@ -129,14 +135,14 @@ class CircuitBreakerListener:
     ) -> None:
         self._state_counter.add(
             1,
-            {"component": context.name, "from_state": current_state.name, "to_state": "failing"},
+            {"component": context.name or "", "from_state": current_state.name, "to_state": "failing"},
         )
 
     async def on_success(self, context: "BreakerContext", state: "BreakerState") -> None:
-        self._success_counter.add(1, {"component": context.name, "state": state.name})
+        self._success_counter.add(1, {"component": context.name or "", "state": state.name})
 
 
-class TimeoutListener:
+class TimeoutListener(BaseTimeoutListener):
     """OpenTelemetry metrics listener for timeout components."""
 
     def __init__(self, meter: Meter | None = None) -> None:
@@ -149,10 +155,10 @@ class TimeoutListener:
         )
 
     async def on_timeout(self, timeout: "TimeoutManager") -> None:
-        self._timeout_counter.add(1, {"component": timeout.name})
+        self._timeout_counter.add(1, {"component": timeout.name or ""})
 
 
-class BulkheadListener:
+class BulkheadListener(BaseBulkheadListener):
     """OpenTelemetry metrics listener for bulkhead components."""
 
     def __init__(self, meter: Meter | None = None) -> None:
@@ -165,10 +171,10 @@ class BulkheadListener:
         )
 
     async def on_bulkhead_full(self, bulkhead: "BulkheadManager") -> None:
-        self._rejected_counter.add(1, {"component": bulkhead.name})
+        self._rejected_counter.add(1, {"component": bulkhead.name or ""})
 
 
-class FallbackListener:
+class FallbackListener(BaseFallbackListener):
     """OpenTelemetry metrics listener for fallback components."""
 
     def __init__(self, meter: Meter | None = None) -> None:
@@ -189,7 +195,7 @@ class FallbackListener:
     ) -> None:
         # Determine if fallback was triggered by exception or predicate
         reason = "exception" if isinstance(result, Exception) else "predicate"
-        self._fallback_counter.add(1, {"component": fallback.name, "reason": reason})
+        self._fallback_counter.add(1, {"component": fallback.name or "", "reason": reason})
 
 
 def register_listeners(meter: Meter | None = None) -> None:

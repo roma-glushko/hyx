@@ -23,8 +23,14 @@ Usage:
 
 from typing import TYPE_CHECKING, Any
 
+from hyx.bulkhead.events import BulkheadListener as BaseBulkheadListener
+from hyx.circuitbreaker.events import BreakerListener as BaseBreakerListener
+from hyx.fallback.events import FallbackListener as BaseFallbackListener
+from hyx.retry.events import RetryListener as BaseRetryListener
+from hyx.timeout.events import TimeoutListener as BaseTimeoutListener
+
 try:
-    from statsd import StatsClient
+    from statsd import StatsClient  # type: ignore[import-untyped]
 except ImportError as e:
     raise ImportError("statsd is required for StatsD instrumentation. Install it with: pip install hyx[statsd]") from e
 
@@ -46,7 +52,7 @@ def _get_client(client: StatsClient | None = None, prefix: str = DEFAULT_PREFIX)
     return client if client is not None else StatsClient(prefix=prefix)
 
 
-class RetryListener:
+class RetryListener(BaseRetryListener):
     """StatsD metrics listener for retry components."""
 
     def __init__(self, client: StatsClient | None = None) -> None:
@@ -69,7 +75,7 @@ class RetryListener:
         self._client.incr(f"retry.{retry.name}.success")
 
 
-class TimeoutListener:
+class TimeoutListener(BaseTimeoutListener):
     """StatsD metrics listener for timeout components."""
 
     def __init__(self, client: StatsClient | None = None) -> None:
@@ -79,7 +85,7 @@ class TimeoutListener:
         self._client.incr(f"timeout.{timeout.name}.exceeded")
 
 
-class CircuitBreakerListener:
+class CircuitBreakerListener(BaseBreakerListener):
     """StatsD metrics listener for circuit breaker components."""
 
     def __init__(self, client: StatsClient | None = None) -> None:
@@ -113,7 +119,7 @@ class CircuitBreakerListener:
         self._client.incr(f"circuitbreaker.{context.name}.success")
 
 
-class FallbackListener:
+class FallbackListener(BaseFallbackListener):
     """StatsD metrics listener for fallback components."""
 
     def __init__(self, client: StatsClient | None = None) -> None:
@@ -131,7 +137,7 @@ class FallbackListener:
         self._client.incr(f"fallback.{fallback.name}.triggered.{reason}")
 
 
-class BulkheadListener:
+class BulkheadListener(BaseBulkheadListener):
     """StatsD metrics listener for bulkhead components."""
 
     def __init__(self, client: StatsClient | None = None) -> None:

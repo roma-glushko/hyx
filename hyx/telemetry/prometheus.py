@@ -18,6 +18,12 @@ Usage:
 
 from typing import TYPE_CHECKING, Any
 
+from hyx.bulkhead.events import BulkheadListener as BaseBulkheadListener
+from hyx.circuitbreaker.events import BreakerListener as BaseBreakerListener
+from hyx.fallback.events import FallbackListener as BaseFallbackListener
+from hyx.retry.events import RetryListener as BaseRetryListener
+from hyx.timeout.events import TimeoutListener as BaseTimeoutListener
+
 try:
     from prometheus_client import REGISTRY, CollectorRegistry, Counter
 except ImportError as e:
@@ -36,7 +42,7 @@ if TYPE_CHECKING:
     from hyx.timeout.manager import TimeoutManager
 
 
-class RetryListener:
+class RetryListener(BaseRetryListener):
     """Prometheus metrics listener for retry components."""
 
     def __init__(self, registry: CollectorRegistry | None = None) -> None:
@@ -77,7 +83,7 @@ class RetryListener:
         self._success_counter.labels(component=retry.name).inc()
 
 
-class CircuitBreakerListener:
+class CircuitBreakerListener(BaseBreakerListener):
     """Prometheus metrics listener for circuit breaker components."""
 
     def __init__(self, registry: CollectorRegistry | None = None) -> None:
@@ -124,7 +130,7 @@ class CircuitBreakerListener:
         self._success_counter.labels(component=context.name, state=state.name).inc()
 
 
-class TimeoutListener:
+class TimeoutListener(BaseTimeoutListener):
     """Prometheus metrics listener for timeout components."""
 
     def __init__(self, registry: CollectorRegistry | None = None) -> None:
@@ -141,7 +147,7 @@ class TimeoutListener:
         self._timeout_counter.labels(component=timeout.name).inc()
 
 
-class BulkheadListener:
+class BulkheadListener(BaseBulkheadListener):
     """Prometheus metrics listener for bulkhead components."""
 
     def __init__(self, registry: CollectorRegistry | None = None) -> None:
@@ -158,7 +164,7 @@ class BulkheadListener:
         self._rejected_counter.labels(component=bulkhead.name).inc()
 
 
-class FallbackListener:
+class FallbackListener(BaseFallbackListener):
     """Prometheus metrics listener for fallback components."""
 
     def __init__(self, registry: CollectorRegistry | None = None) -> None:
