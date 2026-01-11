@@ -32,6 +32,10 @@ class FallbackManager:
         self._name = name
         self._event_dispatcher = event_dispatcher
 
+    @property
+    def name(self) -> str | None:
+        return self._name
+
     async def __call__(self, func: FuncT, *args: Any, **kwargs: Any) -> Any:
         try:
             result = await func(*args, **kwargs)

@@ -42,8 +42,22 @@ Homepage = "https://hyx.readthedocs.io/en/latest/"
 Repository = "https://github.com/roma-glushko/hyx"
 Documentation = "https://hyx.readthedocs.io/en/latest/"
 
+[project.optional-dependencies]
+otel = [
+    "opentelemetry-api>=1.20.0",
+]
+statsd = [
+    "statsd>=4.0.0",
+]
+prometheus = [
+    "prometheus-client>=0.17.0",
+]
+
 [dependency-groups]
 dev = [
+    "opentelemetry-api>=1.20.0",
+    "statsd>=4.0.0",
+    "prometheus-client>=0.17.0",
     "pytest>=7.2.0",
     "mypy>=0.991",
     "ruff>=0.0.261",
@@ -51,6 +65,7 @@ dev = [
     "coverage>=7.0.1",
     "mutmut>=2.4.3",
     "pytest-cov>=4.0.0",
+    "opentelemetry-sdk>=1.39.1",
 ]
 docs = [
     "mkdocs>=1.4.2",

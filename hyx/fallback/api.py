@@ -2,7 +2,7 @@ import functools
 from collections.abc import Callable, Sequence
 from typing import Any, cast
 
-from hyx.events import EventDispatcher, EventManager, get_default_name
+from hyx.events import EventManager, create_manager, get_default_name
 from hyx.fallback.events import _FALLBACK_LISTENERS, FallbackListener
 from hyx.fallback.manager import FallbackManager
 from hyx.fallback.typing import FallbackT, PredicateT
@@ -34,21 +34,16 @@ def fallback(
         raise ValueError("Either on or if_ param should be specified when using the fallback decorator")
 
     def _decorator(func: FuncT) -> FuncT:
-        event_dispatcher = EventDispatcher[FallbackManager, FallbackListener](
+        manager = create_manager(
+            FallbackManager,
             listeners,
             _FALLBACK_LISTENERS,
             event_manager=event_manager,
-        )
-
-        manager = FallbackManager(
             name=name or get_default_name(func),
             handler=handler,
             exceptions=on,
             predicate=if_,
-            event_dispatcher=event_dispatcher.as_listener,
         )
-
-        event_dispatcher.set_component(manager)
 
         @functools.wraps(func)
         async def _wrapper(*args: Any, **kwargs: Any) -> Any:

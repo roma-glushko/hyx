@@ -7,7 +7,7 @@ from hyx.circuitbreaker.events import _BREAKER_LISTENERS, BreakerListener
 from hyx.circuitbreaker.managers import ConsecutiveCircuitBreaker
 from hyx.circuitbreaker.states import BreakerState
 from hyx.circuitbreaker.typing import DelayT
-from hyx.events import EventDispatcher, EventManager, get_default_name
+from hyx.events import EventManager, create_manager, get_default_name
 from hyx.typing import ExceptionsT, FuncT
 
 
@@ -53,22 +53,17 @@ class consecutive_breaker:
         name: str | None = None,
         event_manager: "EventManager | None" = None,
     ) -> None:
-        event_dispatcher = EventDispatcher[ConsecutiveCircuitBreaker, BreakerListener](
+        self._manager = create_manager(
+            ConsecutiveCircuitBreaker,
             listeners,
             _BREAKER_LISTENERS,
             event_manager=event_manager,
-        )
-
-        self._manager = ConsecutiveCircuitBreaker(
             name=name or get_default_name(),
             exceptions=exceptions,
             failure_threshold=failure_threshold,
             recovery_time_secs=recovery_time_secs,
             recovery_threshold=recovery_threshold,
-            event_dispatcher=event_dispatcher.as_listener,
         )
-
-        event_dispatcher.set_component(self._manager)
 
     @property
     def state(self) -> "BreakerState":
