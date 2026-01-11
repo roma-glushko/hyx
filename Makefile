@@ -7,10 +7,10 @@ help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
 install: ## Install project dependencies
-	@poetry install
+	@uv sync --all-groups
 
 clean: ## Clean temporary files
-	@echo "🧹 Cleaning temporary files.."
+	@echo "Cleaning temporary files.."
 	@rm -rf dist
 	@rm -rf .mypy_cache .pytest_cache .ruff_cache
 	@rm -rf .coverage htmlcov coverage.xml
@@ -18,49 +18,49 @@ clean: ## Clean temporary files
 	@rm -rf site
 
 lint-check: ## Lint source code without modifying it
-	@echo "🧹 Ruff"
-	@poetry run ruff $(SOURCE) $(TESTS)
-	@echo "🧹 Black"
-	@poetry run black --check $(SOURCE) $(TESTS)
-	@echo "🧽 MyPy"
-	@poetry run mypy --pretty $(SOURCE) $(TESTS)
+	@echo "Ruff"
+	@uv run ruff check $(SOURCE) $(TESTS)
+	@echo "Black"
+	@uv run black --check $(SOURCE) $(TESTS)
+	@echo "MyPy"
+	@uv run mypy --pretty $(SOURCE) $(TESTS)
 
 lint: ## Lint source code
-	@echo "🧹 Ruff"
-	@poetry run ruff --fix $(SOURCE) $(TESTS)
-	@echo "🧹 Black"
-	@poetry run black $(SOURCE) $(TESTS)
-	@echo "🧹 Ruff"
-	@ruff --fix $(SOURCE) $(TESTS)
-	@echo "🧽 MyPy"
-	@poetry run mypy --pretty $(SOURCE) $(TESTS)
+	@echo "Ruff"
+	@uv run ruff check --fix $(SOURCE) $(TESTS)
+	@echo "Black"
+	@uv run black $(SOURCE) $(TESTS)
+	@echo "Ruff"
+	@uv run ruff check --fix $(SOURCE) $(TESTS)
+	@echo "MyPy"
+	@uv run mypy --pretty $(SOURCE) $(TESTS)
 
 package-build: ## Build the project package
-	@poetry build
+	@uv build
 
 docs-serve: ## Start docs with autoreload
-	@poetry run mkdocs serve
+	@uv run mkdocs serve
 
 docs-build: ## Build docs
-	@poetry run mkdocs build
+	@uv run mkdocs build
 
 build: package-build docs-build
 
 test: ## Run tests
-	@poetry run coverage run -m pytest $(TESTS) $(SOURCE)
+	@uv run coverage run -m pytest $(TESTS) $(SOURCE)
 
 test-meta: ## Test robustness of the test suit
-	@mutmut run
+	@uv run mutmut run
 
 test-meta-results: ## Show weak test cases
-	@mutmut results
+	@uv run mutmut results
 
 test-cov-xml: ## Run tests
-	@poetry run coverage run -m pytest $(TESTS) --cov $(SOURCE) --cov-report=xml
+	@uv run coverage run -m pytest $(TESTS) --cov $(SOURCE) --cov-report=xml
 
 test-cov-html: ## Generate test coverage
-	@poetry run coverage report --show-missing
-	@poetry run coverage html
+	@uv run coverage report --show-missing
+	@uv run coverage html
 
 test-cov-open: test-cov-html  ## Open test coverage in browser
 	@open htmlcov/index.html
