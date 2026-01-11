@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from hyx.circuitbreaker.context import BreakerContext
 from hyx.circuitbreaker.exceptions import BreakerFailing
@@ -96,7 +96,7 @@ class FailingState(BreakerState):
 
     @staticmethod
     def _get_failing_since() -> datetime:
-        return datetime.utcnow()
+        return datetime.now(timezone.utc)
 
     def _get_failing_until(self, since: datetime) -> datetime:
         return since + timedelta(seconds=self._context.recovery_time_secs)
@@ -113,7 +113,7 @@ class FailingState(BreakerState):
         """
         Remaining time the breaker is going to fail
         """
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
 
         if now >= self.until:
             return None
