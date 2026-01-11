@@ -57,23 +57,23 @@ Hyx is meant to be [Hystrix (Java)](https://github.com/Netflix/Hystrix), [resili
 
 Hyx can be installed from [PyPi](https://pypi.org/project/hyx):
 
-``` sh
+```sh
 pip install hyx
 
-# or via poetry
-poetry add hyx
+# or via uv
+uv add hyx
 ```
 
 ## Component Map
 | Component         | Problem                                                                                                                                                                            | Solution                                                                                                                                                                      | Implemented? |
 |-------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------|
-| 🔁 Retry           | The failures happen sometimes, but they self-recover after a short time                                                                                                            | Automatically retry operation on temporary failures                                                                                                                           | ✅            |
+| 🔁 Retry           | Failures happen sometimes, but they self-recover after a short time                                                                                                                | Automatically retry operations on temporary failures                                                                                                                          | ✅            |
 | 💾 Cache           |                                                                                                                                                                                    |                                                                                                                                                                               |              |
-| ⚡️ Circuit Breaker | When downstream microservices have got overloaded, sending even more load can make the situation only worse.                                                                       | Stop doing requests to your failing microservice temporarily if amount of errors exceeded expected thresholds. Then see if the given time helped the microservice to recover  | ✅            |
-| ⏱ Timeout         | Sometimes operations may take too much time. We cannot wait that long or after that time the success is unlikely                                                                   | Bound waiting to a reasonable amount of time                                                                                                                                  | ✅            |
-| 🚰 Bulkhead        | If executed without control, some code can take too much resources and put down the whole application (and upstream services) or cause slowness of other places of the application | Fix the amount of calls to the code, queue other calls and fail calls that goes beyond your capacity                                                                          | ✅            |
-| 🏃‍♂️ Rate Limiter   | The microservice can be requested with any rate even one that can put it down if happens by accident                                                                               | Limit the rate your system can be accessed by                                                                                                                                 | ✅            |
-| 🤝 Fallback        | Nothing can guarantee you that your dependencies will work. What would you do when it's failing?                                                                                   | Degrade gracefully by defining some default values or placeholders if your dependencies are down                                                                              | ✅            |
+| ⚡️ Circuit Breaker | When downstream microservices become overloaded, sending even more load only makes things worse                                                                                    | Temporarily stop sending requests to failing microservices when error thresholds are exceeded. Then check if the pause helped them recover                                    | ✅            |
+| ⏱ Timeout         | Sometimes operations take too long. We can't wait forever, and after a certain point success becomes unlikely                                                                      | Bound waiting to a reasonable amount of time                                                                                                                                  | ✅            |
+| 🚰 Bulkhead        | Without limits, some code can consume too many resources, bringing down the whole application (and upstream services) or slowing down other parts                                  | Limit the number of concurrent calls, queue excess calls, and fail calls that exceed capacity                                                                                 | ✅            |
+| 🏃‍♂️ Rate Limiter   | A microservice can be called at any rate, including one that could bring it down if triggered accidentally                                                                         | Limit the rate at which your system can be accessed                                                                                                                           | ✅            |
+| 🤝 Fallback        | Nothing guarantees that your dependencies will work. What do you do when they fail?                                                                                                | Degrade gracefully by providing default values or placeholders when dependencies are down                                                                                     | ✅            |
 
 <p align="right">
 Inspired by <a href="https://github.com/App-vNext/Polly#resilience-policies" target="_blank">Polly's Resiliency Policies</a>

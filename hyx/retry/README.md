@@ -1,9 +1,8 @@
 # hyx.retry
 
-Retry is the most basic component in our resiliency toolkit. 
-It wraps some function that listen to exceptions it raises. 
-If the specified exceptions are thrown, it retries in some time in a way that was specified.
-
+Retry is the most basic component in our resiliency toolkit.
+It wraps a function and listens for exceptions it raises.
+If specified exceptions are thrown, it retries after a delay according to the configured strategy.
 
 ## Acknowledgements
 

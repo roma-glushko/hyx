@@ -1,13 +1,13 @@
 # hyx.bulkhead
 
-Bulkhead ensures that some action or code block is not going to consume all resources of the asyncio loop. 
-It defines a fixed amount of executions (along with concurrent executions) of the action.
+Bulkhead ensures that an action or code block doesn't consume all resources of the asyncio loop.
+It defines a fixed limit on the number of concurrent executions of an action.
 
-If the amount raise above configured maximum, the bulkhead gets full and raise an exception. 
-Hence, the requester won't be able to overload the application by triggering the action further.
+If the count rises above the configured maximum, the bulkhead becomes full and raises an exception.
+This prevents requesters from overloading the application by triggering further actions.
 
-Another way to think about bulkhead is that it throttles executions of some code.
+Another way to think about a bulkhead is that it throttles executions of some code.
 
 ## Acknowledgements
 
-- (App-vNext/Polly: Bulkhead)[https://github.com/App-vNext/Polly/tree/master/src/Polly/Bulkhead]
+- [App-vNext/Polly: Bulkhead](https://github.com/App-vNext/Polly/tree/master/src/Polly/Bulkhead)
