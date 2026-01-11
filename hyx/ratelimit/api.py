@@ -3,7 +3,7 @@ from collections.abc import Sequence
 from types import TracebackType
 from typing import Any, cast
 
-from hyx.events import EventDispatcher, EventManager, get_default_name
+from hyx.events import EventManager, create_manager, get_default_name
 from hyx.ratelimit.events import _RATELIMITER_LISTENERS, RateLimiterListener
 from hyx.ratelimit.managers import RateLimiter, TokenBucketLimiter
 from hyx.typing import FuncT
@@ -62,7 +62,7 @@ class tokenbucket:
     * **event_manager** *(None | EventManager)* - Event manager for tracking listener tasks
     """
 
-    __slots__ = ("_limiter", "_name")
+    __slots__ = ("_limiter",)
 
     def __init__(
         self,
@@ -73,23 +73,16 @@ class tokenbucket:
         listeners: Sequence[RateLimiterListener] | None = None,
         event_manager: EventManager | None = None,
     ) -> None:
-        self._name = name
-
-        event_dispatcher: EventDispatcher[TokenBucketLimiter, RateLimiterListener] = EventDispatcher(
+        self._limiter = create_manager(
+            TokenBucketLimiter,
             listeners,
             _RATELIMITER_LISTENERS,
             event_manager=event_manager,
-        )
-
-        self._limiter = TokenBucketLimiter(
             max_executions=max_executions,
             per_time_secs=per_time_secs,
             bucket_size=bucket_size,
             name=name,
-            event_dispatcher=event_dispatcher.as_listener,
         )
-
-        event_dispatcher.set_component(self._limiter)
 
     async def __aenter__(self) -> "tokenbucket":
         await self._limiter.acquire()
