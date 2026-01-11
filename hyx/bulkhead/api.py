@@ -5,7 +5,7 @@ from typing import Any, cast
 
 from hyx.bulkhead.events import _BULKHEAD_LISTENERS, BulkheadListener
 from hyx.bulkhead.manager import BulkheadManager
-from hyx.events import EventDispatcher, EventManager, get_default_name
+from hyx.events import EventManager, create_manager, get_default_name
 from hyx.typing import FuncT
 
 
@@ -34,20 +34,15 @@ class bulkhead:
         listeners: Sequence[BulkheadListener] | None = None,
         event_manager: "EventManager | None" = None,
     ) -> None:
-        event_dispatcher = EventDispatcher[BulkheadManager, BulkheadListener](
+        self._manager = create_manager(
+            BulkheadManager,
             listeners,
             _BULKHEAD_LISTENERS,
             event_manager=event_manager,
-        )
-
-        self._manager = BulkheadManager(
             name=name or get_default_name(),
             max_concurrency=max_concurrency,
             max_capacity=max_capacity,
-            event_dispatcher=event_dispatcher.as_listener,
         )
-
-        event_dispatcher.set_component(self._manager)
 
     async def __aenter__(self) -> "bulkhead":
         await self._manager.acquire()

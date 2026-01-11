@@ -35,6 +35,10 @@ class BulkheadManager:
         self._name = name
         self._event_dispatcher = event_dispatcher
 
+    @property
+    def name(self) -> str | None:
+        return self._name
+
     async def _raise_on_exceed(self) -> None:
         if self._total_execs_limiter.locked():
             await self._event_dispatcher.on_bulkhead_full(self)
