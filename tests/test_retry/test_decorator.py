@@ -4,7 +4,6 @@ import pytest
 
 from hyx.events import EventManager
 from hyx.retry import retry
-from hyx.retry.api import bucket_retry
 from hyx.retry.counters import Counter
 from hyx.retry.events import RetryListener
 from hyx.retry.exceptions import AttemptsExceeded
@@ -107,7 +106,7 @@ async def test__retry__global_retry_limit() -> None:
     listener = Listener()
     event_manager = EventManager()
 
-    @bucket_retry(
+    @retry(
         on=RuntimeError,
         attempts=attempts,
         backoff=0.1,
@@ -139,7 +138,7 @@ async def test__retry__token_bucket_limiter():
     event_manager = EventManager()
     listener = Listener()
 
-    @bucket_retry(
+    @retry(
         on=RuntimeError,
         attempts=attempts,
         per_time_secs=per_time_secs,
