@@ -70,6 +70,7 @@ async def my_function():
 | `hyx.circuitbreaker.success` | Counter | `component`, `state` | Successful operations |
 | `hyx.timeout.exceeded` | Counter | `component` | Timeout exceeded |
 | `hyx.bulkhead.rejected` | Counter | `component` | Rejected due to capacity |
+| `hyx.ratelimiter.rejected` | Counter | `component` | Rejected due to rate limiting |
 | `hyx.fallback.triggered` | Counter | `component`, `reason` | Fallback triggered |
 
 ## Prometheus
@@ -129,6 +130,7 @@ breaker = consecutive_breaker(
 | `hyx_circuitbreaker_success_total` | Counter | `component`, `state` | Successful operations |
 | `hyx_timeout_exceeded_total` | Counter | `component` | Timeout exceeded |
 | `hyx_bulkhead_rejected_total` | Counter | `component` | Rejected due to capacity |
+| `hyx_ratelimiter_rejected_total` | Counter | `component` | Rejected due to rate limiting |
 | `hyx_fallback_triggered_total` | Counter | `component`, `reason` | Fallback triggered |
 
 ## StatsD
@@ -193,6 +195,7 @@ All metrics are prefixed with the client prefix (default: `hyx`).
 | `circuitbreaker.<name>.success` | Counter | Successful operation |
 | `timeout.<name>.exceeded` | Counter | Timeout exceeded |
 | `bulkhead.<name>.rejected` | Counter | Rejected due to capacity |
+| `ratelimiter.<name>.rejected` | Counter | Rejected due to rate limiting |
 | `fallback.<name>.triggered` | Counter | Fallback triggered |
 | `fallback.<name>.triggered.<reason>` | Counter | Fallback by reason (exception/predicate) |
 

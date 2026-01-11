@@ -115,6 +115,21 @@ class MyBulkheadListener(BulkheadListener):
 |--------|------------|-------------|
 | `on_bulkhead_full` | `bulkhead` | Request rejected (capacity exceeded) |
 
+### RateLimiterListener
+
+```python
+from hyx.ratelimit.events import RateLimiterListener
+
+class MyRateLimiterListener(RateLimiterListener):
+    async def on_rate_limited(self, limiter):
+        """Called when an operation is rejected due to rate limiting."""
+        print(f"Rate limiter {limiter.name} rejected request")
+```
+
+| Method | Parameters | Description |
+|--------|------------|-------------|
+| `on_rate_limited` | `limiter` | Request rejected (rate limit exceeded) |
+
 ### FallbackListener
 
 ```python
@@ -144,6 +159,7 @@ from hyx.retry.events import register_retry_listener
 from hyx.circuitbreaker.events import register_breaker_listener
 from hyx.timeout.events import register_timeout_listener
 from hyx.bulkhead.events import register_bulkhead_listener
+from hyx.ratelimit.events import register_ratelimiter_listener
 from hyx.fallback.events import register_fallback_listener
 
 # Register once at application startup
@@ -151,6 +167,7 @@ register_retry_listener(MyRetryListener())
 register_breaker_listener(MyBreakerListener())
 register_timeout_listener(MyTimeoutListener())
 register_bulkhead_listener(MyBulkheadListener())
+register_ratelimiter_listener(MyRateLimiterListener())
 register_fallback_listener(MyFallbackListener())
 ```
 
